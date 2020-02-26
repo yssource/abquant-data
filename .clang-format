@@ -1,0 +1,54 @@
+# I will use a mix of Google and linux-kernal style guide.
+BasedOnStyle: Google
+Language: Cpp
+# Cpp11BracedListStyle: true
+IndentWidth: 4
+ColumnLimit: 120
+BreakBeforeBraces: Linux
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignOperands: true
+AllowShortFunctionsOnASingleLine: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+#访问修饰符前的空格
+AccessModifierOffset: -4
+# 连续的空行保留几行
+MaxEmptyLinesToKeep: 1
+# 支持一行的if
+AllowShortIfStatementsOnASingleLine: true
+# 在未封闭(括号的开始和结束不在同一行)的括号中的代码是否对齐
+AlignAfterOpenBracket: true
+# switch的case缩进
+IndentCaseLabels: false
+# 针对OC的block的缩进宽度
+ObjCBlockIndentWidth: 4
+# 针对OC，属性名后加空格
+ObjCSpaceAfterProperty: true
+# # 每行字符的长度
+# ColumnLimit: 120
+# 注释对齐
+AlignTrailingComments: true
+# 括号后加空格
+SpaceAfterCStyleCast: false
+# 换行的时候对齐操作符
+AlignOperands: true
+# 中括号两边空格 []
+SpacesInSquareBrackets: false
+# 多行声明语句按照=对齐
+AlignConsecutiveDeclarations: false
+# 容器类的空格 例如 OC的字典
+SpacesInContainerLiterals: false
+# 在构造函数初始化时按逗号断行，并以冒号对齐
+BreakConstructorInitializersBeforeComma: true
+# 函数参数换行
+AllowAllParametersOfDeclarationOnNextLine: true
+#在续行(#     下一行)时的缩进长度
+ContinuationIndentWidth: 4
+# tab键盘的宽度
+TabWidth: 4
+# 赋值运算符前加空格
+SpaceBeforeAssignmentOperators: true
+# 行尾的注释前加1个空格
+SpacesBeforeTrailingComments: 1

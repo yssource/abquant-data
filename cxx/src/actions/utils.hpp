@@ -1,0 +1,49 @@
+/****************************************************************************
+ * Copyright (c) 2020-2016 Jimmy M. Gong                                    *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * Distributed under the terms of the Apache License 2.0 License.           *
+ *                                                                          *
+ * The full license is in the file LICENSE, distributed with this software. *
+ ****************************************************************************/
+
+#pragma once
+#include <QtCore/QVariant>
+#include <QtCore/QVariantMap>
+#include <QtCore/QVector>
+#include <algorithm>
+#include <cmath>
+#include <exception>
+#include <iostream>
+#include <limits>
+#include <vector>
+
+#include "DataFrame/DataFrame.h"
+#include "xtensor/xarray.hpp"
+
+namespace abq
+{
+using namespace hmdf;
+using namespace std;
+
+template <typename T, std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, int> = 0>
+void xfillna(xt::xarray<T>& v, T n)
+{
+    std::transform(std::begin(v), std::end(v), std::begin(v), [n](T m) -> T {
+        if (std::isnan(m)) {
+            return n;
+        } else {
+            return m;
+        }
+    });
+}
+
+enum class FQ_TYPE : short int {
+    NONE = 0x00,
+    PRE  = 0x01,
+    POST = 0xFF,
+};
+
+enum class MIN_TYPE : short int { ONE = 1, FIVE = 5, FIFTEEN = 15, THIRTY = 30, SIXTY = 60 };
+
+} // namespace abq

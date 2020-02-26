@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+
+[dev-packages]
+click = "*"
+logbook = "*"
+pytest = "*"
+pudb = "*"
+
+[packages]
+zipp = {editable = true,path = "."}
+pandas = "*"
+numpy = "*"
+pytdx = {editable = true,file = "file:///home/jimmy/workspace/git/rainx/pytdx"}
+
+[requires]
+python_version = "3.7"
