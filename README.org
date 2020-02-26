@@ -18,8 +18,31 @@
 A&B professional platform for quantitative finance. God is asking & bidding Me. ABQ.
 * Note
   [WIP]
-
   开发中 ...
+* 构建
+  作者本人是在Linux(x86_64 Linux 4.19.105-1-MANJARO) 上构建本项目，目前不支持
+  Windows. \\
+  你需要安装好clang clang++ llvm python pip conan 等基础开发工具
+  - 核心模块 cpp
+  - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
+  - 用户接口层 python
+** cpp 依赖
+   - ORM 层 [[https://github.com/yssource/treefrog-framework.git][treefrog-framework]] ::
+#+begin_src shell :exports code
+  git clone https://github.com/yssource/treefrog-framework.git
+  cd treefrog-framework && mkdir -v qbuild && cd qbuild
+  conan install .. --build missing --pr ../abquant.profile
+  conan build ..
+  sudo make install
+#+end_src
+   - abquant 核心应用层 ::
+#+begin_src shell :exports code
+  git clone https://github.com/yssource/abquant.git
+  cd abquant && mkdir -v qbuild && cd qbuild
+  conan install .. --build missing --pr ../abquant.profile
+  conan build ..
+  sudo make install
+#+end_src
 * 打赏
   欢迎请作者喝杯咖啡 :+1:
   | 微信                               | 支付宝                             |
@@ -32,7 +55,7 @@ All rights reserved.
 除非遵守当前许可，否则不得使用本软件。
 ** 非商业用途（非商业用途指个人出于非商业目的使用本软件，或者高校、研究所等非营利机构出于教育、科研等目的使用本软件）：
     遵守 Apache License 2.0（下称“Apache 2.0 许可”），您可以在以下位置获得
-    Apache 2.0 许可的副本：http://www.apache.org/licenses/LICENSE-2.0。 \\
+    Apache 2.0 许可的副本：http://www.apache.org/licenses/LICENSE-2.0 。 \\
     除非法律有要求或以书面形式达成协议，否则本软件分发时需保持当前许可“原样”不变，且不得附加任何条件。
 
 ** 商业用途（商业用途指个人出于任何商业目的使用本软件，或者法人或其他组织出于任何目的使用本软件）：
