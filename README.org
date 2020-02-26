@@ -22,7 +22,7 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
 * 构建
   作者本人是在Linux(x86_64 Linux 4.19.105-1-MANJARO) 上构建本项目，目前不支持
   Windows. \\
-  你需要安装好clang clang++ llvm python pip conan 等基础开发工具
+  你需要安装好clang++/llvm python pip conan 等基础开发工具
   - 核心模块 cpp
   - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
   - 用户接口层 python
@@ -43,6 +43,17 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
   conan build ..
   sudo make install
 #+end_src
+* 开发初衷
+  作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
+  验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
+  了量化交易。
+
+交易三部曲，a) 数据获取 b) 策略回测 c) 实盘交易 \\
+市面上开源的a,b,c 项目大部分都是python开发，但是在实践过程中性能都不理想，于是想
+到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
+* 感谢
+- [[https://github.com/ricequant/rqalpha.git][rqalpha]]
+- [[https://github.com/QUANTAXIS/QUANTAXIS.git][QUANTAXIS]]
 * 打赏
   欢迎请作者喝杯咖啡 :+1:
   | 微信                               | 支付宝                             |
@@ -64,5 +75,5 @@ All rights reserved.
     或源代码的产品或服务），任何法人或其他组织不得出于任何目的使用本软件，否则原
     作者有权追究相应的知识产权侵权责任。 \\
     在此前提下，对本软件的使用同样需要遵守 Apache 2.0 许可，Apache 2.0 许可与本
-    许可冲突之处，以本许可为准。 \\
+    许可冲突之处，以本许可为准。\\
     详细的授权流程，请联系 yssource@163.com 获取。
