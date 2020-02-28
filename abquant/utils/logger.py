@@ -24,7 +24,7 @@ logbook.set_datetime_format("local")
 
 
 # patch warn
-logbook.base._level_names[logbook.base.WARNING] = 'WARN'
+logbook.base._level_names[logbook.base.WARNING] = "WARN"
 
 
 __all__ = [
@@ -39,17 +39,9 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
 def user_std_handler_log_formatter(record, handler):
-    # from rqalpha.environment import Environment
-    # try:
-    #     dt = Environment.get_instance().calendar_dt.strftime(DATETIME_FORMAT)
-    # except Exception:
-    #     dt = datetime.now().strftime(DATETIME_FORMAT)
-
     dt = datetime.now().strftime(DATETIME_FORMAT)
     log = "{dt} {level} {msg}".format(
-        dt=dt,
-        level=record.level_name,
-        msg=record.message,
+        dt=dt, level=record.level_name, msg=record.message,
     )
     return log
 
@@ -71,6 +63,7 @@ def formatter_builder(tag):
         if record.formatted_exception:
             log += "\n" + record.formatted_exception
         return log
+
     return formatter
 
 
@@ -99,7 +92,7 @@ def init_logger():
     system_log.handlers = [StderrHandler(bubble=True)]
     basic_system_log.handlers = [StderrHandler(bubble=True)]
     std_log.handlers = [StderrHandler(bubble=True)]
-    user_log.handlers = []
+    user_log.handlers = [StderrHandler(bubble=True)]
     user_system_log.handlers = []
 
 
@@ -119,17 +112,28 @@ def set_loggers(conf={}):
     """
     pass
     """
-    # FIXME: workaround here, mock a config
-    conf = {"extra": {"logger": [], "user_system_log_disabled": False,
-                      "user_log_disabled": False, "log_level": "verbose"}}
+    # workaround here, mock a config
+    conf = {
+        "extra": {
+            "logger": [],
+            "user_system_log_disabled": False,
+            "user_log_disabled": False,
+            "log_level": "verbose",
+        }
+    }
     config = AbqAttrDict(conf)
     extra_config = config.extra
 
     init_logger()
 
-    for log in [basic_system_log, system_log, std_log, user_system_log, user_detail_log]:
-        log.level = getattr(
-            logbook, config.extra.log_level.upper(), logbook.NOTSET)
+    for log in [
+        basic_system_log,
+        system_log,
+        std_log,
+        user_system_log,
+        user_detail_log,
+    ]:
+        log.level = getattr(logbook, config.extra.log_level.upper(), logbook.NOTSET)
 
     user_log.level = logbook.DEBUG
 

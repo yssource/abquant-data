@@ -2,6 +2,6 @@
 
 """Main module."""
 
-from .utils.logger import set_loggers
+from abquant.utils.logger import set_loggers
 
 set_loggers()

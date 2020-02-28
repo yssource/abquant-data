@@ -3,11 +3,11 @@
 """Console script for abquant."""
 import sys
 import click
-from .utils.logger import set_loggers
-from .utils.logger import user_log as ulog
+from abquant.utils.logger import set_loggers
+from abquant.utils.logger import user_log as ulog
 
-# from .data.stock import Stock
-from .data.base import create_stock_day
+# from abquant.data.stock import Stock
+from abquant.data.base import create_stock_day
 
 set_loggers()
 

@@ -5,17 +5,18 @@ import pandas as pd
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from retrying import retry
-from ..utils.logger import system_log as slog
-from ..utils.cache import Cache
-from ..utils.parallelism import Parallelism
-from ..utils.market import *
-from ..config import Setting
+from abquant.utils.logger import system_log as slog
+from abquant.utils.logger import user_log as ulog
+from abquant.utils.cache import Cache
+from abquant.utils.parallelism import Parallelism
+from abquant.utils.market import *
+from abquant.config import Setting
 
 
-def ping(ip, port=7709, type_="stock"):
+def ping(ip: str, port: int = 7709, type_: str = "stock"):
     api = TdxHq_API()
     apix = TdxExHq_API()
-    __time1 = datetime.datetime.now()
+    now = datetime.datetime.now()
     try:
         if type_ in ["stock"]:
             with api.connect(ip, port, time_out=0.7):
@@ -23,36 +24,36 @@ def ping(ip, port=7709, type_="stock"):
 
                 if res is not None:
                     if len(api.get_security_list(0, 1)) > 800:
-                        return datetime.datetime.now() - __time1
+                        return datetime.datetime.now() - now
                     else:
-                        print("BAD RESPONSE {}".format(ip))
+                        slog.error("BAD RESPONSE {}".format(ip))
                         return datetime.timedelta(9, 9, 0)
                 else:
 
-                    print("BAD RESPONSE {}".format(ip))
+                    slog.error("BAD RESPONSE {}".format(ip))
                     return datetime.timedelta(9, 9, 0)
         elif type_ in ["future"]:
             with apix.connect(ip, port, time_out=0.7):
                 res = apix.get_instrument_count()
                 if res is not None:
                     if res > 40000:
-                        return datetime.datetime.now() - __time1
+                        return datetime.datetime.now() - now
                     else:
-                        print("Bad FUTUREIP REPSONSE {}".format(ip))
+                        slog.error("Bad FUTUREIP REPSONSE {}".format(ip))
                         return datetime.timedelta(9, 9, 0)
                 else:
-                    print("Bad FUTUREIP REPSONSE {}".format(ip))
+                    slog.error("Bad FUTUREIP REPSONSE {}".format(ip))
                     return datetime.timedelta(9, 9, 0)
     except Exception as e:
         if isinstance(e, TypeError):
-            print(e)
+            slog.error(e)
         else:
-            print("BAD RESPONSE {}".format(ip))
+            slog.error("BAD RESPONSE {}".format(ip))
         return datetime.timedelta(9, 9, 0)
 
 
 def select_best_ip():
-    slog.debug(u"Selecting the Best Server IP of TDX.")
+    slog.debug("Selecting the Best Server IP of TDX.")
 
     # 删除exclude ip
     import json
@@ -101,7 +102,7 @@ def select_best_ip():
             print("DEFAULT FUTURE IP {} is BAD, RETESTING".format(ipdefault))
             best_future_ip = get_ip_list_by_ping(future_ip_list, _type="future")
     ipbest = {"stock": best_stock_ip, "future": best_future_ip}
-    Setting.set_config(section="IPLIST", option="default", default_value=ipbest)
+    Setting.seconfig(section="IPLIST", option="default", default_value=ipbest)
 
     slog.debug(
         "=== The BEST SERVER ===\n stock_ip {} future_ip {}".format(

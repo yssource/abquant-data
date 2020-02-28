@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 import simplejson as json
 import six
-from .utils.logger import user_log as ulog
+from abquant.utils.logger import user_log as ulog
 
 xdg_config_home = (
     Path(os.getenv("XDG_CONFIG_HOME", ""))

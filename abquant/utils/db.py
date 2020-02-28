@@ -1,0 +1,1 @@
+    client = pymongo.MongoClient(uri)

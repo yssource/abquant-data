@@ -1,5 +1,5 @@
 import abc
-import time
+from abquant.helper import time_counter
 
 
 class IDataSource(object, metaclass=abc.ABCMeta):
@@ -32,23 +32,11 @@ def get_vendor(vendor="tdx"):
     return vendors[vendor]
 
 
-def time_counter(func):
-    from ..utils.logger import system_log
-
-    def wrapper(*args, **kwargs):
-        start = time.time()
-        func(*args, **kwargs)
-        end = time.time()
-        duration = end - start
-        system_log.debug((u"{}({}, {}) has a duration: {}.").format(
-            func, args, kwargs, duration))
-    return wrapper
-
 @time_counter
 def create_stock_day():
     vendor = get_vendor()
     vendor.Stock().create()
 
-
+@time_counter
 def create_stock_min():
     pass

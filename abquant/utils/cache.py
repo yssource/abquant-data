@@ -5,7 +5,7 @@ import time
 
 
 @singleton
-class Cache:
+class Cache(object):
     """简单的缓存系统
     把这个变量保存在内存里, 同时给它一个过期时间, 过期则失效.
     """
