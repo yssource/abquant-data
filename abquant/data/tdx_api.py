@@ -2,6 +2,7 @@ import datetime
 
 import numpy as np
 import pandas as pd
+import json
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from retrying import retry
@@ -11,6 +12,16 @@ from abquant.utils.cache import Cache
 from abquant.utils.parallelism import Parallelism
 from abquant.utils.market import *
 from abquant.config import Setting
+
+global best_ip
+best_ip = {
+    'stock': {
+        'ip': None, 'port': None
+    },
+    'future': {
+        'ip': None, 'port': None
+    }
+}
 
 
 def ping(ip: str, port: int = 7709, type_: str = "stock"):
@@ -56,8 +67,6 @@ def select_best_ip():
     slog.debug("Selecting the Best Server IP of TDX.")
 
     # 删除exclude ip
-    import json
-
     null = None
     exclude_ip = {"ip": "1.1.1.1", "port": 7709}
     default_ip = {
@@ -67,11 +76,13 @@ def select_best_ip():
     alist = []
     alist.append(exclude_ip)
 
-    ipexclude = Setting.get_setting(Setting.NETWORK_IP_INI, "IPLIST", "exclude")
+    ipexclude = Setting.get_setting(
+        Setting.NETWORK_IP_INI, "IPLIST", "exclude")
 
     Setting.exclude_from_stock_ip_list(ipexclude)
 
-    ipdefault = Setting.get_setting(Setting.NETWORK_IP_INI, "IPLIST", "default")
+    ipdefault = Setting.get_setting(
+        Setting.NETWORK_IP_INI, "IPLIST", "default")
 
     ipdefault = eval(ipdefault) if isinstance(ipdefault, str) else ipdefault
     assert isinstance(ipdefault, dict)
@@ -85,10 +96,10 @@ def select_best_ip():
         if ping(
             ipdefault["stock"]["ip"], ipdefault["stock"]["port"], "stock"
         ) < datetime.timedelta(0, 1):
-            print("USING DEFAULT STOCK IP")
+            slog.debug("USING DEFAULT STOCK IP")
             best_stock_ip = ipdefault["stock"]
         else:
-            print("DEFAULT STOCK IP is BAD, RETESTING")
+            slog.error("DEFAULT STOCK IP is BAD, RETESTING")
             best_stock_ip = get_ip_list_by_ping(stock_ip_list)
     if ipdefault["future"]["ip"] == None:
         best_future_ip = get_ip_list_by_ping(future_ip_list, _type="future")
@@ -96,13 +107,16 @@ def select_best_ip():
         if ping(
             ipdefault["future"]["ip"], ipdefault["future"]["port"], "future"
         ) < datetime.timedelta(0, 1):
-            print("USING DEFAULT FUTURE IP")
+            slog.debug("USING DEFAULT FUTURE IP")
             best_future_ip = ipdefault["future"]
         else:
-            print("DEFAULT FUTURE IP {} is BAD, RETESTING".format(ipdefault))
-            best_future_ip = get_ip_list_by_ping(future_ip_list, _type="future")
+            slog.error(
+                "DEFAULT FUTURE IP {} is BAD, RETESTING".format(ipdefault))
+            best_future_ip = get_ip_list_by_ping(
+                future_ip_list, _type="future")
     ipbest = {"stock": best_stock_ip, "future": best_future_ip}
-    Setting.seconfig(section="IPLIST", option="default", default_value=ipbest)
+    Setting.update_setting(Setting.NETWORK_IP_INI,
+                           "IPLIST", "default", json.dumps(ipbest))
 
     slog.debug(
         "=== The BEST SERVER ===\n stock_ip {} future_ip {}".format(
@@ -131,7 +145,7 @@ def get_ip_list_by_multi_process_ping(ip_list=[], n=0, _type="stock", cache_age=
     results = cache.get(_type)
     if results:
         # read the data from cache
-        print("loading ip list from {} cache.".format(_type))
+        slog.debug("loading ip list from {} cache.".format(_type))
     else:
         ips = [(x["ip"], x["port"], _type) for x in ip_list]
         ps = Parallelism()
@@ -147,14 +161,15 @@ def get_ip_list_by_multi_process_ping(ip_list=[], n=0, _type="stock", cache_age=
         if _type:
             # store the data as binary data stream
             cache.set(_type, results, age=cache_age)
-            print("saving ip list to {} cache {}".format(_type, len(results)))
+            slog.debug("saving ip list to {} cache {}".format(
+                _type, len(results)))
     if len(results) > 0:
         if n == 0 and len(results) > 0:
             return results
         else:
             return results[:n]
     else:
-        print("ALL IP PING TIMEOUT!")
+        slog.debug("ALL IP PING TIMEOUT!")
         return [{"ip": None, "port": None}]
 
 
@@ -250,5 +265,5 @@ def get_stock_list(type_="stock", ip=None, port=None):
             return data.assign(code=data["code"].apply(lambda x: str(x))).assign(
                 name=data["name"].apply(lambda x: str(x)[0:6])
             )
-            # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
+        # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
             #    .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
