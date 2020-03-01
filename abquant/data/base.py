@@ -136,7 +136,14 @@ def create_stock_day():
 
 
 @time_counter
-def create_stock_min():
+def create_stock_min(freqs):
     broker = get_broker()
-    broker.Stock().create_index_min()
-    broker.Stock().create_min()
+    f = freqs.split() if freqs else ""
+    if f:
+        s = broker.Stock(freqs=f)
+        s.create_min(stockOrIndex="stock")
+        s.create_min(stockOrIndex="index")
+    else:
+        s = broker.Stock()
+        s.create_min(stockOrIndex="stock")
+        s.create_min(stockOrIndex="index")

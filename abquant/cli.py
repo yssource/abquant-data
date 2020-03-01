@@ -7,7 +7,7 @@ from abquant.utils.logger import set_loggers
 from abquant.utils.logger import user_log as ulog
 
 # from abquant.data.stock import Stock
-from abquant.data.base import create_stock_day, create_all
+from abquant.data.base import create_stock_day, create_stock_min, create_all
 
 set_loggers()
 
@@ -75,6 +75,15 @@ def stock_day(ow, ap):
         for s in ap.split(","):
             ulog.debug(s)
 
+@stock.command('min')
+@click.option('freqs', '-f', default="",
+              help='1min, 5min, 15min. Default=False.')
+def stock_min(freqs):
+    """stock min."""
+    click.echo('freqs {}'.format(freqs))
+    # s = Stock()
+    click.echo(create_stock_min(freqs))
+
 @stock.command('info')
 @click.option('ow', '--overwrite', flag_value=True,
               default=False,
@@ -85,7 +94,7 @@ def stock_info(ow, ap):
     """stock info."""
     click.echo('overwrite {}, append {}'.format(ow, ap))
     # s = Stock()
-    click.echo(create_stock_day())
+    # click.echo(create_stock_min())
     if ow:
         ulog.debug(ow)
     if not ow and (ap and isinstance(ap, (str, ))):

@@ -8,7 +8,7 @@ import pandas as pd
 from abquant.utils.logger import system_log as slog
 from abquant.utils.trading_days import trade_date_sse
 
-QATZInfo_CN = 'Asia/Shanghai'
+QATZInfo_CN = "Asia/Shanghai"
 
 
 def QA_util_time_now():
@@ -67,7 +67,7 @@ def QA_util_date_str2int(date):
     """
     # return int(str(date)[0:4] + str(date)[5:7] + str(date)[8:10])
     if isinstance(date, str):
-        return int(str().join(date.split('-')))
+        return int(str().join(date.split("-")))
     elif isinstance(date, int):
         return date
 
@@ -88,7 +88,7 @@ def QA_util_date_int2str(int_date):
     """
     date = str(int_date)
     if len(date) == 8:
-        return str(date[0:4] + '-' + date[4:6] + '-' + date[6:8])
+        return str(date[0:4] + "-" + date[4:6] + "-" + date[6:8])
     elif len(date) == 10:
         return date
 
@@ -108,12 +108,12 @@ def QA_util_to_datetime(time):
         datetime
     """
     if len(str(time)) == 10:
-        _time = '{} 00:00:00'.format(time)
+        _time = "{} 00:00:00".format(time)
     elif len(str(time)) == 19:
         _time = str(time)
     else:
-        slog.error('WRONG DATETIME FORMAT {}'.format(time))
-    return datetime.datetime.strptime(_time, '%Y-%m-%d %H:%M:%S')
+        slog.error("WRONG DATETIME FORMAT {}".format(time))
+    return datetime.datetime.strptime(_time, "%Y-%m-%d %H:%M:%S")
 
 
 def QA_util_datetime_to_strdate(dt):
@@ -155,7 +155,7 @@ def QA_util_datetime_to_strdatetime(dt):
         dt.day,
         dt.hour,
         dt.minute,
-        dt.second
+        dt.second,
     )
     return strdatetime
 
@@ -175,7 +175,7 @@ def make_datestamp(date):
         time
     """
     datestr = str(date)[0:10]
-    date = time.mktime(time.strptime(datestr, '%Y-%m-%d'))
+    date = time.mktime(time.strptime(datestr, "%Y-%m-%d"))
     return date
 
 
@@ -195,13 +195,13 @@ def make_timestamp(time_):
     """
     if len(str(time_)) == 10:
         # yyyy-mm-dd格式
-        return time.mktime(time.strptime(time_, '%Y-%m-%d'))
+        return time.mktime(time.strptime(time_, "%Y-%m-%d"))
     elif len(str(time_)) == 16:
         # yyyy-mm-dd hh:mm格式
-        return time.mktime(time.strptime(time_, '%Y-%m-%d %H:%M'))
+        return time.mktime(time.strptime(time_, "%Y-%m-%d %H:%M"))
     else:
         timestr = str(time_)[0:19]
-        return time.mktime(time.strptime(timestr, '%Y-%m-%d %H:%M:%S'))
+        return time.mktime(time.strptime(timestr, "%Y-%m-%d %H:%M:%S"))
 
 
 def QA_util_tdxtimestamp(time_stamp):
@@ -222,19 +222,13 @@ def QA_util_tdxtimestamp(time_stamp):
     """
     if time_stamp is not None:
         time_stamp = str(time_stamp)
-        time = time_stamp[:-6] + ':'
+        time = time_stamp[:-6] + ":"
         if int(time_stamp[-6:-4]) < 60:
-            time += '%s:' % time_stamp[-6:-4]
-            time += '%06.3f' % (
-                int(time_stamp[-4:]) * 60 / 10000.0
-            )
+            time += "%s:" % time_stamp[-6:-4]
+            time += "%06.3f" % (int(time_stamp[-4:]) * 60 / 10000.0)
         else:
-            time += '%02d:' % (
-                int(time_stamp[-6:]) * 60 / 1000000
-            )
-            time += '%06.3f' % (
-                (int(time_stamp[-6:]) * 60 % 1000000) * 60 / 1000000.0
-            )
+            time += "%02d:" % (int(time_stamp[-6:]) * 60 / 1000000)
+            time += "%06.3f" % ((int(time_stamp[-6:]) * 60 % 1000000) * 60 / 1000000.0)
         return time
 
 
@@ -359,10 +353,10 @@ def QA_util_realtime(strtime, client):
     """
     time_stamp = make_datestamp(strtime)
     coll = client.quantaxis.trade_date
-    temp_str = coll.find_one({'date_stamp': {"$gte": time_stamp}})
-    time_real = temp_str['date']
-    time_id = temp_str['num']
-    return {'time_real': time_real, 'id': time_id}
+    temp_str = coll.find_one({"date_stamp": {"$gte": time_stamp}})
+    time_real = temp_str["date"]
+    time_id = temp_str["num"]
+    return {"time_real": time_real, "id": time_id}
 
 
 def QA_util_id2date(idx, client):
@@ -384,8 +378,8 @@ def QA_util_id2date(idx, client):
         str
     """
     coll = client.quantaxis.trade_date
-    temp_str = coll.find_one({'num': idx})
-    return temp_str['date']
+    temp_str = coll.find_one({"num": idx})
+    return temp_str["date"]
 
 
 def QA_util_is_trade(date, code, client):
@@ -412,7 +406,7 @@ def QA_util_is_trade(date, code, client):
     """
     coll = client.quantaxis.stock_day
     date = str(date)[0:10]
-    is_trade = coll.find_one({'code': code, 'date': date})
+    is_trade = coll.find_one({"code": code, "date": date})
     try:
         len(is_trade)
         return True
@@ -499,35 +493,35 @@ def QA_util_select_hours(time=None, gt=None, lt=None, gte=None, lte=None):
 
     fun_list = []
     if gt != None:
-        fun_list.append('>')
+        fun_list.append(">")
     if lt != None:
-        fun_list.append('<')
+        fun_list.append("<")
     if gte != None:
-        fun_list.append('>=')
+        fun_list.append(">=")
     if lte != None:
-        fun_list.append('<=')
+        fun_list.append("<=")
 
     assert len(fun_list) > 0
     true_list = []
     try:
         for item in fun_list:
-            if item == '>':
-                if __realtime.strftime('%H') > gt:
+            if item == ">":
+                if __realtime.strftime("%H") > gt:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '<':
-                if __realtime.strftime('%H') < lt:
+            elif item == "<":
+                if __realtime.strftime("%H") < lt:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '>=':
-                if __realtime.strftime('%H') >= gte:
+            elif item == ">=":
+                if __realtime.strftime("%H") >= gte:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '<=':
-                if __realtime.strftime('%H') <= lte:
+            elif item == "<=":
+                if __realtime.strftime("%H") <= lte:
                     true_list.append(0)
                 else:
                     true_list.append(1)
@@ -577,35 +571,35 @@ def QA_util_select_min(time=None, gt=None, lt=None, gte=None, lte=None):
 
     fun_list = []
     if gt != None:
-        fun_list.append('>')
+        fun_list.append(">")
     if lt != None:
-        fun_list.append('<')
+        fun_list.append("<")
     if gte != None:
-        fun_list.append('>=')
+        fun_list.append(">=")
     if lte != None:
-        fun_list.append('<=')
+        fun_list.append("<=")
 
     assert len(fun_list) > 0
     true_list = []
     try:
         for item in fun_list:
-            if item == '>':
-                if __realtime.strftime('%M') > gt:
+            if item == ">":
+                if __realtime.strftime("%M") > gt:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '<':
-                if __realtime.strftime('%M') < lt:
+            elif item == "<":
+                if __realtime.strftime("%M") < lt:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '>=':
-                if __realtime.strftime('%M') >= gte:
+            elif item == ">=":
+                if __realtime.strftime("%M") >= gte:
                     true_list.append(0)
                 else:
                     true_list.append(1)
-            elif item == '<=':
-                if __realtime.strftime('%M') <= lte:
+            elif item == "<=":
+                if __realtime.strftime("%M") <= lte:
                     true_list.append(0)
                 else:
                     true_list.append(1)
@@ -667,11 +661,7 @@ def QA_util_calc_time(func, *args, **kwargs):
     # return datetime.datetime.now() - _time
 
 
-month_data = pd.date_range(
-    '1/1/1996',
-    '12/31/2023',
-    freq='Q-MAR'
-).astype(str).tolist()
+month_data = pd.date_range("1/1/1996", "12/31/2023", freq="Q-MAR").astype(str).tolist()
 
 
 def get_real_date(date, trade_list=trade_date_sse, towards=-1):
@@ -697,18 +687,16 @@ def get_real_date(date, trade_list=trade_date_sse, towards=-1):
     if towards == 1:
         while date not in trade_list:
             date = str(
-                datetime.datetime.strptime(str(date)[0:10],
-                                           '%Y-%m-%d') +
-                datetime.timedelta(days=1)
+                datetime.datetime.strptime(str(date)[0:10], "%Y-%m-%d")
+                + datetime.timedelta(days=1)
             )[0:10]
         else:
             return str(date)[0:10]
     elif towards == -1:
         while date not in trade_list:
             date = str(
-                datetime.datetime.strptime(str(date)[0:10],
-                                           '%Y-%m-%d') -
-                datetime.timedelta(days=1)
+                datetime.datetime.strptime(str(date)[0:10], "%Y-%m-%d")
+                - datetime.timedelta(days=1)
             )[0:10]
         else:
             return str(date)[0:10]
@@ -758,3 +746,19 @@ def get_trade_gap(start, end):
         return trade_date_sse.index(end) + 1 - trade_date_sse.index(start)
     else:
         return 0
+
+
+def now_time():
+    return (
+        str(
+            get_real_date(
+                str(datetime.date.today() - datetime.timedelta(days=1)),
+                trade_date_sse,
+                -1,
+            )
+        )
+        + " 17:00:00"
+        if datetime.datetime.now().hour < 15
+        else str(get_real_date(str(datetime.date.today()), trade_date_sse, -1))
+        + " 15:00:00"
+    )

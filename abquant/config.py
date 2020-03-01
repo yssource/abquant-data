@@ -36,6 +36,8 @@ class Setting(object):
     stock_ip_list  = []
     future_ip_list = []
 
+    DBNAME = ""
+
     def __init__(self, uri=None):
         self.mongo_uri = uri or Setting.get_mongo()
         self.username = None
@@ -49,14 +51,14 @@ class Setting(object):
             return
         try:
             Setting.config = Setting.get_config(Setting.MONGODB_INI)
-            dbname = Setting.config.get("product", "DatabaseName")
+            Setting.DBNAME = Setting.config.get("product", "DatabaseName")
             host = Setting.config.get("product", "HostName")
             host = host if host else "localhost"
             port = Setting.config.get("product", "Port")
             port = port if port else "27017"
-            res = "mongodb://{}:{}/{}".format(host, port, dbname)
+            res = "mongodb://{}:{}".format(host, port)
         except:
-            res = "mongodb://localhost:27017/abquant"
+            res = "mongodb://localhost:27017"
         return res
 
     @staticmethod

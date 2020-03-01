@@ -511,14 +511,14 @@ def get_index_day(code, start_date, end_date, frequence="day", ip=None, port=Non
         return data.assign(date=data["date"].apply(lambda x: str(x)[0:10]))
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
-def QA_fetch_get_stock_min(code, start, end, frequence='1min', ip=None,
+def get_stock_min(code, start, end, frequence='1min', ip=None,
                            port=None):
     ip, port = get_mainmarket_ip(ip, port)
     api = TdxHq_API()
     type_ = ''
     start_date = str(start)[0:10]
     today_ = datetime.date.today()
-    lens = QA_util_get_trade_gap(start_date, today_)
+    lens = get_trade_gap(start_date, today_)
     if str(frequence) in ['5', '5m', '5min', 'five']:
         frequence, type_ = 0, '5min'
         lens = 48 * lens
@@ -541,7 +541,7 @@ def QA_fetch_get_stock_min(code, start, end, frequence='1min', ip=None,
         data = pd.concat(
             [api.to_df(
                 api.get_security_bars(
-                    frequence, _select_market_code(
+                    frequence, select_market_code(
                         str(code)),
                     str(code),
                     (int(lens / 800) - i) * 800, 800)) for i
@@ -553,9 +553,9 @@ def QA_fetch_get_stock_min(code, start, end, frequence='1min', ip=None,
                     code=str(code),
                     date=data['datetime'].apply(lambda x: str(x)[0:10]),
                     date_stamp=data['datetime'].apply(
-                lambda x: QA_util_date_stamp(x)),
+                lambda x: make_datestamp(x)),
                 time_stamp=data['datetime'].apply(
-                lambda x: QA_util_time_stamp(x)),
+                lambda x: make_timestamp(x)),
                 type=type_).set_index('datetime', drop=False,
                                       inplace=False)[start:end]
         return data.assign(datetime=data['datetime'].apply(lambda x: str(x)))
@@ -590,13 +590,13 @@ def QA_fetch_get_stock_latest(code, frequence='day', ip=None, port=None):
 
     with api.connect(ip, port):
         data = pd.concat([api.to_df(api.get_security_bars(
-            frequence, _select_market_code(item), item, 0, 1)).assign(
+            frequence, select_market_code(item), item, 0, 1)).assign(
             code=item) for item in code], axis=0, sort=False)
         return data \
             .assign(date=pd.to_datetime(data['datetime']
                                         .apply(lambda x: x[0:10])),
                     date_stamp=data['datetime']
-                    .apply(lambda x: QA_util_date_stamp(str(x[0:10])))) \
+                    .apply(lambda x: make_datestamp(str(x[0:10])))) \
             .set_index('date', drop=False) \
             .drop(['year', 'month', 'day', 'hour', 'minute', 'datetime'],
                   axis=1)
@@ -620,7 +620,7 @@ def QA_fetch_get_stock_realtime(code=['000001', '000002'], ip=None, port=None):
         code = [code] if isinstance(code, str) else code
         for id_ in range(int(len(code) / 80) + 1):
             __data = __data.append(api.to_df(api.get_security_quotes(
-                [(_select_market_code(x), x) for x in
+                [(select_market_code(x), x) for x in
                  code[80 * id_:80 * (id_ + 1)]])))
             __data = __data.assign(datetime=datetime.datetime.now(
             ), servertime=__data['reversed_bytes0'].apply(QA_util_tdxtimestamp))
