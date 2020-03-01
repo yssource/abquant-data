@@ -7,6 +7,7 @@ from abquant.helper import time_counter
 from abquant.config import Setting
 from abquant.data.tdx_api import get_stock_day
 from abquant.utils.logger import system_log as slog
+from abquant.data.tdx import Stock, Future
 import pymongo
 
 
@@ -27,7 +28,7 @@ class ISecurityVisitor(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def create_min(self, iSecurity: ISecurity, *args, **kwargs):
+    def create_min(self, iSecurity: ISecurity):
         pass
 
 
@@ -37,70 +38,22 @@ class SecurityVisitor(ISecurityVisitor):
         pass
 
     def create_day(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_index_day"):
-            iSecurity.create_index_day()
+        # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_day"):
-            iSecurity.create_day()
+            iSecurity.create_day(stockOrIndex="index")
+            if isinstance(iSecurity, Stock):
+                iSecurity.create_day(stockOrIndex="stock")
+            # if isinstance(ISecurity, Future):
+            #     iSecurity.create_day(stockOrIndex="future")
 
-    def create_min(self, iSecurity: ISecurity, *args, **kwargs):
-        # freq = kwargs.get("freq", "x")
-        if getattr(iSecurity, "create_index_min"):
-            iSecurity.create_index_min(args, kwargs)
+    def create_min(self, iSecurity: ISecurity):
+        # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_min"):
-            iSecurity.create_min(args, kwargs)
-
-class Security(object):
-    def __init__(self, *args, **kwargs):
-        "docstring"
-        self._db = pymongo.MongoClient(Setting.get_mongo())
-        self.kind = kwargs.get("kind", "x")
-        if self.kind in ["min"]:
-            self.freq = kwargs.get("freq", "1min")
-
-    @property
-    def db(self):
-        return self._db
-
-    def create(self):
-        if self.kind in ["x"]:
-            slog.debug("create ... stock")
-            self.create_day()
-            self.create_min()
-        if self.kind in ["day"]:
-            self.create_day()
-        if self.kind in ["min"]:
-            if self.freq in ["x", "xmin"]:
-                self.create_min(freq=self.freq)
-            if self.freq in ["1min"]:
-                pass
-
-    def create_day(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_index_day"):
-            iSecurity.create_index_day()
-        if getattr(iSecurity, "create_day"):
-            iSecurity.create_day()
-        # code = "000001"
-        # start = "2020-01-01"
-        # end = "2020-02-01"
-        # actual = get_stock_day(code, start, end)
-        # # actual = get_index_day(code, start, end)
-        # slog.debug(actual)
-
-    def create_min(self, iSecurity: ISecurity, *args, **kwargs):
-        # freq = kwargs.get("freq", "x")
-        if getattr(iSecurity, "create_index_min"):
-            iSecurity.create_index_min(args, kwargs)
-        if getattr(iSecurity, "create_min"):
-            iSecurity.create_min(args, kwargs)
-
-    def delete(self):
-        slog.debug("delete ... stock")
-
-    def update(self):
-        slog.debug("update ... stock")
-
-    def read(self):
-        slog.debug("read ... stock")
+            iSecurity.create_min(stockOrIndex="index")
+            if isinstance(iSecurity, Stock):
+                iSecurity.create_min(stockOrIndex="stock")
+            # if isinstance(ISecurity, Future):
+            #     iSecurity.create_min(stockOrIndex="future")
 
 
 def get_broker(broker="tdx"):
@@ -131,8 +84,9 @@ def create_all():
 @time_counter
 def create_stock_day():
     broker = get_broker()
-    broker.Stock().create_index_day()
-    broker.Stock().create_day()
+    s = broker.Stock()
+    s.create_day(stockOrIndex="index")
+    s.create_day(stockOrIndex="stock")
 
 
 @time_counter
@@ -141,9 +95,9 @@ def create_stock_min(freqs):
     f = freqs.split() if freqs else ""
     if f:
         s = broker.Stock(freqs=f)
-        s.create_min(stockOrIndex="stock")
         s.create_min(stockOrIndex="index")
+        s.create_min(stockOrIndex="stock")
     else:
         s = broker.Stock()
-        s.create_min(stockOrIndex="stock")
         s.create_min(stockOrIndex="index")
+        s.create_min(stockOrIndex="stock")
