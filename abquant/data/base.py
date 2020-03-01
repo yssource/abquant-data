@@ -7,7 +7,8 @@ from abquant.helper import time_counter
 from abquant.config import Setting
 from abquant.data.tdx_api import get_stock_day
 from abquant.utils.logger import system_log as slog
-from abquant.data.tdx import Stock, Future
+
+# from abquant.data.tdx import Stock, Future
 import pymongo
 
 
@@ -20,6 +21,9 @@ class ISecurity(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def accept(self, visitor: ISecurityVisitor) -> None:
         pass
+
+    def getClassName(self):
+        return self.__class__.__name__
 
 
 class ISecurityVisitor(object, metaclass=abc.ABCMeta):
@@ -41,8 +45,8 @@ class SecurityVisitor(ISecurityVisitor):
         # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_day"):
             iSecurity.create_day(stockOrIndex="index")
-            if isinstance(iSecurity, Stock):
-                iSecurity.create_day(stockOrIndex="stock")
+            # if isinstance(iSecurity, Stock):
+            iSecurity.create_day()
             # if isinstance(ISecurity, Future):
             #     iSecurity.create_day(stockOrIndex="future")
 
@@ -50,8 +54,8 @@ class SecurityVisitor(ISecurityVisitor):
         # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_min"):
             iSecurity.create_min(stockOrIndex="index")
-            if isinstance(iSecurity, Stock):
-                iSecurity.create_min(stockOrIndex="stock")
+            # if isinstance(iSecurity, Stock):
+            iSecurity.create_min()
             # if isinstance(ISecurity, Future):
             #     iSecurity.create_min(stockOrIndex="future")
 

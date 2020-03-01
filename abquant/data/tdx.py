@@ -7,8 +7,14 @@ import pymongo
 import concurrent
 from abquant.config import Setting
 from abquant.utils.datetime import now_time
-from abquant.data.tdx_api import get_stock_day, get_index_day, get_index_min, get_stock_min
-# from abquant.data.base import ISecurityVisitor
+from abquant.data.tdx_api import (
+    get_stock_day,
+    get_index_day,
+    get_index_min,
+    get_stock_min,
+)
+
+from abquant.data.base import ISecurity, ISecurityVisitor
 from time import sleep
 from tqdm.auto import tqdm, trange
 from tqdm.contrib.concurrent import process_map, thread_map
@@ -19,17 +25,19 @@ from threading import RLock
 from functools import partial
 import sys
 import datetime
+import json
 
 
-class Stock(object):
+# class Stock(object):
+class Stock(ISecurity):
     def __init__(self, *args, **kwargs):
         "docstring"
         self._client = pymongo.MongoClient(Setting.get_mongo())
         self._db = self._client[Setting.DBNAME]
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
-    # def accept(self, visitor: ISecurityVisitor) -> None:
-    def accept(self, visitor) -> None:
+    def accept(self, visitor: ISecurityVisitor) -> None:
+        # def accept(self, visitor) -> None:
         visitor.create_day(self)
         visitor.create_min(self)
 
@@ -45,12 +53,11 @@ class Stock(object):
             if stockOrIndex == "index"
             else get_stock_list().code.unique().tolist()
         )
+        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
+        # return
         coll = self._db.index_day if stockOrIndex == "index" else self._db.stock_day
         coll.create_index(
-            [
-                ("code", pymongo.ASCENDING),
-                ("date_stamp", pymongo.ASCENDING),
-            ]
+            [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
         )
         err = []
 
@@ -65,9 +72,7 @@ class Stock(object):
                 ref_ = coll.find({"code": str(code)[0:6]})
                 end_time = str(now_time())[0:10]
                 start_time = (
-                    ref_[ref_.count() - 1]["date"]
-                    if ref_.count() > 0
-                    else "1990-01-01"
+                    ref_[ref_.count() - 1]["date"] if ref_.count() > 0 else "1990-01-01"
                 )
                 if start_time == end_time:
                     return
@@ -76,18 +81,16 @@ class Stock(object):
                     if stockOrIndex == "index"
                     else get_stock_day(str(code), start_time, end_time)
                 )
-                if df.empty:
+                if df is None or df.empty:
+                    slog.warn(
+                        "df is empty. {}|{}|{}".format(code, start_time, end_time)
+                    )
                     return
-                coll.insert_many(
-                    to_json_from_pandas(df)
-                )
+                coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
                 text = "{}, {} -> {}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code),
-                    start_time,
-                    end_time,
-                    interval,
+                    "{} {}".format(stockOrIndex, code), start_time, end_time, interval,
                 )
                 for _ in trange(df.size, desc=text):
                     pass
@@ -104,7 +107,16 @@ class Stock(object):
         else:
             slog.info(" ERROR CODE \n ")
             slog.info(err)
-
+            errs = dict()
+            if Setting.ERROR_CODES_JSON.exists():
+                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
+                    try:
+                        errs = json.load(f)
+                    except Exception:
+                        pass
+            errs["{}_{}_day".format(self.getClassName(), stockOrIndex)] = list(set(err))
+            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
+                json.dump(errs, f)
 
     def create_min(self, *args, **kwargs):
         """save index_min
@@ -119,6 +131,8 @@ class Stock(object):
             if stockOrIndex == "index"
             else get_stock_list().code.unique().tolist()
         )
+        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
+        # return
         coll = self._db.index_min if stockOrIndex == "index" else self._db.stock_min
         coll.create_index(
             [
@@ -152,11 +166,14 @@ class Stock(object):
                         if stockOrIndex == "index"
                         else get_stock_min(str(code), start_time, end_time, freq)
                     )
-                    if df.empty:
+                    if df is None or df.empty:
+                        slog.warn(
+                            "df is empty. {}|{}|{}|{}".format(
+                                code, start_time, end_time, freq
+                            )
+                        )
                         continue
-                    coll.insert_many(
-                        to_json_from_pandas(df)
-                    )
+                    coll.insert_many(to_json_from_pandas(df))
                     finish = datetime.datetime.now()
                     interval = (finish - begin).total_seconds()
                     text = "{}, {}, {} -> {}, {:<04.2}s".format(
@@ -181,20 +198,36 @@ class Stock(object):
         else:
             slog.info(" ERROR CODE \n ")
             slog.info(err)
+            errs = dict()
+            if Setting.ERROR_CODES_JSON.exists():
+                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
+                    try:
+                        errs = json.load(f)
+                    except Exception:
+                        pass
+            errs["{}_{}_min".format(self.getClassName(), stockOrIndex)] = list(set(err))
+            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
+                json.dump(errs, f)
 
 
-class Future(object):
+# class Future(object):
+class Future(ISecurity):
     def __init__(self, *args, **kwargs):
         "docstring"
+        self.freqs = []
         pass
 
-    # def accept(self, visitor: ISecurityVisitor) -> None:
-    def accept(self, visitor) -> None:
+    def accept(self, visitor: ISecurityVisitor) -> None:
+        # def accept(self, visitor) -> None:
         visitor.create_day(self)
         visitor.create_min(self)
 
     def create_day(self, *args, **kwargs):
-        slog.debug("Future, create_day")
+        stockOrIndex = kwargs.pop("stockOrIndex", "future")
+        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
+        return
 
     def create_min(self, *args, **kwargs):
-        slog.debug("Future, create_min")
+        stockOrIndex = kwargs.pop("stockOrIndex", "future")
+        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
+        return

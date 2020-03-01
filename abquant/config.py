@@ -3,12 +3,9 @@ import configparser
 import os
 import platform
 from pathlib import Path
-import locale
 import codecs
-import pandas as pd
 import yaml
 import simplejson as json
-import six
 from abquant.utils.logger import user_log as ulog
 
 xdg_config_home = (
@@ -30,10 +27,11 @@ class Setting(object):
     STOCK_IP_JSON = abquant_home / "config/stock_ip.json"
     FUTURE_IP_JSON = abquant_home / "config/future_ip.json"
     NETWORK_IP_INI = abquant_home / "config/network.ini"
+    ERROR_CODES_JSON = abquant_home / "log/error_codes.json"
 
     config = configparser.ConfigParser()
     info_ip_list = []
-    stock_ip_list  = []
+    stock_ip_list = []
     future_ip_list = []
 
     DBNAME = ""
