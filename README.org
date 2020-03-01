@@ -43,6 +43,30 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
   conan build ..
   sudo make install
 #+end_src
+* Usage
+** abquant 数据获取
+   - python 层获取数据源，支持mongodb
+     #+begin_src shell :exports code
+       # 保存所有数据
+       abquant save all
+
+       # 保存所有股票日线，日线指数
+       abquant stock day
+
+       # 保存所有股票分钟线，分钟指数
+       # Default 保存所有频率 (1min, 5min, 15min, 30min, 60min)
+       abquant stock min
+
+       # 保存股票分钟线，分钟指数不同频率数据 (1min, 5min, 15min, 30min, 60min)
+       # 1min 一分钟
+       abquant stock min "1min"
+       # 5min 五分钟
+       abquant stock min "5min"
+       # ...
+       # 1min 一分钟 和5min 五分钟
+       abquant stock min "1min 5min"
+       # ...
+     #+end_src
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上

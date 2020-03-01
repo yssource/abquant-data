@@ -147,7 +147,6 @@ class Stock(object):
                     )
                     if start_time == end_time:
                         continue
-
                     df = (
                         get_index_min(str(code), start_time, end_time, freq)
                         if stockOrIndex == "index"
