@@ -48,7 +48,11 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
    - python 层获取数据源，支持mongodb
      #+begin_src shell :exports code
        # 保存所有数据
+       # 但是不包含除权数据，除权数据不是经常更新，请手动 "abquant stock xdxr"
        abquant save all
+
+       # 股票除权除息
+       abquant stock xdxr
 
        # 保存所有股票日线，日线指数
        abquant stock day

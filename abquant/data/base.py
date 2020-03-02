@@ -35,6 +35,9 @@ class ISecurityVisitor(object, metaclass=abc.ABCMeta):
     def create_min(self, iSecurity: ISecurity):
         pass
 
+    @abc.abstractmethod
+    def create_xdxr(self, iSecurity: ISecurity):
+        pass
 
 class SecurityVisitor(ISecurityVisitor):
     def __init__(self, *args, **kwargs):
@@ -58,6 +61,13 @@ class SecurityVisitor(ISecurityVisitor):
             iSecurity.create_min()
             # if isinstance(ISecurity, Future):
             #     iSecurity.create_min(stockOrIndex="future")
+
+    def create_xdxr(self, iSecurity: ISecurity):
+        # import pudb; pudb.set_trace()
+        if getattr(iSecurity, "create_xdxr"):
+            pass
+            # please manually `abquant stock xdxr`
+            # iSecurity.create_xdxr()
 
 
 def get_broker(broker="tdx"):
@@ -105,3 +115,9 @@ def create_stock_min(freqs):
         s = broker.Stock()
         s.create_min(stockOrIndex="index")
         s.create_min(stockOrIndex="stock")
+
+@time_counter
+def create_stock_xdxr():
+    broker = get_broker()
+    s = broker.Stock()
+    s.create_xdxr()

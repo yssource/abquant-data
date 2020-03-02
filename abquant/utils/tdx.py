@@ -1,3 +1,10 @@
+import pandas as pd
+import numpy as np
+from abquant.utils.logger import system_log as slog
+from abquant.helper import to_json_from_pandas
+from abquant.utils.datetime import make_datestamp, make_timestamp
+
+
 def for_sz(code):
     """深市代码分类
     Arguments:
@@ -182,3 +189,129 @@ def select_type(frequence):
         frequence, type_ = 3, "60min"
 
     return frequence
+
+
+def query_stock_day(
+    code: str, start, end, collections, format="numpy", frequence="day",
+):
+    """'获取股票日线'
+
+    Returns:
+        [type] -- [description]
+
+        感谢@几何大佬的提示
+        https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/#return-the-specified-fields-and-the-id-field-only
+
+    """
+
+    start = str(start)[0:10]
+    end = str(end)[0:10]
+    # code= [code] if isinstance(code,str) else code
+
+    # code checking
+    code = code.split()
+    cursor = collections.find(
+        {
+            "code": {"$in": code},
+            "date_stamp": {"$lte": make_datestamp(end), "$gte": make_datestamp(start)},
+        },
+        {"_id": 0},
+        batch_size=10000,
+    )
+    # res=[QA_util_dict_remove_key(data, '_id') for data in cursor]
+
+    res = pd.DataFrame([item for item in cursor])
+    try:
+        res = (
+            res.assign(volume=res.vol, date=pd.to_datetime(res.date))
+            .drop_duplicates((["date", "code"]))
+            .query("volume>1")
+            .set_index("date", drop=False)
+        )
+        res = res.loc[
+            :, ["code", "open", "high", "low", "close", "volume", "amount", "date"]
+        ]
+    except:
+        res = None
+    if format in ["P", "p", "pandas", "pd"]:
+        return res
+    elif format in ["json", "dict"]:
+        return to_json_from_pandas(res)
+    # 多种数据格式
+    elif format in ["n", "N", "numpy"]:
+        return np.asarray(res)
+    elif format in ["list", "l", "L"]:
+        return np.asarray(res).tolist()
+    else:
+        slog.error(
+            'QA Error QA_fetch_stock_day format parameter %s is none of  "P, p, pandas, pd , json, dict , n, N, numpy, list, l, L, !" '
+            % format
+        )
+        return None
+
+
+def stock_to_fq(bfq_data, xdxr_data, fqtype):
+    "使用数据库数据进行复权"
+    info = xdxr_data.query("category==1")
+    bfq_data = bfq_data.assign(if_trade=1)
+
+    if len(info) > 0:
+        data = pd.concat(
+            [bfq_data, info.loc[bfq_data.index[0] : bfq_data.index[-1], ["category"]]],
+            axis=1,
+        )
+
+        data["if_trade"].fillna(value=0, inplace=True)
+        data = data.fillna(method="ffill")
+
+        data = pd.concat(
+            [
+                data,
+                info.loc[
+                    bfq_data.index[0] : bfq_data.index[-1],
+                    ["fenhong", "peigu", "peigujia", "songzhuangu"],
+                ],
+            ],
+            axis=1,
+        )
+    else:
+        data = pd.concat(
+            [
+                bfq_data,
+                info.loc[
+                    :, ["category", "fenhong", "peigu", "peigujia", "songzhuangu"]
+                ],
+            ],
+            axis=1,
+        )
+    data = data.fillna(0)
+    data["preclose"] = (
+        data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]
+    ) / (10 + data["peigu"] + data["songzhuangu"])
+
+    if fqtype in ["01", "qfq"]:
+        data["adj"] = (
+            (data["preclose"].shift(-1) / data["close"]).fillna(1)[::-1].cumprod()
+        )
+    else:
+        data["adj"] = (
+            (data["close"] / data["preclose"].shift(-1)).cumprod().shift(1).fillna(1)
+        )
+
+    for col in ["open", "high", "low", "close", "preclose"]:
+        data[col] = data[col] * data["adj"]
+    data["volume"] = (
+        data["volume"] / data["adj"]
+        if "volume" in data.columns
+        else data["vol"] / data["adj"]
+    )
+    try:
+        data["high_limit"] = data["high_limit"] * data["adj"]
+        data["low_limit"] = data["high_limit"] * data["adj"]
+    except:
+        pass
+    return data.query("if_trade==1 and open != 0").drop(
+        ["fenhong", "peigu", "peigujia", "songzhuangu", "if_trade", "category"],
+        axis=1,
+        errors="ignore",
+    )

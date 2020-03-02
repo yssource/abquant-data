@@ -7,7 +7,7 @@ from abquant.utils.logger import set_loggers
 from abquant.utils.logger import user_log as ulog
 
 # from abquant.data.stock import Stock
-from abquant.data.base import create_stock_day, create_stock_min, create_all
+from abquant.data.base import create_stock_day, create_stock_min, create_stock_xdxr, create_all
 
 set_loggers()
 
@@ -83,6 +83,12 @@ def stock_min(freqs):
     click.echo('freqs {}'.format(freqs))
     # s = Stock()
     click.echo(create_stock_min(freqs))
+
+@stock.command('xdxr')
+def stock_xdxr():
+    """stock xdxr."""
+    # s = Stock()
+    click.echo(create_stock_xdxr())
 
 @stock.command('info')
 @click.option('ow', '--overwrite', flag_value=True,

@@ -7,11 +7,13 @@ import pymongo
 import concurrent
 from abquant.config import Setting
 from abquant.utils.datetime import now_time
+from abquant.utils.tdx import query_stock_day, stock_to_fq
 from abquant.data.tdx_api import (
     get_stock_day,
     get_index_day,
     get_index_min,
     get_stock_min,
+    get_stock_xdxr,
 )
 
 from abquant.data.base import ISecurity, ISecurityVisitor
@@ -37,9 +39,9 @@ class Stock(ISecurity):
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
-        # def accept(self, visitor) -> None:
         visitor.create_day(self)
         visitor.create_min(self)
+        visitor.create_xdxr(self)
 
     def create_day(self, *args, **kwargs):
         """save index_day
@@ -61,7 +63,7 @@ class Stock(ISecurity):
         )
         err = []
 
-        def __saving_work(idx):
+        def saving_work(idx):
             code = (
                 stockOrIndexList.index[idx][0]
                 if stockOrIndex == "index"
@@ -100,7 +102,7 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(__saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
         if len(err) < 1:
             slog.info("SUCCESS")
@@ -143,7 +145,7 @@ class Stock(ISecurity):
         )
         err = []
 
-        def __saving_work(idx):
+        def saving_work(idx):
             code = (
                 stockOrIndexList.index[idx][0]
                 if stockOrIndex == "index"
@@ -191,7 +193,7 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(__saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
         if len(err) < 1:
             slog.info("SUCCESS")
@@ -209,6 +211,91 @@ class Stock(ISecurity):
             with Setting.ERROR_CODES_JSON.open(mode="w") as f:
                 json.dump(errs, f)
 
+    def create_xdxr(self, *args, **kwargs):
+        """save index_xdxr
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        stockOrIndex = kwargs.pop("stockOrIndex", "")
+        stockOrIndexList = (
+            get_stock_list(stockOrIndex)
+            if stockOrIndex == "index"
+            else get_stock_list().code.unique().tolist()
+        )
+        slog.debug("{} {} xdxr".format(self.getClassName(), stockOrIndex))
+        # return
+        coll = self._db.stock_xdxr
+        coll_adj = self._db.stock_adj
+        coll.create_index(
+            [("code", pymongo.ASCENDING), ("date", pymongo.ASCENDING)], unique=True
+        )
+        coll_adj.create_index(
+            [("code", pymongo.ASCENDING), ("date", pymongo.ASCENDING)], unique=True,
+        )
+        err = []
+
+        def saving_work(idx):
+            code = (
+                stockOrIndexList.index[idx][0]
+                if stockOrIndex == "index"
+                else stockOrIndexList[idx]
+            )
+            try:
+                begin = datetime.datetime.now()
+                xdxr = get_stock_xdxr(str(code))
+                try:
+                    coll.insert_many(to_json_from_pandas(xdxr), ordered=False)
+                except Exception as e:
+                    pass
+                    # slog.error(e)
+                try:
+                    data = query_stock_day(
+                        str(code),
+                        "1990-01-01",
+                        str(datetime.date.today()),
+                        self._db.stock_day,
+                        "pd",
+                    )
+                    qfq = stock_to_fq(data, xdxr, "qfq")
+                    qfq = qfq.assign(date=qfq.date.apply(lambda x: str(x)[0:10]))
+                    adjdata = to_json_from_pandas(qfq.loc[:, ["date", "code", "adj"]])
+                    coll_adj.delete_many({"code": code})
+                    coll_adj.insert_many(adjdata)
+                except Exception as e:
+                    pass
+                    # slog.error(e)
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "{}, {:<04.2}s".format(
+                    "{} {}".format(stockOrIndex, code), interval,
+                )
+                for _ in trange(data.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+                err.append(code)
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=4) as p:
+            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+
+        if len(err) < 1:
+            slog.info("SUCCESS")
+        else:
+            slog.info(" ERROR CODE \n ")
+            slog.info(err)
+            errs = dict()
+            if Setting.ERROR_CODES_JSON.exists():
+                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
+                    try:
+                        errs = json.load(f)
+                    except Exception:
+                        pass
+            errs["{}_xdxr".format(self.getClassName())] = list(set(err))
+            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
+                json.dump(errs, f)
+
 
 # class Future(object):
 class Future(ISecurity):
@@ -218,9 +305,9 @@ class Future(ISecurity):
         pass
 
     def accept(self, visitor: ISecurityVisitor) -> None:
-        # def accept(self, visitor) -> None:
         visitor.create_day(self)
         visitor.create_min(self)
+        visitor.create_xdxr(self)
 
     def create_day(self, *args, **kwargs):
         stockOrIndex = kwargs.pop("stockOrIndex", "future")
