@@ -46,6 +46,7 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
 * Usage
 ** abquant 数据获取
    - python 层获取数据源，支持mongodb
+     #name: data-saving
      #+begin_src shell :exports code
        # 保存所有数据
        # 但是不包含除权数据，除权数据不是经常更新，请手动 "abquant stock xdxr"
@@ -77,6 +78,24 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
        abquant stock min -f '["1min", "5min"]' --add '["000001", "300001", "600001"]'
        # ...
      #+end_src
+
+     #name: error-data-saving
+     #+begin_src shell :results output :exports both
+       # 查看保存数据后的错误信息
+       bat ~/.config/abquant/log/error_codes.json
+       # 如果在保存数据后，发现数据错误，可以使用
+       abquant stock day --add '["395005"]'
+       abquant stock min --add '["395041", "395005", "300822", "603949", "603353", "300819", "300821", "002976", "688051"]'
+       abquant stock xdxr --add '["002976", "603949", "300822", "688051", "603353"]'
+
+       # 注意，这些数据错误可能是退市，已经不存在的数据。也有可能是网络原因数据不完整，你需要具体分析。
+       # 在下一次保存数据时，最好先
+       echo "" 1> ~/.config/abquant/log/error_codes.json
+     #+end_src
+
+     #+RESULTS:
+     : {"Stock_index_day": ["395005"], "Stock_index_min": ["395041", "395005"], "Stock_stock_min": ["300822", "603949", "603353", "300819", "300821", "002976", "688051"], "Stock_xdxr": ["002976", "603949", "300822", "688051", "603353"]}
+
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
@@ -86,7 +105,6 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
 市面上开源的a,b,c 项目大部分都是python开发，但是在实践过程中性能都不理想，于是想
 到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
 * 感谢
-- [[https://github.com/ricequant/rqalpha.git][rqalpha]]
 - [[https://github.com/QUANTAXIS/QUANTAXIS.git][QUANTAXIS]]
 * 打赏
   欢迎请作者喝杯咖啡 :+1:

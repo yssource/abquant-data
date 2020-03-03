@@ -53,7 +53,7 @@ def stock():
     help="overwrite collection. Default=False.",
 )
 @click.option(
-    "codes", "--add", default="", help="Append stocks into collection. Default=False."
+    "codes", "--add", default="", help="Append stocks day collection. Default=False."
 )
 def stock_day(ow, codes):
     """stock day."""
@@ -63,7 +63,7 @@ def stock_day(ow, codes):
         except Exception as e:
             slog.error("--add {} format is invalid.".format(codes))
             slog.error(
-                'Please using such a format. --add \'["000001", "300001", "600001"]\'\n'
+                'Please using such a format. --add \'["000001", "300001", "600001"]\''
             )
             return
     create_stock_day(codes)
@@ -71,7 +71,7 @@ def stock_day(ow, codes):
 
 @stock.command("min")
 @click.option(
-    "codes", "--add", default="", help="Append stocks into collection. Default=False."
+    "codes", "--add", default="", help="Append stocks min collection. Default=False."
 )
 @click.option("freqs", "-f", default="", help="1min, 5min, 15min. Default=False.")
 def stock_min(codes, freqs):
@@ -82,16 +82,16 @@ def stock_min(codes, freqs):
         except Exception as e:
             slog.error("--add {} format is invalid.".format(codes))
             slog.error(
-                'Please using such a format. --add \'["000001", "300001", "600001"]\'\n'
+                'Please using such a format. --add \'["000001", "300001", "600001"]\''
             )
             return
     if freqs and isinstance(freqs, (str,)):
         try:
             freqs = json.loads(freqs)
         except Exception as e:
-            slog.error("--add {} format is invalid.".format(freqs))
+            slog.error("-f {} format is invalid.".format(freqs))
             slog.error(
-                'Please using such a format. --add \'["1min", "5min", "30min"]\'\n'
+                'Please using such a format. --add \'["1min", "5min", "30min"]\''
             )
             return
     create_stock_min(codes, freqs)
@@ -109,7 +109,7 @@ def stock_xdxr(codes):
         except Exception as e:
             slog.error("--add {} format is invalid.".format(codes))
             slog.error(
-                'Please using such a format. --add \'["000001", "300001", "600001"]\'\n'
+                'Please using such a format. --add \'["000001", "300001", "600001"]\''
             )
             return
     create_stock_xdxr(codes)
