@@ -32,10 +32,10 @@ def save():
     """Manages ships."""
 
 
-@save.command("all")
+@save.command("base")
 def save_base():
     """Creates a new ship."""
-    click.echo("save all")
+    click.echo("save base")
     create_base()
 
 
@@ -66,6 +66,8 @@ def stock_day(ow, codes):
                 'Please using such a format. --add \'["000001", "300001", "600001"]\''
             )
             return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
     create_stock_day(codes)
 
 
@@ -94,6 +96,10 @@ def stock_min(codes, freqs):
                 'Please using such a format. --add \'["1min", "5min", "30min"]\''
             )
             return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
+    if not freqs and isinstance(freqs, (str,)):
+        freqs = ["1min", "5min", "15min", "30min", "60min"]
     create_stock_min(codes, freqs)
 
 
@@ -112,4 +118,6 @@ def stock_xdxr(codes):
                 'Please using such a format. --add \'["000001", "300001", "600001"]\''
             )
             return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
     create_stock_xdxr(codes)
