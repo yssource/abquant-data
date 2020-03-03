@@ -24,8 +24,9 @@ int main(int argc, char* argv[])
     // QStringList codes = {"000001"};
     const char* start = "2017-01-01";
     const char* end   = "2019-12-01";
+    MIN_FREQ freq = MIN_FREQ::FIVE;
 
-    StockMinAction sma(codes, start, end);
+    StockMinAction sma(codes, start, end, freq);
     // auto df2 = sma.toFq(FQ_TYPE::PRE);
     // auto df3 = sma.toFq(FQ_TYPE::POST);
     int N      = 10;

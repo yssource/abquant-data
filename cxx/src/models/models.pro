@@ -1,6 +1,6 @@
 TARGET = abqmodel
 TEMPLATE = lib
-CONFIG += shared c++14 x86_64
+CONFIG += shared c++17 x86_64
 QT += sql qml
 QT -= gui
 DEFINES += TF_DLL

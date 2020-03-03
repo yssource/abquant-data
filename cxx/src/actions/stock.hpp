@@ -29,6 +29,7 @@
 
 #include "DataFrame/DataFrame.h"
 #include "abquant/actions/indicator.hpp"
+#include "abquant/actions/utils.hpp"
 
 namespace abq
 {
@@ -90,9 +91,13 @@ protected:
     template <typename S>
     QList<S> run(const QStringList codes, const char* start, const char* end);
     template <typename S>
+    QList<S> run(const QStringList codes, const char* start, const char* end, MIN_FREQ freq);
+    template <typename S>
     QList<S> run(const QStringList codes, int category = 1);
     template <typename S>
     QList<S> get_price(const QStringList codes, const char* start, const char* end);
+    template <typename S>
+    QList<S> get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq);
     template <typename S>
     QList<S> get_price(const QStringList codes, int category);
 
@@ -167,6 +172,16 @@ QList<S> StockAction<SA>::run(const QStringList codes, const char* start, const 
 
 template <class SA>
 template <typename S>
+QList<S> StockAction<SA>::run(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+{
+    QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, start, end, freq);
+
+    QList<S> stocks = future.result();
+    return stocks;
+}
+
+template <class SA>
+template <typename S>
 QList<S> StockAction<SA>::run(const QStringList codes, int category)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, category);
@@ -194,6 +209,21 @@ QList<S> StockAction<SA>::get_price(const QStringList codes, const char* start, 
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
     QList<S> stocks = S::get_price(codes, start_d, end_d);
+    commitTransactions();
+    return stocks;
+}
+
+template <class SA>
+template <typename S>
+QList<S> StockAction<SA>::get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+{
+    double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
+    double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
+    auto sa        = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(sa);
+    bool EnableTransactions = true;
+    setTransactionEnabled(EnableTransactions);
+    QList<S> stocks = S::get_price(codes, start_d, end_d, freq);
     commitTransactions();
     return stocks;
 }

@@ -129,7 +129,8 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
          const char* start = "2017-01-01";
          const char* end   = "2019-12-01";
 
-         StockMinAction sma(codes, start, end);
+         MIN_FREQ freq = MIN_FREQ::FIVE;
+         StockMinAction sma(codes, start, end, freq);
          int N      = 10;
          auto begin = std::chrono::high_resolution_clock::now();
          for (int i = 0; i < N; ++i) {

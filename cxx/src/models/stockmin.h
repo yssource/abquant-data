@@ -7,6 +7,8 @@
 #include <QVariant>
 #include <TAbstractModel>
 #include <TGlobal>
+// #include "abquant/helpers/applicationhelper.h"
+#include "abquant/actions/utils.hpp"
 
 class TModelObject;
 class StockMinObject;
@@ -58,7 +60,7 @@ public:
                            double timeStamp, const QString& type);
     static StockMin create(const QVariantMap& values);
     static StockMin get(const QString& id);
-    static QList<StockMin> get_price(const QStringList codes, double start, double end);
+    static QList<StockMin> get_price(const QStringList codes, double start, double end, abq::MIN_FREQ freq = abq::MIN_FREQ::ONE);
     static int count();
     static QList<StockMin> getAll();
     static QJsonArray getAllJson();

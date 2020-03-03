@@ -44,6 +44,6 @@ enum class FQ_TYPE : short int {
     POST = 0xFF,
 };
 
-enum class MIN_TYPE : short int { ONE = 1, FIVE = 5, FIFTEEN = 15, THIRTY = 30, SIXTY = 60 };
+enum class MIN_FREQ : short int { ONE = 0x01, FIVE = 0x05, FIFTEEN = 0x0F, THIRTY = 0x1E, SIXTY = 0x3C };
 
 } // namespace abq

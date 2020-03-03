@@ -11,10 +11,10 @@
 
 namespace abq
 {
-StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end)
-    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}
+StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}
 {
-    m_stockmins = run<StockMin>(codes, start, end);
+    m_stockmins = run<StockMin>(codes, start, end, freq);
 }
 
 MyDataFrame StockMinAction::toFq(FQ_TYPE fq)

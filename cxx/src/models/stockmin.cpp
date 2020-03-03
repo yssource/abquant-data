@@ -127,7 +127,7 @@ StockMin StockMin::get(const QString& id)
     return StockMin(mapper.findByObjectId(id));
 }
 
-QList<StockMin> StockMin::get_price(const QStringList codes, double start, double end)
+QList<StockMin> StockMin::get_price(const QStringList codes, double start, double end, abq::MIN_FREQ freq)
 {
     TMongoODMapper<StockMinObject> mapper;
     TCriteria cri;
@@ -141,6 +141,30 @@ QList<StockMin> StockMin::get_price(const QStringList codes, double start, doubl
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);
     cri.add(StockMinObject::TimeStamp, TMongo::LessEqual,
             end); // AND add to the end operator
+
+    QString qsFreq = "";
+    switch (freq) {
+    case abq::MIN_FREQ::ONE:
+        qsFreq = QString("1min");
+        break;
+    case abq::MIN_FREQ::FIVE:
+        qsFreq = QString("5min");
+        break;
+    case abq::MIN_FREQ::FIFTEEN:
+        qsFreq = QString("15min");
+        break;
+    case abq::MIN_FREQ::THIRTY:
+        qsFreq = QString("30min");
+        break;
+    case abq::MIN_FREQ::SIXTY:
+        qsFreq = QString("60min");
+        break;
+    default:
+        qsFreq = QString("1min");
+        break;
+    }
+    cri.add(StockMinObject::Type, TMongo::Equal,
+            qsFreq); // AND add to the end operator
     return tfGetModelListByMongoCriteria<StockMin, StockMinObject>(cri);
 }
 

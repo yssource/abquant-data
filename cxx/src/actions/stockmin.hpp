@@ -27,7 +27,7 @@ public:
     //! Default constructor
     StockMinAction() = delete;
 
-    StockMinAction(QStringList codes, const char* start, const char* end);
+    StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE);
 
     //! Copy constructor
     StockMinAction(const StockMinAction &other) = default;
@@ -56,7 +56,7 @@ private:
     QStringList m_codes;
     const char* m_start;
     const char* m_end;
-    const char* m_type;
+    MIN_FREQ m_freq;
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockMinAction& sa)

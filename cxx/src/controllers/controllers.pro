@@ -1,6 +1,6 @@
 TARGET = abqcontroller
 TEMPLATE = lib
-CONFIG += shared c++11 x86_64
+CONFIG += shared c++17 x86_64
 QT += network sql xml qml
 QT -= gui
 DEFINES += TF_DLL
