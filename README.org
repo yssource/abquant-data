@@ -18,20 +18,20 @@
 A&B professional platform for quantitative finance. God is asking & bidding Me. ABQ.
 
 abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交易
-- qbquant-data
+- qbquant-data ::
   开源项目
-- abquant-strategy
+- abquant-strategy ::
   闭源项目
-- abquant-trade
+- abquant-trade ::
   [[https://github.com/yssource/rqalpha-mod-xtrade][xtrade]]
   闭源项目
 * Note
   [WIP]
   开发中 ...
 * 构建
-  作者本人是在x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
+  作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
-  你需要安装好clang++/llvm python pip conan 等基础开发工具
+  你需要安装好 clang++/llvm python pip conan 等基础开发工具
   - 核心模块 cpp
   - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
   - 用户接口层 python
@@ -56,7 +56,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 #+end_src
 * Usage
 ** abquant 数据获取
-   - python 层获取数据源，支持mongodb
+   - python 层获取数据源，支持 mongodb
      #+name: data-saving
      #+begin_src shell :exports code
        # 保存所有数据
@@ -84,7 +84,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        abquant stock min -f '["5min"]'
        abquant stock min -f '["5min"]' --add '["000001", "300001", "600001"]'
        # ...
-       # 1min 一分钟 和5min 五分钟
+       # 1min 一分钟和 5min 五分钟
        abquant stock min -f '["1min", "5min"]'
        abquant stock min -f '["1min", "5min"]' --add '["000001", "300001", "600001"]'
        # ...
@@ -110,6 +110,41 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # 在下一次保存数据时，最好先
        echo "" 1> ~/.config/abquant/log/error_codes.json
      #+end_src
+** abquant 数据使用
+   #+name: cpp-data-using
+   #+begin_src C++ :exports code
+     #include <chrono>
+     #include "abquant/actions/abquant.hpp"
+     #include "abquant/actions/stockmin.hpp"
+     #include "abquant/actions/utils.hpp"
+
+     using namespace abq;
+
+     int main(int argc, char* argv[])
+     {
+         // abq entry_point
+         Abquant::start();
+
+         QStringList codes = {"000001", "000002", "000003"};
+         const char* start = "2017-01-01";
+         const char* end   = "2019-12-01";
+
+         StockMinAction sma(codes, start, end);
+         int N      = 10;
+         auto begin = std::chrono::high_resolution_clock::now();
+         for (int i = 0; i < N; ++i) {
+             // 分钟前复权
+             sma.toFq(FQ_TYPE::PRE);
+             // 分钟后复权
+             // sma.toFq(FQ_TYPE::POST);
+         }
+         auto finish_ = std::chrono::high_resolution_clock::now();
+         std::chrono::duration<double> elapsed = finish_ - begin;
+         qDebug() << "Elapsed time: " << elapsed.count() << " s\n";
+
+         return 0;
+     }
+   #+end_src
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
@@ -141,6 +176,5 @@ All rights reserved.
     或源代码的产品或服务），任何法人或其他组织不得出于任何目的使用本软件，否则原
     作者有权追究相应的知识产权侵权责任。 \\
     在此前提下，对本软件的使用同样需要遵守 Apache 2.0 许可，Apache 2.0 许可与本
-    许可冲突之处，以本许可为准。
-
+    许可冲突之处，以本许可为准。 \\
     详细的授权流程，请联系 yssource@163.com 获取。

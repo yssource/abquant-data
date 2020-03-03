@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from abquant.conans import ConanFile, CMake, tools, Meson, RunEnvironment
+from conans import ConanFile, CMake, tools, Meson, RunEnvironment
 import os
 import shutil
 import platform
