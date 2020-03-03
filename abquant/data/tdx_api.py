@@ -388,7 +388,6 @@ def get_stock_day(
                 axis=0,
                 sort=False,
             )
-
             # 这里的问题是: 如果只取了一天的股票,而当天停牌, 那么就直接返回None了
             if len(data) < 1:
                 return None
@@ -417,12 +416,7 @@ def get_stock_day(
                 # elif if_fq in ['02','hfq']:
                 #     return QA_data_make_hfq(data,xdxr)
     except Exception as e:
-        if isinstance(e, TypeError):
-            slog.warn("Tushare内置的pytdx版本和QUANTAXIS使用的pytdx 版本不同, 请重新安装pytdx以解决此问题")
-            slog.warn("pip uninstall pytdx")
-            slog.warn("pip install pytdx")
-        else:
-            slog.error(e)
+        slog.error(e)
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
@@ -456,7 +450,6 @@ def get_index_day(code, start_date, end_date, frequence="day", ip=None, port=Non
         frequence = 11
 
     with api.connect(ip, port):
-
         start_date = str(start_date)[0:10]
         today_ = datetime.date.today()
         lens = get_trade_gap(start_date, today_)

@@ -7,10 +7,7 @@ from abquant.helper import time_counter
 from abquant.config import Setting
 from abquant.data.tdx_api import get_stock_day
 from abquant.utils.logger import system_log as slog
-
 # from abquant.data.tdx import Stock, Future
-import pymongo
-
 
 class ISecurity(object, metaclass=abc.ABCMeta):
     """
@@ -45,26 +42,17 @@ class SecurityVisitor(ISecurityVisitor):
         pass
 
     def create_day(self, iSecurity: ISecurity):
-        # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_day"):
             iSecurity.create_day(stockOrIndex="index")
-            # if isinstance(iSecurity, Stock):
             iSecurity.create_day()
-            # if isinstance(ISecurity, Future):
-            #     iSecurity.create_day(stockOrIndex="future")
 
     def create_min(self, iSecurity: ISecurity):
-        # import pudb; pudb.set_trace()
         if getattr(iSecurity, "create_min"):
             iSecurity.create_min(stockOrIndex="index")
-            # if isinstance(iSecurity, Stock):
             iSecurity.create_min()
-            # if isinstance(ISecurity, Future):
-            #     iSecurity.create_min(stockOrIndex="future")
 
     def create_xdxr(self, iSecurity: ISecurity):
-        # import pudb; pudb.set_trace()
-        if getattr(iSecurity, "create_xdxr"):
+        if getattr(iSecurity, "create_xdxr", None):
             pass
             # please manually `abquant stock xdxr`
             # iSecurity.create_xdxr()
@@ -96,28 +84,21 @@ def create_all():
 
 
 @time_counter
-def create_stock_day():
+def create_stock_day(codes):
     broker = get_broker()
-    s = broker.Stock()
+    s = broker.Stock(codes=codes)
     s.create_day(stockOrIndex="index")
     s.create_day(stockOrIndex="stock")
 
+@time_counter
+def create_stock_min(codes, freqs):
+    broker = get_broker()
+    s = broker.Stock(codes=codes, freqs=freqs)
+    s.create_min(stockOrIndex="index")
+    s.create_min(stockOrIndex="stock")
 
 @time_counter
-def create_stock_min(freqs):
+def create_stock_xdxr(codes):
     broker = get_broker()
-    f = freqs.split() if freqs else ""
-    if f:
-        s = broker.Stock(freqs=f)
-        s.create_min(stockOrIndex="index")
-        s.create_min(stockOrIndex="stock")
-    else:
-        s = broker.Stock()
-        s.create_min(stockOrIndex="index")
-        s.create_min(stockOrIndex="stock")
-
-@time_counter
-def create_stock_xdxr():
-    broker = get_broker()
-    s = broker.Stock()
+    s = broker.Stock(codes=codes)
     s.create_xdxr()

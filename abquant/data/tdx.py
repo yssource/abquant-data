@@ -36,6 +36,7 @@ class Stock(ISecurity):
         "docstring"
         self._client = pymongo.MongoClient(Setting.get_mongo())
         self._db = self._client[Setting.DBNAME]
+        self.codes = kwargs.get("codes", [])
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
@@ -51,12 +52,14 @@ class Stock(ISecurity):
         """
         stockOrIndex = kwargs.pop("stockOrIndex", "stock")
         stockOrIndexList = (
-            get_stock_list(stockOrIndex)
-            if stockOrIndex == "index"
-            else get_stock_list().code.unique().tolist()
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(stockOrIndex)
+                if stockOrIndex == "index"
+                else get_stock_list().code.unique().tolist()
+            )
         )
-        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
-        # return
         coll = self._db.index_day if stockOrIndex == "index" else self._db.stock_day
         coll.create_index(
             [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
@@ -127,14 +130,15 @@ class Stock(ISecurity):
             client {[type]} -- [description] (default: {DATABASE})
         """
         stockOrIndex = kwargs.pop("stockOrIndex", "stock")
-
         stockOrIndexList = (
-            get_stock_list(stockOrIndex)
-            if stockOrIndex == "index"
-            else get_stock_list().code.unique().tolist()
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(stockOrIndex)
+                if stockOrIndex == "index"
+                else get_stock_list().code.unique().tolist()
+            )
         )
-        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
-        # return
         coll = self._db.index_min if stockOrIndex == "index" else self._db.stock_min
         coll.create_index(
             [
@@ -219,12 +223,14 @@ class Stock(ISecurity):
         """
         stockOrIndex = kwargs.pop("stockOrIndex", "")
         stockOrIndexList = (
-            get_stock_list(stockOrIndex)
-            if stockOrIndex == "index"
-            else get_stock_list().code.unique().tolist()
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(stockOrIndex)
+                if stockOrIndex == "index"
+                else get_stock_list().code.unique().tolist()
+            )
         )
-        slog.debug("{} {} xdxr".format(self.getClassName(), stockOrIndex))
-        # return
         coll = self._db.stock_xdxr
         coll_adj = self._db.stock_adj
         coll.create_index(
@@ -262,16 +268,17 @@ class Stock(ISecurity):
                     adjdata = to_json_from_pandas(qfq.loc[:, ["date", "code", "adj"]])
                     coll_adj.delete_many({"code": code})
                     coll_adj.insert_many(adjdata)
+
+                    finish = datetime.datetime.now()
+                    interval = (finish - begin).total_seconds()
+                    text = "{}, {:<04.2}s".format(
+                        "{} {}".format(stockOrIndex, code), interval,
+                    )
+                    for _ in trange(data.size, desc=text):
+                        pass
                 except Exception as e:
                     pass
                     # slog.error(e)
-                finish = datetime.datetime.now()
-                interval = (finish - begin).total_seconds()
-                text = "{}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code), interval,
-                )
-                for _ in trange(data.size, desc=text):
-                    pass
             except Exception as e:
                 slog.error("{}".format(e))
                 err.append(code)
@@ -297,10 +304,10 @@ class Stock(ISecurity):
                 json.dump(errs, f)
 
 
-# class Future(object):
 class Future(ISecurity):
     def __init__(self, *args, **kwargs):
         "docstring"
+        self.codes = kwargs.get("codes", [])
         self.freqs = []
         pass
 

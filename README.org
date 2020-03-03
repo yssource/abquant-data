@@ -53,22 +53,28 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
 
        # 股票除权除息
        abquant stock xdxr
+       abquant stock xdxr --add '["000001", "300001", "600001"]'
 
        # 保存所有股票日线，日线指数
        abquant stock day
+       abquant stock day --add '["000001", "300001", "600001"]'
 
        # 保存所有股票分钟线，分钟指数
        # Default 保存所有频率 (1min, 5min, 15min, 30min, 60min)
        abquant stock min
+       abquant stock min --add '["000001", "300001", "600001"]'
 
        # 保存股票分钟线，分钟指数不同频率数据 (1min, 5min, 15min, 30min, 60min)
        # 1min 一分钟
        abquant stock min "1min"
+       abquant stock min -f '["1min"]' --add '["000001", "300001", "600001"]'
        # 5min 五分钟
-       abquant stock min "5min"
+       abquant stock min -f '["5min"]'
+       abquant stock min -f '["5min"]' --add '["000001", "300001", "600001"]'
        # ...
        # 1min 一分钟 和5min 五分钟
-       abquant stock min "1min 5min"
+       abquant stock min -f '["1min", "5min"]'
+       abquant stock min -f '["1min", "5min"]' --add '["000001", "300001", "600001"]'
        # ...
      #+end_src
 * 开发初衷
