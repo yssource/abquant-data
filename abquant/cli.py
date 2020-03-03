@@ -10,7 +10,7 @@ from abquant.data.base import (
     create_stock_day,
     create_stock_min,
     create_stock_xdxr,
-    create_all,
+    create_base,
 )
 
 set_loggers()
@@ -33,10 +33,10 @@ def save():
 
 
 @save.command("all")
-def save_all():
+def save_base():
     """Creates a new ship."""
     click.echo("save all")
-    create_all()
+    create_base()
 
 
 @cli.group()

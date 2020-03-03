@@ -7,7 +7,9 @@ from abquant.helper import time_counter
 from abquant.config import Setting
 from abquant.data.tdx_api import get_stock_day
 from abquant.utils.logger import system_log as slog
+
 # from abquant.data.tdx import Stock, Future
+
 
 class ISecurity(object, metaclass=abc.ABCMeta):
     """
@@ -35,6 +37,7 @@ class ISecurityVisitor(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def create_xdxr(self, iSecurity: ISecurity):
         pass
+
 
 class SecurityVisitor(ISecurityVisitor):
     def __init__(self, *args, **kwargs):
@@ -71,7 +74,7 @@ def get_broker(broker="tdx"):
 
 
 @time_counter
-def create_all():
+def create_base():
     def registe_securities(
         securities: List[ISecurity], visitor: ISecurityVisitor
     ) -> None:
@@ -90,12 +93,14 @@ def create_stock_day(codes):
     s.create_day(stockOrIndex="index")
     s.create_day(stockOrIndex="stock")
 
+
 @time_counter
 def create_stock_min(codes, freqs):
     broker = get_broker()
     s = broker.Stock(codes=codes, freqs=freqs)
     s.create_min(stockOrIndex="index")
     s.create_min(stockOrIndex="stock")
+
 
 @time_counter
 def create_stock_xdxr(codes):

@@ -16,11 +16,20 @@
 
 * Description
 A&B professional platform for quantitative finance. God is asking & bidding Me. ABQ.
+
+abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交易
+- qbquant-data
+  开源项目
+- abquant-strategy
+  闭源项目
+- abquant-trade
+  [[https://github.com/yssource/rqalpha-mod-xtrade][xtrade]]
+  闭源项目
 * Note
   [WIP]
   开发中 ...
 * 构建
-  作者本人是在Linux(x86_64 Linux 4.19.105-1-MANJARO) 上构建本项目，目前不支持
+  作者本人是在x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
   你需要安装好clang++/llvm python pip conan 等基础开发工具
   - 核心模块 cpp
@@ -34,6 +43,7 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
   conan install .. --build missing --pr ../abquant.profile
   conan build ..
   sudo make install
+  sudo ldconfig
 #+end_src
    - abquant 核心应用层 ::
 #+begin_src shell :exports code
@@ -42,15 +52,16 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
   conan install .. --build missing --pr ../abquant.profile
   conan build ..
   sudo make install
+  sudo ldconfig
 #+end_src
 * Usage
 ** abquant 数据获取
    - python 层获取数据源，支持mongodb
-     #name: data-saving
+     #+name: data-saving
      #+begin_src shell :exports code
        # 保存所有数据
        # 但是不包含除权数据，除权数据不是经常更新，请手动 "abquant stock xdxr"
-       abquant save all
+       abquant save base
 
        # 股票除权除息
        abquant stock xdxr
@@ -79,29 +90,32 @@ A&B professional platform for quantitative finance. God is asking & bidding Me. 
        # ...
      #+end_src
 
-     #name: error-data-saving
+     #+name: error-data-saving
      #+begin_src shell :results output :exports both
        # 查看保存数据后的错误信息
        bat ~/.config/abquant/log/error_codes.json
+     #+end_src
+
+     #+RESULTS: error-data-saving
+     : {"Stock_index_day": ["395005"], "Stock_index_min": ["395041", "395005"], "Stock_stock_min": ["300822", "603949", "603353", "300819", "300821", "002976", "688051"], "Stock_xdxr": ["002976", "603949", "300822", "688051", "603353"]}
+
+     #+name: error-data-saving
+     #+begin_src shell :results output :exports both
        # 如果在保存数据后，发现数据错误，可以使用
        abquant stock day --add '["395005"]'
        abquant stock min --add '["395041", "395005", "300822", "603949", "603353", "300819", "300821", "002976", "688051"]'
        abquant stock xdxr --add '["002976", "603949", "300822", "688051", "603353"]'
 
-       # 注意，这些数据错误可能是退市，已经不存在的数据。也有可能是网络原因数据不完整，你需要具体分析。
+       # 注意：这些数据错误可能是退市，已经不存在的数据。也有可能是网络原因，数据不完整，你需要具体分析。
        # 在下一次保存数据时，最好先
        echo "" 1> ~/.config/abquant/log/error_codes.json
      #+end_src
-
-     #+RESULTS:
-     : {"Stock_index_day": ["395005"], "Stock_index_min": ["395041", "395005"], "Stock_stock_min": ["300822", "603949", "603353", "300819", "300821", "002976", "688051"], "Stock_xdxr": ["002976", "603949", "300822", "688051", "603353"]}
-
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
   了量化交易。
 
-交易三部曲，a) 数据获取 b) 策略回测 c) 实盘交易 \\
+交易三部曲，a) 数据获取 b) 策略回测 c) 模拟/实盘交易 \\
 市面上开源的a,b,c 项目大部分都是python开发，但是在实践过程中性能都不理想，于是想
 到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
 * 感谢
