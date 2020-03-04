@@ -80,9 +80,6 @@ MyDataFrame StockDayAction::toDataFrame() const
     } catch (exception& e) {
         cout << e.what() << endl;
     }
-
-    std::array<const char*, 6> columns = {"open", "close", "high", "low", "vol", "amount"};
     return df;
 };
-
 } // namespace abq

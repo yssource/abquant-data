@@ -31,15 +31,15 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 * 构建
   作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
-  你需要安装好 clang++/llvm python pip conan 等基础开发工具
+  你需要安装好 clang++/llvm python pip conan cmake/qmake 等基础开发工具
   - 核心模块 cpp
   - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
   - 用户接口层 python
 ** cpp 依赖
    - ORM 层 [[https://github.com/yssource/treefrog-framework.git][treefrog-framework]] ::
 #+begin_src shell :exports code
-  git clone https://github.com/yssource/treefrog-framework.git
-  cd treefrog-framework && git checkout feature/withConan && mkdir -v qbuild && cd qbuild
+  git clone -b feature/withConan https://github.com/yssource/treefrog-framework.git
+  cd treefrog-framework && mkdir -v qbuild && cd qbuild
   conan install .. --build missing
   conan build ..
   sudo make install
@@ -59,7 +59,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
      #+name: config
      #+begin_src shell :exports code
        # 当前项目根目录下，拷贝 config 文件夹
-       cp -rfv $PWD/cxx/config ~/.config/
+       mkdir -pv ~/.config/abquant && cp -rfv $PWD/cxx/config ~/.config/abquant/
      #+end_src
 ** abquant 数据获取
    - python 层获取数据源，支持 mongodb
@@ -158,8 +158,8 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   了量化交易。
 
 交易三部曲，a) 数据获取 b) 策略回测 c) 模拟/实盘交易 \\
-市面上开源的a,b,c 项目大部分都是python开发，但是在实践过程中性能都不理想，于是想
-到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
+市面上开源的 a,b,c 项目大部分都是 python 开发，但是在实践过程中性能都不理想，于是想
+到站在巨人肩上利用 C++ 造轮子。核心模块 C++，通过中间层 binding 交给用户 python 层。
 * 感谢
 - [[https://github.com/QUANTAXIS/QUANTAXIS.git][QUANTAXIS]]
   abquant-data 数据获取借鉴了很多 pytdx/quantaxis 代码，并兼容 quantaxis 数据库
