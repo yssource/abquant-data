@@ -21,7 +21,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 - qbquant-data ::
   开源项目
 - abquant-strategy ::
-  闭源项目
+  闭源项目，基于 zeromg/nanomsg
 - abquant-trade ::
   [[https://github.com/yssource/rqalpha-mod-xtrade][xtrade]]
   闭源项目
@@ -39,22 +39,28 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
    - ORM 层 [[https://github.com/yssource/treefrog-framework.git][treefrog-framework]] ::
 #+begin_src shell :exports code
   git clone https://github.com/yssource/treefrog-framework.git
-  cd treefrog-framework && mkdir -v qbuild && cd qbuild
-  conan install .. --build missing --pr ../abquant.profile
+  cd treefrog-framework && git checkout feature/withConan && mkdir -v qbuild && cd qbuild
+  conan install .. --build missing
   conan build ..
   sudo make install
   sudo ldconfig
 #+end_src
    - abquant 核心应用层 ::
 #+begin_src shell :exports code
-  git clone https://github.com/yssource/abquant.git
-  cd abquant && mkdir -v qbuild && cd qbuild
+  git clone https://github.com/yssource/abquant-data.git
+  cd abquant-data && mkdir -v qbuild && cd qbuild
   conan install .. --build missing --pr ../abquant.profile
   conan build ..
   sudo make install
   sudo ldconfig
 #+end_src
 * Usage
+** abquant config
+     #+name: config
+     #+begin_src shell :exports code
+       # 当前项目根目录下，拷贝 config 文件夹
+       cp -rfv $PWD/cxx/config ~/.config/
+     #+end_src
 ** abquant 数据获取
    - python 层获取数据源，支持 mongodb
      #+name: data-saving
@@ -156,7 +162,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
 * 感谢
 - [[https://github.com/QUANTAXIS/QUANTAXIS.git][QUANTAXIS]]
-  abquant-data 数据获取借鉴了很多pytdx/quantaxis 代码，并兼容 quantaxis 数据库
+  abquant-data 数据获取借鉴了很多 pytdx/quantaxis 代码，并兼容 quantaxis 数据库
 * 打赏
   欢迎请作者喝杯咖啡 :+1:
   | 微信                               | 支付宝                             |

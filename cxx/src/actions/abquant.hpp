@@ -77,7 +77,7 @@ using namespace std;
             QProcess::systemEnvironment().filter("XDG_CONFIG_HOME=", Qt::CaseSensitive).value(0).mid(16);              \
         QString abq = "";                                                                                              \
         if (!xdg_config_home.isEmpty()) {                                                                              \
-            abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant/config");                 \
+            abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant");                        \
         } else {                                                                                                       \
             abq = QString("%1%2%3").arg(QDir::homePath()).arg(QDir::separator()).arg(".abquant");                      \
         }                                                                                                              \
@@ -117,7 +117,7 @@ using namespace std;
         QProcess::systemEnvironment().filter("XDG_CONFIG_HOME=", Qt::CaseSensitive).value(0).mid(16); \
     QString abq = "";                                                                                 \
     if (!xdg_config_home.isEmpty()) {                                                                 \
-        abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant/config");    \
+        abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant");           \
     } else {                                                                                          \
         abq = QString("%1%2%3").arg(QDir::homePath()).arg(QDir::separator()).arg(".abquant");         \
     }                                                                                                 \
