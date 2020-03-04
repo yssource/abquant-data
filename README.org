@@ -156,6 +156,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 到站在巨人肩上利用C++ 造轮子。核心模块C++，通过中间层binding交给用户python层。
 * 感谢
 - [[https://github.com/QUANTAXIS/QUANTAXIS.git][QUANTAXIS]]
+  abquant-data 数据获取借鉴了很多pytdx/quantaxis 代码，并兼容 quantaxis 数据库
 * 打赏
   欢迎请作者喝杯咖啡 :+1:
   | 微信                               | 支付宝                             |

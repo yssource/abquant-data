@@ -29,14 +29,6 @@
 #include <iostream>
 #include <vector>
 
-// #include <TWebApplication>
-// #include <TAppSettings>
-// #include "tkvsdatabasepool.h"
-// #ifdef QT_SQL_LIB
-// # include <TActionThread>
-// # include "tsqldatabasepool.h"
-// #endif
-
 #ifdef _WIN32
 #ifdef LIBRARY_EXPORTS
 #define LIBRARY_API __declspec(dllexport)
@@ -81,8 +73,14 @@ using namespace std;
                 }                                                                                                      \
             }                                                                                                          \
         };                                                                                                             \
-        QString home                  = QDir::homePath();                                                              \
-        QString abq                   = QString("%1%2%3").arg(home).arg(QDir::separator()).arg(".abquant");            \
+        QString xdg_config_home =                                                                                      \
+            QProcess::systemEnvironment().filter("XDG_CONFIG_HOME=", Qt::CaseSensitive).value(0).mid(16);              \
+        QString abq = "";                                                                                              \
+        if (!xdg_config_home.isEmpty()) {                                                                              \
+            abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant/config");                 \
+        } else {                                                                                                       \
+            abq = QString("%1%2%3").arg(QDir::homePath()).arg(QDir::separator()).arg(".abquant");                      \
+        }                                                                                                              \
         std::vector<std::string> args = {"main", "-e", "test", abq.toStdString()};                                     \
         std::vector<char*> vec;                                                                                        \
         for (const auto& arg : args) vec.emplace_back((char*)arg.data());                                              \
@@ -114,23 +112,29 @@ using namespace std;
         return QTest::qExec(&tc, argc, argv);                                                         \
     }
 
-#define ABQ_OPEN_MAIN()                                                                                 \
-    QString home                  = QDir::homePath();                                                   \
-    QString abq                   = QString("%1%2%3").arg(home).arg(QDir::separator()).arg(".abquant"); \
-    std::vector<std::string> args = {"main", "-e", "test", abq.toStdString()};                          \
-    std::vector<char*> vec;                                                                             \
-    for (const auto& arg : args) vec.emplace_back((char*)arg.data());                                   \
-    vec.emplace_back(nullptr);                                                                          \
-    int argc             = vec.size() - 1;                                                              \
-    char** argv          = vec.data();                                                                  \
-    TWebApplication* app = new TWebApplication(argc, argv);                                             \
-    QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray();       \
-    QTextCodec* codec    = QTextCodec::codecForName(codecName);                                         \
-    QTextCodec::setCodecForLocale(codec);                                                               \
-    int idx     = QCoreApplication::arguments().indexOf("-e");                                          \
-    QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");        \
-    app->setDatabaseEnvironment(env);                                                                   \
-    TSqlDatabasePool::instance();                                                                       \
+#define ABQ_OPEN_MAIN()                                                                               \
+    QString xdg_config_home =                                                                         \
+        QProcess::systemEnvironment().filter("XDG_CONFIG_HOME=", Qt::CaseSensitive).value(0).mid(16); \
+    QString abq = "";                                                                                 \
+    if (!xdg_config_home.isEmpty()) {                                                                 \
+        abq = QString("%1%2%3").arg(xdg_config_home).arg(QDir::separator()).arg("abquant/config");    \
+    } else {                                                                                          \
+        abq = QString("%1%2%3").arg(QDir::homePath()).arg(QDir::separator()).arg(".abquant");         \
+    }                                                                                                 \
+    std::vector<std::string> args = {"main", "-e", "product", abq.toStdString()};                     \
+    std::vector<char*> vec;                                                                           \
+    for (const auto& arg : args) vec.emplace_back((char*)arg.data());                                 \
+    vec.emplace_back(nullptr);                                                                        \
+    int argc             = vec.size() - 1;                                                            \
+    char** argv          = vec.data();                                                                \
+    TWebApplication* app = new TWebApplication(argc, argv);                                           \
+    QByteArray codecName = Tf::appSettings()->value(Tf::InternalEncoding, "UTF-8").toByteArray();     \
+    QTextCodec* codec    = QTextCodec::codecForName(codecName);                                       \
+    QTextCodec::setCodecForLocale(codec);                                                             \
+    int idx     = QCoreApplication::arguments().indexOf("-e");                                        \
+    QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");      \
+    app->setDatabaseEnvironment(env);                                                                 \
+    TSqlDatabasePool::instance();                                                                     \
     TKvsDatabasePool::instance();
 
 #define ABQ_CLOSE_MAIN()                                                                                   \

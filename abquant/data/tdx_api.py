@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Thanks for the works from QUANTAXIS
+
 import datetime
 
 import numpy as np

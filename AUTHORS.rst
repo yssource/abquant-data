@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* JimmyG <jimmy.m.gong@gmail.com>
+* Jimmy M. Gong <jimmy.m.gong@gmail.com>

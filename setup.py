@@ -12,16 +12,15 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = [
-    "Click>=7.0",
 ]
 
 setup_requirements = [
     "conan",
-    "pytest-runner",
 ]
 
 test_requirements = [
     "pytest",
+    "pytest-runner",
 ]
 
 setup(
@@ -30,25 +29,23 @@ setup(
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: LGPL3 License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.7",
     ],
     description="A&B Quantitive Finance System",
-    # py_modules=['abquant'],
     entry_points={"console_scripts": ["abquant=abquant.cli:cli"]},
     install_requires=requirements,
-    license="MIT license",
+    license="GPL3 license, LGPL3 license",
     long_description=readme + "\n\n" + history,
     include_package_data=True,
     keywords="abquant",
     name="abquant",
     packages=find_packages(include=["abquant", "abquant.*"]),
-    # package_data={"": ["../../lib/*"]},
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://github.com/yssource/abquant",
+    url="https://github.com/yssource/abquant-data",
     version="0.1.0",
     zip_safe=False,
 )
