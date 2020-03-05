@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-# import libfoo as foo
-import foo
+# import libfoo as abqstockmin
+# import libabqactions as abqstockmin
+import abqstockmin
 
 class MainTest(unittest.TestCase):
     def testFoo(self):
-        print(foo.foo2())
-        self.assertEqual(foo.add(5, 5), 10)
-        self.assertEqual(foo.foo2(), 600001)
+        print(abqstockmin.stock())
+        self.assertEqual(abqstockmin.add(5, 5), 10)
+        self.assertEqual(abqstockmin.stock(), 60)
 
 if __name__ == '__main__':
     unittest.main()

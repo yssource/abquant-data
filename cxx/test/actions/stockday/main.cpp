@@ -21,8 +21,6 @@
 #include <utility>
 #include "string"
 
-// namespace abq {
-
 using namespace abq;
 using namespace std;
 
@@ -133,5 +131,3 @@ void TestStockDay::cleanupTestCase() {}
 // ABQ_TEST_SQLLESS_MAIN(TestStockDay)
 ABQ_TEST_MAIN(TestStockDay)
 #include "main.moc"
-
-// } // namespace abq

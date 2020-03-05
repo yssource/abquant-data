@@ -6,6 +6,7 @@ import os
 import shutil
 import platform
 import pathlib
+import shutil
 
 
 class AbquantConan(ConanFile):
@@ -50,8 +51,10 @@ class AbquantConan(ConanFile):
         return self.source_folder
 
     @property
-    def _build_subfolder(self):
-        return os.path.join(self.source_folder, "qbuild")
+    def _build_subfolder(self, kind_="qbuild"):
+        return os.path.join(
+            self.source_folder, "qbuild" if kind_ in ["qbuild"] else "cbuild"
+        )
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -61,7 +64,7 @@ class AbquantConan(ConanFile):
         self.requires("qt/5.12.6@{}/{}".format("bincrafters", "stable"))
         self.requires("xtensor/0.21.3@")
         self.requires("dataframe/1.6.0@")
-        self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))
+        # self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))
 
     def _build_with_qmake(self, test=None):
         tools.mkdir(self._build_subfolder)
@@ -129,5 +132,28 @@ class AbquantConan(ConanFile):
                 self.output.info(cmd)
                 self.run("bear make", run_environment=True)
 
+    def _build_with_cmake(self):
+        self.output.info("Building with CMake")
+        tools.mkdir(self._build_subfolder)
+        with tools.chdir(self._build_subfolder):
+            pass
+        self._build_with_cmake_bind11()
+
+    def _build_with_cmake_bind11(self):
+        env_build = RunEnvironment(self)
+        with tools.environment_append(env_build.vars):
+            cmake = CMake(self, set_cmake_flags=True)
+            if self.settings.os == "Macos":
+                cmake.definitions["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.14"
+            cmake.definitions["PYTHON_EXECUTABLE"] = shutil.which("python")
+            cmake.configure()
+            cmake.build()
+
     def build(self):
-        self._build_with_qmake()
+        if pathlib.Path.cwd().name == "qbuild":
+            self._build_with_qmake()
+        if pathlib.Path.cwd().name == "cbuild":
+            self._build_with_cmake()
+
+    # def package_info(self):
+    #     self.env_info.CMAKE_PREFIX_PATH.append(self.package_folder)

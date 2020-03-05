@@ -21,7 +21,6 @@
 #include "tkvsdatabasepool.h"
 #ifdef QT_SQL_LIB
 #include <TActionThread>
-
 #include "tsqldatabasepool.h"
 #endif
 

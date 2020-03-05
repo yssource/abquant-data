@@ -1,2 +1,2 @@
-add_subdirectory(glue)
+add_subdirectory(stockmin)
 add_subdirectory(test)
