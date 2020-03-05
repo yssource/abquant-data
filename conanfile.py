@@ -63,10 +63,10 @@ class AbquantConan(ConanFile):
     def requirements(self):
         self.requires("qt/5.12.6@{}/{}".format("bincrafters", "stable"))
         self.requires("xtensor/0.21.3@")
-        self.requires("dataframe/1.6.0@")
+        # self.requires("dataframe/1.6.0@")
         # self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))
 
-    def _build_with_qmake(self, test=None):
+    def _build_with_qmake(self):
         tools.mkdir(self._build_subfolder)
         with tools.chdir(self._build_subfolder):
             pass
@@ -113,9 +113,6 @@ class AbquantConan(ConanFile):
                     "QMAKE_LINK=" + value,
                     "QMAKE_LINK_SHLIB=" + value,
                 ]
-
-            if test:
-                args += ["-recursive", "{}/main.pro".format(self.test_m)]
 
             # args += ["target.path=\"{}\"".format(self._libdir), "header.path=\"{}\"".format(self._includedir)]
 

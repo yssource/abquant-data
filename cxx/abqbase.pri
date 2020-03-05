@@ -13,17 +13,18 @@ win32 {
   } else {
     LIBS += -ltreefrog1
   }
-} else {
+  } else {
   unix:LIBS += -Wl,-rpath,. -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
-  # unix:LIBS += -Wl,-rpath,. -Wl,-rpath,/home/jimmy/workspace/git/treefrogframework/treefrog-framework/src/ -L/home/jimmy/workspace/git/treefrogframework/treefrog-framework/src -ltreefrog
+  unix:LIBS += -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lDataFrame
   unix:INCLUDEPATH += /usr/include/treefrog
+  unix:INCLUDEPATH += /usr/local/include/DataFrame
   linux-*:LIBS += -lrt
 
-  # unix:CONFIG += link_pkgconfig
-  # unix:PKGCONFIG += xtl xtensor
-  # unix:INCLUDEPATH += /home/jimmy/workspace/git/xtensor-stack/xtl/include
-  # unix:INCLUDEPATH += /home/jimmy/workspace/git/xtensor-stack/xtensor/include
-  # header.files = $$HEADER_FILES $$HEADER_CLASSES
+# unix:CONFIG += link_pkgconfig
+# unix:PKGCONFIG += xtl xtensor
+# unix:INCLUDEPATH += /home/jimmy/workspace/git/xtensor-stack/xtl/include
+# unix:INCLUDEPATH += /home/jimmy/workspace/git/xtensor-stack/xtensor/include
+# header.files = $$HEADER_FILES $$HEADER_CLASSES
 }
 
 # unix {

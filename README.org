@@ -28,6 +28,8 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 * Note
   [WIP]
   开发中 ...
+
+  abquant is an early developer preview, and is not suitable for general usage yet. Features and implementation are subject to change.
 * 构建
   作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
@@ -37,6 +39,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   - 用户接口层 python
 ** cpp 依赖
    - ORM 层 [[https://github.com/yssource/treefrog-framework.git][treefrog-framework]] ::
+#+name: treefrog-framework
 #+begin_src shell :exports code
   git clone -b feature/withConan https://github.com/yssource/treefrog-framework.git
   cd treefrog-framework && mkdir -v qbuild && cd qbuild
@@ -45,7 +48,17 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   sudo make install
   sudo ldconfig
 #+end_src
+   - DataFrame 层 [[https://github.com/hosseinmoein/DataFrame.git][DataFrame]] ::
+#+name: dataframe
+#+begin_src shell :exports code
+  git clone https://github.com/hosseinmoein/DataFrame.git
+  cd DataFrame && cmake -H. -Bbuild -GNinja
+  ninja -C build
+  sudo ninja -C build install
+  sudo ldconfig
+#+end_src
    - abquant 核心应用层 ::
+#+name: abquant-building
 #+begin_src shell :exports code
   git clone https://github.com/yssource/abquant-data.git
   cd abquant-data && mkdir -v qbuild && cd qbuild
@@ -53,7 +66,27 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   conan build ..
   sudo make install
   sudo ldconfig
+
+  # binding
+  cd abquant-data && mkdir -v cbuild && cd cbuild
+  conan install .. --build missing --pr ../abquant.profile
+  conan build ..
+
+  # todo:: qbuild, cbuild 将来会直接放在 setup.py 中作为 ext_modules 完成。
+  # 用户只需 pip install -e .
 #+end_src
+** python 依赖安装
+   #+begin_src python :exports code
+     pip install -r requirements-dev.txt
+     pip install -e .
+   #+end_src
+** 环境变量
+   #+begin_src shell :exports code
+     export ABQ_HOME=${PWD}
+     export ABQ_CXX_HOME="${ABQ_HOME}/cxx"
+     export LD_LIBRARY_PATH="${ABQ_HOME}/lib:${LD_LIBRARY_PATH}"
+     export PYTHONPATH="${ABQ_HOME}/lib:${PYTHONPATH}"
+   #+end_src
 * Usage
 ** abquant config
      #+name: config
