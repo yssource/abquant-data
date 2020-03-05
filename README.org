@@ -18,7 +18,7 @@
 A&B professional platform for quantitative finance. God is asking & bidding Me. ABQ.
 
 abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交易
-- qbquant-data ::
+- abquant-data ::
   开源项目
 - abquant-strategy ::
   闭源项目，基于 zeromg/nanomsg
@@ -29,7 +29,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   [WIP]
   开发中 ...
 
-  abquant is an early developer preview, and is not suitable for general usage yet. Features and implementation are subject to change.
+  ABQuant is an early developer preview, and is not suitable for general usage yet. Features and implementation are subject to change.
 * 构建
   作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\

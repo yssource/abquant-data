@@ -19,5 +19,7 @@ logbook
 tqdm
 simplejson
 retrying
+matplotlib
+seaborn
 
 pytest
