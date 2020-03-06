@@ -50,7 +50,7 @@ public:
     MyDataFrame toDataFrame() const;
 
     template <typename T>
-    QMap<const char*, QVector<T>> toSerie(const char*) const noexcept;
+    QVector<T> toSeries(const char*) const noexcept;
 
 private:
     QList<StockDay> m_stockdays;
@@ -83,65 +83,69 @@ private:
 };
 
 template <typename T>
-QMap<const char*, QVector<T>> StockDayAction::toSerie(const char* col) const noexcept
+QVector<T> StockDayAction::toSeries(const char* col) const noexcept
 {
-    QVector<T> data;
-    QMap<const char*, QVector<T>> serie;
+    QVector<T> series;
     auto cols = getColumns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        return serie;
+        return series;
     }
     for (auto s : getStocks()) {
         if constexpr (std::is_same_v<T, double>) {
+            if (QString("open") == QString(col)) {
+                series << s.open();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
             if (QString("close") == QString(col)) {
-                data << s.close();
+                series << s.close();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("high") == QString(col)) {
-                data << s.high();
+                series << s.high();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("low") == QString(col)) {
-                data << s.low();
+                series << s.low();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("vol") == QString(col)) {
-                data << s.vol();
+                series << s.vol();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("amount") == QString(col)) {
-                data << s.amount();
+                series << s.amount();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("date") == QString(col)) {
-                data << s.date();
+                series << s.date();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("code") == QString(col)) {
-                data << s.code();
+                series << s.code();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("date_stamp") == QString(col)) {
-                data << s.dateStamp();
+                series << s.dateStamp();
                 continue;
             }
         }
     }
-    serie.insert(col, data);
-    return serie;
+    return series;
 }
 } // namespace abq

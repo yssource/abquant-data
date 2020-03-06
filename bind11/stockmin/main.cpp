@@ -1,66 +1,75 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <QtCore/QObject>
 #include <iostream>
+#include <string>
+#include <vector>
+// #include <pybind11/stl_bind.h>
 
 #include "abquant/actions/abquant.hpp"
 #include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/utils.hpp"
 
-using namespace std;
+// using namespace std;
 namespace abq
 {
-int add(int i, int j) { return i + j; }
-
-size_t stock()
+class PyStockMin
 {
-    Abquant::start();
-    QStringList codes = {"000001", "000002", "000003"};
-    // QStringList codes = {"000001"};
-    const char* start = "2017-01-01";
-    const char* end   = "2019-12-01";
-    MIN_FREQ freq     = MIN_FREQ::FIVE;
+public:
+    PyStockMin(std::vector<std::string> codes, const string& start, const string& end, const string& sfreq = "5min")
+        : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}
+    {
+        Abquant::start();
+    };
 
-    StockMinAction sma(codes, start, end, freq);
+    size_t toQfq() const
+    {
+        MIN_FREQ freq;
+        if (QString::fromStdString(m_sfreq) == QString("5min")) {
+            freq = MIN_FREQ::FIVE;
+        }
 
-    auto fq = sma.toFq(FQ_TYPE::PRE);
-    return fq.get_index().size();
-}
+        QStringList qcodes;
+        for (auto c : m_codes) {
+            qcodes << QString::fromStdString(c);
+        }
+        StockMinAction sma(qcodes, m_start.c_str(), m_end.c_str(), freq);
+        auto fq = sma.toFq(FQ_TYPE::PRE);
+        return fq.get_index().size();
+    }
+    ~PyStockMin() = default;
+
+private:
+    std::vector<std::string> m_codes;
+    const string m_start;
+    const string m_end;
+    const string m_sfreq;
+    // StockMinAction m_sam;
+};
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(abqstockmin, m)
 {
     m.doc() = R"pbdoc(
-        Pybind11 example plugin
+        Pybind11 StockMin plugin
         -----------------------
 
-        .. currentmodule:: cmake_example
+        .. abqstockmin:: currentmodule_exmaple
 
         .. autosummary::
-           :toctree: _generate
+           :stockmin: toQfq
 
-           add
-           subtract
+           toQfq
     )pbdoc";
 
-    m.def("add", &add, R"pbdoc(
-        Add two numbers
+    py::class_<PyStockMin> sm_class(m, "PyStockMin");
+    sm_class.def(py::init<std::vector<std::string>, const string, const string, const string>())
+        .def("toQfq", &PyStockMin::toQfq, R"pbdoc(
+        toQfq
 
-        Some other explanation about the add function.
-    )pbdoc");
-
-    m.def("stock", &stock, R"pbdoc(
-        abqstockmin fffffff Add two numbers
-
-        Some other explanation about the add function.
-    )pbdoc");
-
-    m.def(
-        "subtract", [](int i, int j) { return i - j; }, R"pbdoc(
-        Subtract two numbers
-
-        Some other explanation about the subtract function.
+        qfq function.
     )pbdoc");
 
 #ifdef VERSION_INFO

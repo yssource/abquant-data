@@ -84,7 +84,7 @@ protected:
 
 protected:
     template <typename T>
-    QMap<const char*, QVector<T>> toSerie(const char*) const noexcept;
+    QVector<T> toSeries(const char*) const noexcept;
 
     MyDataFrame toFq();
     MyDataFrame toDataFrame();
@@ -192,10 +192,10 @@ QList<S> StockAction<SA>::run(const QStringList codes, int category)
 
 template <class SA>
 template <typename T>
-QMap<const char*, QVector<T>> StockAction<SA>::toSerie(const char* col) const noexcept
+QVector<T> StockAction<SA>::toSeries(const char* col) const noexcept
 {
     auto sa = derived_cast();
-    return sa->toSerie(col);
+    return sa->toSeries(col);
 }
 
 template <class SA>

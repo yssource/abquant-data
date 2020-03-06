@@ -30,25 +30,29 @@ public:
     StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE);
 
     //! Copy constructor
-    StockMinAction(const StockMinAction &other) = default;
+    StockMinAction(const StockMinAction& other) = default;
 
     //! Move constructor
-    StockMinAction(StockMinAction &&other) noexcept = default;
+    StockMinAction(StockMinAction&& other) noexcept = default;
 
     //! Destructor
     virtual ~StockMinAction() noexcept = default;
 
     //! Copy assignment operator
-    StockMinAction &operator=(const StockMinAction &other) = default;
+    StockMinAction& operator=(const StockMinAction& other) = default;
 
     //! Move assignment operator
-    StockMinAction &operator=(StockMinAction &&other) noexcept = default;
+    StockMinAction& operator=(StockMinAction&& other) noexcept = default;
 
     inline QList<StockMin> getStocks() const { return m_stockmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };
 
     MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE);
     MyDataFrame toDataFrame() const;
+
+    template <typename T>
+    QVector<T> toSeries(const char*) const noexcept;
+
 private:
     QList<StockMin> m_stockmins;
     const QVector<const char*> m_columns = {"open",     "close", "high", "low",       "vol",       "amount",
@@ -79,4 +83,89 @@ private:
         return d;
     }
 };
+
+template <typename T>
+QVector<T> StockMinAction::toSeries(const char* col) const noexcept
+{
+    QVector<T> series;
+    auto cols = getColumns();
+    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
+        return series;
+    }
+    for (auto s : getStocks()) {
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("open") == QString(col)) {
+                series << s.open();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("close") == QString(col)) {
+                series << s.close();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("high") == QString(col)) {
+                series << s.high();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("low") == QString(col)) {
+                series << s.low();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("vol") == QString(col)) {
+                series << s.vol();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("amount") == QString(col)) {
+                series << s.amount();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("datetime") == QString(col)) {
+                series << s.datetime();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, QString>) {
+            if (QString("code") == QString(col)) {
+                series << s.code();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, QString>) {
+            if (QString("date") == QString(col)) {
+                series << s.date();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("datestamp") == QString(col)) {
+                series << s.dateStamp();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("timestamp") == QString(col)) {
+                series << s.timeStamp();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, QString>) {
+            if (QString("type") == QString(col)) {
+                series << s.type();
+                continue;
+            }
+        }
+    }
+    return series;
+}
 } // namespace abq

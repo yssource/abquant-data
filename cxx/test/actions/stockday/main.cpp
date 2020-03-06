@@ -80,7 +80,7 @@ void TestStockDay::initTestCase()
     // StockXdxrAction sc(codes);
     // qDebug() << sc << "\n";
 
-    // auto mm0 = sa.toSerie<QString>("code");
+    // auto mm0 = sa.toSeries<QString>("code");
     // for (auto o : mm0) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -88,14 +88,14 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n code000 \n";
 
-    // auto mm = sa.toSerie<double>("close");
+    // auto mm = sa.toSeries<double>("close");
     // for (auto o : mm) {
     //     for (auto i : o) {
     //         qDebug() << i;
     //     }
     // }
 
-    // auto mm2 = sa.toSerie<double>("high");
+    // auto mm2 = sa.toSeries<double>("high");
     // for (auto o : mm2) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -103,7 +103,7 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n close \n";
 
-    // auto mm3 = sa.toSerie<QString>("date");
+    // auto mm3 = sa.toSeries<QString>("date");
     // for (auto o : mm3) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -111,7 +111,7 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n date \n";
 
-    // auto mm4 = sc.toSerie<double>("peigu");
+    // auto mm4 = sc.toSeries<double>("peigu");
     // for (auto o : mm4) {
     //     for (auto i : o) {
     //         qDebug() << i;

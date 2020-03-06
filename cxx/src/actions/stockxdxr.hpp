@@ -36,7 +36,7 @@ public:
     virtual ~StockXdxrAction() noexcept = default;
 
     template <typename T>
-    QMap<const char*, QVector<T>> toSerie(const char*) const noexcept;
+    QVector<T> toSeries(const char*) const noexcept;
 
     //! Copy assignment operator
     StockXdxrAction& operator=(const StockXdxrAction& other) = default;
@@ -94,114 +94,112 @@ private:
 };
 
 template <typename T>
-QMap<const char*, QVector<T>> StockXdxrAction::toSerie(const char* col) const noexcept
+QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
 {
-    QVector<T> data;
-    QMap<const char*, QVector<T>> serie;
+    QVector<T> series;
     auto cols = getColumns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        return serie;
+        return series;
     }
     for (auto s : getStocks()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("category") == QString(col)) {
-                data << static_cast<double>(s.category());
+                series << static_cast<double>(s.category());
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("name") == QString(col)) {
-                data << s.name();
+                series << s.name();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("fenhong") == QString(col)) {
-                data << s.fenhong();
+                series << s.fenhong();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("peigujia") == QString(col)) {
-                data << s.peigujia();
+                series << s.peigujia();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("songzhuangu") == QString(col)) {
-                data << s.songzhuangu();
+                series << s.songzhuangu();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("peigu") == QString(col)) {
-                data << s.peigu();
+                series << s.peigu();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("suogu") == QString(col)) {
-                data << s.suogu();
+                series << s.suogu();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("liquidity_before") == QString(col)) {
-                data << s.liquidityBefore();
+                series << s.liquidityBefore();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("liquidity_after") == QString(col)) {
-                data << s.liquidityAfter();
+                series << s.liquidityAfter();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("shares_before") == QString(col)) {
-                data << s.sharesBefore();
+                series << s.sharesBefore();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("shares_after") == QString(col)) {
-                data << s.sharesAfter();
+                series << s.sharesAfter();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("fenshu") == QString(col)) {
-                data << s.fenshu();
+                series << s.fenshu();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("xingquanjia") == QString(col)) {
-                data << s.xingquanjia();
+                series << s.xingquanjia();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("date") == QString(col)) {
-                data << s.date();
+                series << s.date();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("category_meaning") == QString(col)) {
-                data << s.categoryMeaning();
+                series << s.categoryMeaning();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, QString>) {
             if (QString("code") == QString(col)) {
-                data << s.code();
+                series << s.code();
                 continue;
             }
         }
     }
-    serie.insert(col, data);
-    return serie;
+    return series;
 }
 
 } // namespace abq
