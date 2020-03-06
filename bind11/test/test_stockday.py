@@ -9,8 +9,8 @@ class MainTest(unittest.TestCase):
         codes = ["000001"]
         start = "2019-01-01"
         end = "2019-12-01"
-        sm = stockday(codes, start, end)
-        series = sm.toSeries("open")
+        sd = stockday(codes, start, end)
+        series = sd.toSeries("open")
         self.assertTrue(len(series) > 0)
         self.assertEqual(series[0], 9.39)
 

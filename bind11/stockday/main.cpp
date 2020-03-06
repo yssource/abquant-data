@@ -39,15 +39,8 @@ public:
             for (auto c : m_codes) {
                 qcodes << QString::fromStdString(c);
             }
-
             StockDayAction sda(qcodes, m_start.c_str(), m_end.c_str());
             auto seriese = sda.toSeries<double>(col.c_str());
-            std::cout << "seriese: " << seriese.size() << "\n";
-            for (auto s : seriese) {
-                qDebug() << "s: " << s;
-            }
-
-            // return "toSeries";
             return seriese.toStdVector();
         }
     ~PyStockDay() = default;

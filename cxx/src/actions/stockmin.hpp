@@ -55,8 +55,8 @@ public:
 
 private:
     QList<StockMin> m_stockmins;
-    const QVector<const char*> m_columns = {"open",     "close", "high", "low",       "vol",       "amount",
-                                            "datetime", "code",  "date", "datestamp", "timestamp", "type"};
+    const QVector<const char*> m_columns = {"open",     "close", "high", "low",        "vol",        "amount",
+                                            "datetime", "code",  "date", "date_stamp", "time_stamp", "type"};
     QStringList m_codes;
     const char* m_start;
     const char* m_end;
@@ -148,13 +148,13 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
             }
         }
         if constexpr (std::is_same_v<T, double>) {
-            if (QString("datestamp") == QString(col)) {
+            if (QString("date_stamp") == QString(col)) {
                 series << s.dateStamp();
                 continue;
             }
         }
         if constexpr (std::is_same_v<T, double>) {
-            if (QString("timestamp") == QString(col)) {
+            if (QString("time_stamp") == QString(col)) {
                 series << s.timeStamp();
                 continue;
             }
