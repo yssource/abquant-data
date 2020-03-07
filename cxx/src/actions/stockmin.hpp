@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QDebug>
+#include <algorithm>
 #include <iostream>
 
 #include "abquant/actions/stock.hpp"
@@ -25,15 +26,15 @@ class StockMinAction : public StockAction<StockMinAction>
 {
 public:
     //! Default constructor
-    StockMinAction() = delete;
+    StockMinAction() = default;
 
     StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE);
 
     //! Copy constructor
-    StockMinAction(const StockMinAction& other) = default;
+    StockMinAction(const StockMinAction& other) = delete;
 
     //! Move constructor
-    StockMinAction(StockMinAction&& other) noexcept = default;
+    StockMinAction(StockMinAction&& other) noexcept = delete;
 
     //! Destructor
     virtual ~StockMinAction() noexcept = default;
@@ -42,7 +43,18 @@ public:
     StockMinAction& operator=(const StockMinAction& other) = default;
 
     //! Move assignment operator
-    StockMinAction& operator=(StockMinAction&& other) noexcept = default;
+    StockMinAction& operator=(StockMinAction&& other) noexcept
+    {
+        if (&other == this) {
+            return *this;
+        }
+        std::swap(m_codes, other.m_codes);
+        std::swap(m_start, other.m_start);
+        std::swap(m_end, other.m_end);
+        std::swap(m_freq, other.m_freq);
+        std::swap(m_stockmins, other.m_stockmins);
+        return *this;
+    }
 
     inline QList<StockMin> getStocks() const { return m_stockmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };

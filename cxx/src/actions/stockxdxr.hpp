@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QDebug>
+#include <algorithm>
 #include <iostream>
 
 #include "abquant/actions/stock.hpp"
@@ -23,14 +24,14 @@ class StockXdxrAction : public StockAction<StockXdxrAction>
 {
 public:
     //! Default constructor
-    StockXdxrAction() = delete;
+    StockXdxrAction() = default;
 
     StockXdxrAction(const QStringList codes, int category = 1);
     //! Copy constructor
-    StockXdxrAction(const StockXdxrAction& other) = default;
+    StockXdxrAction(const StockXdxrAction& other) = delete;
 
     //! Move constructor
-    StockXdxrAction(StockXdxrAction&& other) noexcept = default;
+    StockXdxrAction(StockXdxrAction&& other) noexcept = delete;
 
     //! Destructor
     virtual ~StockXdxrAction() noexcept = default;
@@ -42,7 +43,16 @@ public:
     StockXdxrAction& operator=(const StockXdxrAction& other) = default;
 
     //! Move assignment operator
-    StockXdxrAction& operator=(StockXdxrAction&& other) noexcept = default;
+    StockXdxrAction& operator=(StockXdxrAction&& other) noexcept
+    {
+        if (&other == this) {
+            return *this;
+        }
+        std::swap(m_codes, other.m_codes);
+        std::swap(m_category, other.m_category);
+        std::swap(m_stockxdxrs, other.m_stockxdxrs);
+        return *this;
+    }
 
     inline QList<StockXdxr> getStocks() const { return m_stockxdxrs; };
     inline QVector<const char*> getColumns() const { return m_columns; };

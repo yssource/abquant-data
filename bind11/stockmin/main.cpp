@@ -5,7 +5,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-// #include <pybind11/stl_bind.h>
 
 #include "abquant/actions/abquant.hpp"
 #include "abquant/actions/stockmin.hpp"
@@ -21,10 +20,6 @@ public:
         : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}
     {
         Abquant::start();
-    };
-
-    size_t toQfq() const
-    {
         MIN_FREQ freq;
         if (QString::fromStdString(m_sfreq) == QString("5min")) {
             freq = MIN_FREQ::FIVE;
@@ -34,18 +29,22 @@ public:
         for (auto c : m_codes) {
             qcodes << QString::fromStdString(c);
         }
-        StockMinAction sma(qcodes, m_start.c_str(), m_end.c_str(), freq);
-        auto fq = sma.toFq(FQ_TYPE::PRE);
+        m_sma = StockMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq);
+    };
+
+    size_t toQfq()
+    {
+        auto fq = m_sma.toFq(FQ_TYPE::PRE);
         return fq.get_index().size();
     }
     ~PyStockMin() = default;
 
 private:
-    std::vector<std::string> m_codes;
-    const string m_start;
-    const string m_end;
-    const string m_sfreq;
-    // StockMinAction m_sam;
+    std::vector<std::string> m_codes{};
+    const string m_start{};
+    const string m_end{};
+    const string m_sfreq{};
+    StockMinAction m_sma{};
 };
 
 namespace py = pybind11;

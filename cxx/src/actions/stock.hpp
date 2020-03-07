@@ -63,15 +63,15 @@ public:
 
 protected:
     //! Default constructor
-    StockAction() = delete;
+    StockAction() = default;
 
     StockAction(QStringList);
 
     //! Copy constructor
-    StockAction(const StockAction& other) = default;
+    StockAction(const StockAction& other) = delete;
 
     //! Move constructor
-    StockAction(StockAction&& other) noexcept = default;
+    StockAction(StockAction&& other) noexcept = delete;
 
     // ! Destructor
     ~StockAction() noexcept = default;

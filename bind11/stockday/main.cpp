@@ -20,36 +20,31 @@ public:
         : m_codes{codes}, m_start{start}, m_end{end}
     {
         Abquant::start();
-    };
-
-    size_t toQfq() const
-    {
         QStringList qcodes;
-        for (auto c : m_codes) {
+        for (auto c : codes) {
             qcodes << QString::fromStdString(c);
         }
-        StockDayAction sda(qcodes, m_start.c_str(), m_end.c_str());
-        auto fq = sda.toFq(FQ_TYPE::PRE);
+        m_sda = StockDayAction(qcodes, m_start.c_str(), m_end.c_str());
+    };
+
+    size_t toQfq()
+    {
+        auto fq = m_sda.toFq(FQ_TYPE::PRE);
         return fq.get_index().size();
     }
 
     std::vector<double> toSeries(const string& col) const noexcept
-        {
-            QStringList qcodes;
-            for (auto c : m_codes) {
-                qcodes << QString::fromStdString(c);
-            }
-            StockDayAction sda(qcodes, m_start.c_str(), m_end.c_str());
-            auto seriese = sda.toSeries<double>(col.c_str());
-            return seriese.toStdVector();
-        }
+    {
+        auto seriese = m_sda.toSeries<double>(col.c_str());
+        return seriese.toStdVector();
+    }
     ~PyStockDay() = default;
 
 private:
-    std::vector<std::string> m_codes;
-    const string m_start;
-    const string m_end;
-    // StockDayAction m_sam;
+    std::vector<std::string> m_codes{};
+    const string m_start{};
+    const string m_end{};
+    StockDayAction m_sda{};
 };
 
 namespace py = pybind11;
@@ -69,14 +64,13 @@ PYBIND11_MODULE(abqstockday, m)
     )pbdoc";
 
     py::class_<PyStockDay> sm_class(m, "PyStockDay");
-    sm_class
-        .def(py::init<std::vector<std::string>, const string, const string>())
+    sm_class.def(py::init<std::vector<std::string>, const string, const string>())
         .def("toQfq", &PyStockDay::toQfq, R"pbdoc(
         toQfq
 
         qfq function.
     )pbdoc")
-    .def("toSeries", &PyStockDay::toSeries, R"pbdoc(
+        .def("toSeries", &PyStockDay::toSeries, R"pbdoc(
         toSeries
 
         toSeries function.
