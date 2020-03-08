@@ -195,11 +195,12 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
      }
    #+end_src
 ** binding 层
-   #+begin_src shell
+   #+name: binding-plot
+   #+begin_src shell :exports both
      python ./bind11/test/test_plot.py
    #+end_src
 
-   #+RESULTS:
+   #+RESULTS: binding-plot
    #+begin_example
                          open  close   high    low        vol        amount    date_stamp
      code   date
