@@ -936,6 +936,16 @@ def get_stock_xdxr(code, ip=None, port=None):
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
+def get_stock_info(code, ip=None, port=None):
+    "股票基本信息"
+    ip, port = get_mainmarket_ip(ip, port)
+    api = TdxHq_API()
+    market_code = select_market_code(code)
+    with api.connect(ip, port):
+        return api.to_df(api.get_finance_info(market_code, code))
+
+
+@retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
 def get_stock_block(ip=None, port=None):
     "板块数据"
     ip, port = get_mainmarket_ip(ip, port)

@@ -129,3 +129,10 @@ def create_stock_block():
     brokers_api = [get_broker_api(b) for b in ["tdx", "ths", "qa"]]
     s = broker.Stock()
     s.create_block(brokers_api=brokers_api)
+
+
+@time_counter
+def create_stock_info(codes):
+    broker = get_broker()
+    s = broker.Stock(codes=codes)
+    s.create_info()

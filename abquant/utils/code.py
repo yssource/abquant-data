@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def code_tostr(code):
     """
     explanation:

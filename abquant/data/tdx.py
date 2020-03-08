@@ -14,6 +14,7 @@ from abquant.data.tdx_api import (
     get_index_min,
     get_stock_min,
     get_stock_xdxr,
+    get_stock_info,
 )
 
 from abquant.data.base import ISecurity, ISecurityVisitor
@@ -303,6 +304,73 @@ class Stock(ISecurity):
             with Setting.ERROR_CODES_JSON.open(mode="w") as f:
                 json.dump(errs, f)
 
+    def create_info(self, *args, **kwargs):
+        """save index_day
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        stockOrIndex = kwargs.pop("stockOrIndex", "stock")
+        stockOrIndexList = (
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(stockOrIndex)
+                if stockOrIndex == "index"
+                else get_stock_list().code.unique().tolist()
+            )
+        )
+        self._db.drop_collection("stock_info")
+        coll = self._db.stock_info
+        coll.create_index([("code", pymongo.ASCENDING)])
+        err = []
+
+        def saving_work(idx):
+            code = (
+                stockOrIndexList.index[idx][0]
+                if stockOrIndex == "index"
+                else stockOrIndexList[idx]
+            )
+            try:
+                begin = datetime.datetime.now()
+                df = get_stock_info(str(code))
+                if df is None or df.empty:
+                    slog.warn("df is empty. {}|{}|{}".format(code))
+                    return
+                coll.insert_many(to_json_from_pandas(df))
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "{}, {:<04.2}s".format(
+                    "{} {}".format(stockOrIndex, code), interval,
+                )
+                for _ in trange(df.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+                err.append(code)
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=4) as p:
+            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+
+        if len(err) < 1:
+            slog.info("SUCCESS")
+        else:
+            slog.info(" ERROR CODE \n ")
+            slog.info(err)
+            errs = dict()
+            if Setting.ERROR_CODES_JSON.exists():
+                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
+                    try:
+                        errs = json.load(f)
+                    except Exception:
+                        pass
+            errs["{}_{}_info".format(self.getClassName(), stockOrIndex)] = list(
+                set(err)
+            )
+            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
+                json.dump(errs, f)
+
     def create_block(self, *args, **kwargs):
         """save stock block
 
@@ -317,7 +385,6 @@ class Stock(ISecurity):
         def saving_work(b_api):
             try:
                 begin = datetime.datetime.now()
-                # import pudb; pudb.set_trace()
                 data = b_api.get_stock_block()
                 coll.insert_many(to_json_from_pandas(data))
                 finish = datetime.datetime.now()

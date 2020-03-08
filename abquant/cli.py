@@ -11,6 +11,7 @@ from abquant.data.base import (
     create_stock_min,
     create_stock_xdxr,
     create_stock_block,
+    create_stock_info,
     create_base,
 )
 
@@ -122,6 +123,26 @@ def stock_xdxr(codes):
     if not codes and isinstance(codes, (str,)):
         codes = []
     create_stock_xdxr(codes)
+
+
+@stock.command("info")
+@click.option(
+    "codes", "--add", default="", help="Append stocks info collection. Default=False."
+)
+def stock_info(codes):
+    """stock info."""
+    if codes and isinstance(codes, (str,)):
+        try:
+            codes = json.loads(codes)
+        except Exception as e:
+            slog.error("--add {} format is invalid.".format(codes))
+            slog.error(
+                'Please using such a format. --add \'["000001", "300001", "600001"]\''
+            )
+            return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
+    create_stock_info(codes)
 
 
 @stock.command("block")
