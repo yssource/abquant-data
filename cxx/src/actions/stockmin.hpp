@@ -141,21 +141,21 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, double>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("datetime") == QString(col)) {
-                series << s.datetime();
+                series << s.datetime().toStdString();
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("code") == QString(col)) {
-                series << s.code();
+                series << s.code().toStdString();
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("date") == QString(col)) {
-                series << s.date();
+                series << s.date().toStdString();
                 continue;
             }
         }
@@ -171,9 +171,9 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("type") == QString(col)) {
-                series << s.type();
+                series << s.type().toStdString();
                 continue;
             }
         }

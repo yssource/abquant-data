@@ -1,9 +1,12 @@
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <QtCore/QObject>
+#include <cstring>
 #include <iostream>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 #include "abquant/actions/abquant.hpp"
@@ -33,9 +36,10 @@ public:
         return fq.get_index().size();
     }
 
-    std::vector<double> toSeries(const string& col) const noexcept
+    template <class T>
+    std::vector<T> toSeries(const string& col) const noexcept
     {
-        auto seriese = m_sda.toSeries<double>(col.c_str());
+        auto seriese = m_sda.toSeries<T>(col.c_str());
         return seriese.toStdVector();
     }
     ~PyStockDay() = default;
@@ -70,10 +74,15 @@ PYBIND11_MODULE(abqstockday, m)
 
         qfq function.
     )pbdoc")
-        .def("toSeries", &PyStockDay::toSeries, R"pbdoc(
-        toSeries
+        .def("toSeries", &PyStockDay::toSeries<double>, R"pbdoc(
+        toSeries double
 
-        toSeries function.
+        toSeries double function.
+    )pbdoc")
+        .def("toSeries_string", &PyStockDay::toSeries<std::string>, R"pbdoc(
+        toSeries string
+
+        toSeries string function.
     )pbdoc");
 
 #ifdef VERSION_INFO

@@ -64,10 +64,9 @@ public:
     QVector<T> toSeries(const char*) const noexcept;
 
 private:
-    QList<StockDay> m_stockdays          = {};
-    const QVector<const char*> m_columns = {"open",   "close", "high", "low",       "vol",
-                                            "amount", "date",  "code", "date_stamp"};
-    QStringList m_codes                  = {};
+    QList<StockDay> m_stockdays{};
+    const QVector<const char*> m_columns{"open", "close", "high", "low", "vol", "amount", "date", "code", "date_stamp"};
+    QStringList m_codes{};
     const char* m_start{};
     const char* m_end{};
 
@@ -138,15 +137,15 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("date") == QString(col)) {
-                series << s.date();
+                series << s.date().toStdString();
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("code") == QString(col)) {
-                series << s.code();
+                series << s.code().toStdString();
                 continue;
             }
         }

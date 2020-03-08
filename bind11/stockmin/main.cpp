@@ -37,6 +37,13 @@ public:
         auto fq = m_sma.toFq(FQ_TYPE::PRE);
         return fq.get_index().size();
     }
+
+    template <class T>
+    std::vector<T> toSeries(const string& col) const noexcept
+    {
+        auto seriese = m_sma.toSeries<T>(col.c_str());
+        return seriese.toStdVector();
+    }
     ~PyStockMin() = default;
 
 private:
@@ -69,6 +76,16 @@ PYBIND11_MODULE(abqstockmin, m)
         toQfq
 
         qfq function.
+    )pbdoc")
+        .def("toSeries", &PyStockMin::toSeries<double>, R"pbdoc(
+        toSeries double
+
+        toSeries double function.
+    )pbdoc")
+        .def("toSeries_string", &PyStockMin::toSeries<std::string>, R"pbdoc(
+        toSeries string
+
+        toSeries string function.
     )pbdoc");
 
 #ifdef VERSION_INFO

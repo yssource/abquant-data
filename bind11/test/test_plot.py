@@ -25,6 +25,9 @@ class MainTest(unittest.TestCase):
         high = sd.toSeries("high")
         low = sd.toSeries("low")
         vol = sd.toSeries("vol")
+        amount = sd.toSeries("amount")
+        date = sd.toSeries_string("date")
+        code = sd.toSeries_string("code")
         date_stamp = sd.toSeries("date_stamp")
 
         df = pd.DataFrame(
@@ -34,15 +37,19 @@ class MainTest(unittest.TestCase):
                 "high": high,
                 "low": low,
                 "vol": vol,
+                "amount": amount,
+                "date": date,
+                "code": code,
                 "date_stamp": date_stamp,
             }
         )
-        print(df.head(20))
+        df.set_index(["code", "date"], inplace=True)
 
+        print(df.head(20))
         fig = plt.figure()
         ax = fig.add_subplot(111)
         code = "000001"
-        ax.set_title(code, fontsize='large')
+        ax.set_title(code, fontsize="large")
         df.plot(kind="line", x="date_stamp", y="open", color="red", ax=ax)
         img = "/tmp/abqstockday.png"
         fig.savefig(img)

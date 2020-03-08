@@ -118,7 +118,7 @@ QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("name") == QString(col)) {
                 series << s.name();
                 continue;
@@ -190,19 +190,19 @@ QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("date") == QString(col)) {
                 series << s.date();
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("category_meaning") == QString(col)) {
                 series << s.categoryMeaning();
                 continue;
             }
         }
-        if constexpr (std::is_same_v<T, QString>) {
+        if constexpr (std::is_same_v<T, std::string>) {
             if (QString("code") == QString(col)) {
                 series << s.code();
                 continue;

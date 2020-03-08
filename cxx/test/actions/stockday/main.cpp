@@ -80,7 +80,8 @@ void TestStockDay::initTestCase()
     // StockXdxrAction sc(codes);
     // qDebug() << sc << "\n";
 
-    // auto mm0 = sa.toSeries<QString>("code");
+    // auto mm0 = sa.toSeries<std::string>("code");
+    // qDebug() << "------- mm0 " << mm0.size() << "\n";
     // for (auto o : mm0) {
     //     for (auto i : o) {
     //         qDebug() << i;
