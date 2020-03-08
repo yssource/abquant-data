@@ -74,7 +74,6 @@ MyDataFrame Xdxr<SA>::concat(MyDataFrame& ldf, MyDataFrame& rdf) const
 {
     MyDataFrame join_df =
         ldf.join_by_index<std::decay_t<decltype(rdf)>, std::string, double, int>(rdf, join_policy::left_right_join);
-    // join_df.write<std::ostream, std::string, double, int>(std::cout);
     return join_df;
 }
 
@@ -106,8 +105,8 @@ void Xdxr<SA>::fillConcatDataframe(MyDataFrame& df) const
 template <class SA>
 MyDataFrame Xdxr<SA>::calc(MyDataFrame& df, FQ_TYPE fq) const
 {
-    auto lhs_code      = df.get_column<string>("lhs.code");
-    auto rhs_code      = df.get_column<string>("rhs.code");
+    auto lhs_code    = df.get_column<string>("lhs.code");
+    auto rhs_code    = df.get_column<string>("rhs.code");
     auto open        = df.get_column<double>("open");
     auto close       = df.get_column<double>("close");
     auto high        = df.get_column<double>("high");

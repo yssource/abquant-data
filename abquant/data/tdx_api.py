@@ -113,7 +113,7 @@ def select_best_ip():
     )
 
     slog.debug(
-        "=== The BEST SERVER ===\n stock_ip {} future_ip {}".format(
+        "=== The BEST SERVER === stock_ip: {} future_ip: {}".format(
             best_stock_ip["ip"], best_future_ip["ip"]
         )
     )
@@ -169,10 +169,10 @@ def get_ip_list_by_multi_process_ping(ip_list=[], n=0, _type="stock", cache_age=
 def get_mainmarket_ip(ip, port):
     """[summary]
     Arguments:
-        ip {[type]} -- [description]
-        port {[type]} -- [description]
+        ip {[type_]} -- [description]
+        port {[type_]} -- [description]
     Returns:
-        [type] -- [description]
+        [type_] -- [description]
     """
 
     global best_ip
@@ -290,14 +290,14 @@ def get_stock_list(type_="stock", ip=None, port=None):
 def get_security_bars(code, _type, lens, ip=None, port=None):
     """按bar长度推算数据
     Arguments:
-        code {[type]} -- [description]
-        _type {[type]} -- [description]
-        lens {[type]} -- [description]
+        code {[type_]} -- [description]
+        _type {[type_]} -- [description]
+        lens {[type_]} -- [description]
     Keyword Arguments:
-        ip {[type]} -- [description] (default: {best_ip})
-        port {[type]} -- [description] (default: {7709})
+        ip {[type_]} -- [description] (default: {best_ip})
+        port {[type_]} -- [description] (default: {7709})
     Returns:
-        [type] -- [description]
+        [type_] -- [description]
     """
     ip, port = get_mainmarket_ip(ip, port)
     api = TdxHq_API()
@@ -325,7 +325,7 @@ def get_security_bars(code, _type, lens, ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type=_type,
+                type_=_type,
                 code=str(code),
             )
             .set_index("datetime", drop=False, inplace=False)
@@ -428,15 +428,15 @@ def get_index_day(code, start_date, end_date, frequence="day", ip=None, port=Non
     1- sh
     0 -sz
     Arguments:
-        code {[type]} -- [description]
-        start_date {[type]} -- [description]
-        end_date {[type]} -- [description]
+        code {[type_]} -- [description]
+        start_date {[type_]} -- [description]
+        end_date {[type_]} -- [description]
     Keyword Arguments:
         frequence {str} -- [description] (default: {'day'})
-        ip {[type]} -- [description] (default: {None})
-        port {[type]} -- [description] (default: {None})
+        ip {[type_]} -- [description] (default: {None})
+        port {[type_]} -- [description] (default: {None})
     Returns:
-        [type] -- [description]
+        [type_] -- [description]
     """
 
     ip, port = get_mainmarket_ip(ip, port)
@@ -558,7 +558,7 @@ def get_stock_min(code, start, end, frequence="1min", ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type=type_,
+                type_=type_,
             )
             .set_index("datetime", drop=False, inplace=False)[start:end]
         )
@@ -835,7 +835,7 @@ def get_index_min(code, start, end, frequence="1min", ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type=type_,
+                type_=type_,
             )
             .set_index("datetime", drop=False, inplace=False)[start:end]
         )
@@ -847,10 +847,10 @@ def get_index_min(code, start, end, frequence="1min", ip=None, port=None):
 def QA_fetch_get_index_list(ip=None, port=None):
     """获取指数列表
     Keyword Arguments:
-        ip {[type]} -- [description] (default: {None})
-        port {[type]} -- [description] (default: {None})
+        ip {[type_]} -- [description] (default: {None})
+        port {[type_]} -- [description] (default: {None})
     Returns:
-        [type] -- [description]
+        [type_] -- [description]
     """
 
     ip, port = get_mainmarket_ip(ip, port)
@@ -933,3 +933,41 @@ def get_stock_xdxr(code, ip=None, port=None):
             return data.assign(date=data["date"].apply(lambda x: str(x)[0:10]))
         else:
             return None
+
+
+@retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
+def get_stock_block(ip=None, port=None):
+    "板块数据"
+    ip, port = get_mainmarket_ip(ip, port)
+    api = TdxHq_API()
+    with api.connect(ip, port):
+
+        data = pd.concat(
+            [
+                api.to_df(api.get_and_parse_block_info("block_gn.dat")).assign(
+                    type_="gn"
+                ),
+                api.to_df(api.get_and_parse_block_info("block.dat")).assign(type_="yb"),
+                api.to_df(api.get_and_parse_block_info("block_zs.dat")).assign(
+                    type_="zs"
+                ),
+                api.to_df(api.get_and_parse_block_info("block_fg.dat")).assign(
+                    type_="fg"
+                ),
+            ],
+            sort=False,
+        )
+
+        if len(data) > 10:
+            return (
+                data.assign(source="tdx")
+                .drop(["block_type", "code_index"], axis=1)
+                .set_index("code", drop=False, inplace=False)
+                .drop_duplicates()
+            )
+        else:
+            slog.debug("Wrong with fetch block ")
+
+
+def my_name():
+    return "TDX"

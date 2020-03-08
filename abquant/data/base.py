@@ -63,12 +63,26 @@ class SecurityVisitor(ISecurityVisitor):
 
 def get_broker(broker="tdx"):
     """Factory"""
-    if broker in ["tdx"]:
-        from . import tdx as TDX
-    if broker in ["ths"]:
-        from . import ths as THS
+    from . import tdx as TDX
+    from . import ths as THS
+    from . import qa as QA
     brokers = {
         "tdx": TDX,
+        "ths": THS,
+        "qa": QA,
+    }
+    return brokers[broker]
+
+
+def get_broker_api(broker="tdx"):
+    """Factory"""
+    from . import tdx_api as TDX_api
+    from . import ths_api as THS_api
+    from . import qa_api as QA_api
+    brokers = {
+        "tdx": TDX_api,
+        "ths": THS_api,
+        "qa": QA_api,
     }
     return brokers[broker]
 
@@ -107,3 +121,11 @@ def create_stock_xdxr(codes):
     broker = get_broker()
     s = broker.Stock(codes=codes)
     s.create_xdxr()
+
+
+@time_counter
+def create_stock_block():
+    broker = get_broker("tdx")
+    brokers_api = [get_broker_api(b) for b in ["tdx", "ths", "qa"]]
+    s = broker.Stock()
+    s.create_block(brokers_api=brokers_api)

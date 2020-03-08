@@ -81,7 +81,7 @@ class Setting(object):
         Setting.config = Setting.get_config(ini)
         value = Setting.config.get(section, key)
         msg = "{section} {key} is {value}".format(section=section, key=key, value=value)
-        ulog.info(msg)
+        # ulog.info(msg)
         return value
 
     @staticmethod

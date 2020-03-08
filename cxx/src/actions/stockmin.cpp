@@ -61,7 +61,6 @@ MyDataFrame StockMinAction::toDataFrame() const
         std::vector<std::string> type;
         std::vector<double> if_trade;
 
-        cout << "len(m_stockmins)" << m_stockmins.count() << "\n";
         foreach (auto s, m_stockmins) {
             datetimeCodeIdx.push_back((s.datetime() + QString("_") + s.code()).toStdString());
             open.push_back(s.open());

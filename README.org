@@ -126,6 +126,9 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # 1min 一分钟和 5min 五分钟
        abquant stock min -f '["1min", "5min"]'
        abquant stock min -f '["1min", "5min"]' --add '["000001", "300001", "600001"]'
+
+       # 股票数据板块
+       abquant stock block
        # ...
      #+end_src
 

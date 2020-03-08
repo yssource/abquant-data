@@ -216,7 +216,7 @@ class Stock(ISecurity):
                 json.dump(errs, f)
 
     def create_xdxr(self, *args, **kwargs):
-        """save index_xdxr
+        """save stock_xdxr
 
         Keyword Arguments:
             client {[type]} -- [description] (default: {DATABASE})
@@ -302,6 +302,35 @@ class Stock(ISecurity):
             errs["{}_xdxr".format(self.getClassName())] = list(set(err))
             with Setting.ERROR_CODES_JSON.open(mode="w") as f:
                 json.dump(errs, f)
+
+    def create_block(self, *args, **kwargs):
+        """save stock block
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        brokers_api = kwargs.get("brokers_api", [])
+        self._db.drop_collection("stock_block")
+        coll = self._db.stock_block
+        coll.create_index([("code", pymongo.ASCENDING)])
+
+        def saving_work(b_api):
+            try:
+                begin = datetime.datetime.now()
+                # import pudb; pudb.set_trace()
+                data = b_api.get_stock_block()
+                coll.insert_many(to_json_from_pandas(data))
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "stock block {}, {:<04.2}s".format(b_api.my_name(), interval)
+                for _ in trange(data.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=4) as p:
+            p.map(partial(saving_work), brokers_api)
 
 
 class Future(ISecurity):

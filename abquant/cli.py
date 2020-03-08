@@ -10,6 +10,7 @@ from abquant.data.base import (
     create_stock_day,
     create_stock_min,
     create_stock_xdxr,
+    create_stock_block,
     create_base,
 )
 
@@ -121,3 +122,9 @@ def stock_xdxr(codes):
     if not codes and isinstance(codes, (str,)):
         codes = []
     create_stock_xdxr(codes)
+
+
+@stock.command("block")
+def stock_block():
+    """stock block."""
+    create_stock_block()
