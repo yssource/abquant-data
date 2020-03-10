@@ -81,6 +81,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
      pip install -e .
    #+end_src
 ** 环境变量
+   请参照 .envrc 文件
    #+begin_src shell :exports code
      export ABQ_HOME=${PWD}
      export ABQ_CXX_HOME="${ABQ_HOME}/cxx"

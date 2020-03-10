@@ -7,7 +7,7 @@ import pymongo
 import concurrent
 from abquant.config import Setting
 from abquant.utils.datetime import now_time
-from abquant.utils.tdx import query_stock_day, stock_to_fq
+from abquant.utils.tdx import query_stock_day, stock_to_fq, save_error_log
 from abquant.data.tdx_api import (
     get_stock_day,
     get_index_day,
@@ -18,17 +18,12 @@ from abquant.data.tdx_api import (
 )
 
 from abquant.data.base import ISecurity, ISecurityVisitor
-from time import sleep
 from tqdm.auto import tqdm, trange
 from tqdm.contrib.concurrent import process_map, thread_map
-from random import random
-from multiprocessing import Pool, freeze_support
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from threading import RLock
 from functools import partial
-import sys
 import datetime
-import json
 
 
 # class Stock(object):
@@ -108,21 +103,7 @@ class Stock(ISecurity):
         with ThreadPoolExecutor(max_workers=4) as p:
             p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
-        if len(err) < 1:
-            slog.info("SUCCESS")
-        else:
-            slog.info(" ERROR CODE \n ")
-            slog.info(err)
-            errs = dict()
-            if Setting.ERROR_CODES_JSON.exists():
-                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
-                    try:
-                        errs = json.load(f)
-                    except Exception:
-                        pass
-            errs["{}_{}_day".format(self.getClassName(), stockOrIndex)] = list(set(err))
-            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
-                json.dump(errs, f)
+        save_error_log(err, "{}_{}_day".format(self.getClassName(), stockOrIndex))
 
     def create_min(self, *args, **kwargs):
         """save index_min
@@ -200,21 +181,7 @@ class Stock(ISecurity):
         with ThreadPoolExecutor(max_workers=4) as p:
             p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
-        if len(err) < 1:
-            slog.info("SUCCESS")
-        else:
-            slog.info(" ERROR CODE \n ")
-            slog.info(err)
-            errs = dict()
-            if Setting.ERROR_CODES_JSON.exists():
-                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
-                    try:
-                        errs = json.load(f)
-                    except Exception:
-                        pass
-            errs["{}_{}_min".format(self.getClassName(), stockOrIndex)] = list(set(err))
-            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
-                json.dump(errs, f)
+        save_error_log(err, "{}_{}_min".format(self.getClassName(), stockOrIndex))
 
     def create_xdxr(self, *args, **kwargs):
         """save stock_xdxr
@@ -288,21 +255,7 @@ class Stock(ISecurity):
         with ThreadPoolExecutor(max_workers=4) as p:
             p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
-        if len(err) < 1:
-            slog.info("SUCCESS")
-        else:
-            slog.info(" ERROR CODE \n ")
-            slog.info(err)
-            errs = dict()
-            if Setting.ERROR_CODES_JSON.exists():
-                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
-                    try:
-                        errs = json.load(f)
-                    except Exception:
-                        pass
-            errs["{}_xdxr".format(self.getClassName())] = list(set(err))
-            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
-                json.dump(errs, f)
+        save_error_log(err, "{}_xdxr".format(self.getClassName()))
 
     def create_info(self, *args, **kwargs):
         """save index_day
@@ -353,23 +306,7 @@ class Stock(ISecurity):
         with ThreadPoolExecutor(max_workers=4) as p:
             p.map(partial(saving_work), list(range(len(stockOrIndexList))))
 
-        if len(err) < 1:
-            slog.info("SUCCESS")
-        else:
-            slog.info(" ERROR CODE \n ")
-            slog.info(err)
-            errs = dict()
-            if Setting.ERROR_CODES_JSON.exists():
-                with Setting.ERROR_CODES_JSON.open(mode="r") as f:
-                    try:
-                        errs = json.load(f)
-                    except Exception:
-                        pass
-            errs["{}_{}_info".format(self.getClassName(), stockOrIndex)] = list(
-                set(err)
-            )
-            with Setting.ERROR_CODES_JSON.open(mode="w") as f:
-                json.dump(errs, f)
+        save_error_log(err, "{}_{}_info".format(self.getClassName(), stockOrIndex))
 
     def create_block(self, *args, **kwargs):
         """save stock block

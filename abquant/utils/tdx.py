@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 from abquant.utils.logger import system_log as slog
 from abquant.helper import to_json_from_pandas
-from abquant.utils.datetime import make_datestamp, make_timestamp
+from abquant.utils.datetime import make_datestamp
+from abquant.config import Setting
+import json
 
 
 def for_sz(code):
@@ -315,3 +317,21 @@ def stock_to_fq(bfq_data, xdxr_data, fqtype):
         axis=1,
         errors="ignore",
     )
+
+
+def save_error_log(err: list, key: str):
+    if len(err) < 1:
+        slog.info("SUCCESS")
+    else:
+        slog.info(" ERROR CODE \n ")
+        slog.info(err)
+        errs = dict()
+        if Setting.ERROR_CODES_JSON.exists():
+            with Setting.ERROR_CODES_JSON.open(mode="r") as f:
+                try:
+                    errs = json.load(f)
+                except Exception:
+                    pass
+        errs[key] = list(set(err))
+        with Setting.ERROR_CODES_JSON.open(mode="w") as f:
+            json.dump(errs, f)
