@@ -15,9 +15,9 @@ win32 {
   }
   } else {
   unix:LIBS += -Wl,-rpath,. -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
-  unix:LIBS += -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lDataFrame
+  # unix:LIBS += -Wl,-rpath,/usr/local/lib -L/usr/local/lib -lDataFrame
   unix:INCLUDEPATH += /usr/include/treefrog
-  unix:INCLUDEPATH += /usr/local/include/DataFrame
+  # unix:INCLUDEPATH += /usr/local/include/DataFrame
   linux-*:LIBS += -lrt
 
 # unix:CONFIG += link_pkgconfig

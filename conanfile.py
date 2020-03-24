@@ -50,8 +50,7 @@ class AbquantConan(ConanFile):
     def _source_subfolder(self):
         return self.source_folder
 
-    @property
-    def _build_subfolder(self, kind_="qbuild"):
+    def build_subfolder(self, kind_="qbuild"):
         return os.path.join(
             self.source_folder, "qbuild" if kind_ in ["qbuild"] else "cbuild"
         )
@@ -63,12 +62,12 @@ class AbquantConan(ConanFile):
     def requirements(self):
         self.requires("qt/5.12.6@{}/{}".format("bincrafters", "stable"))
         self.requires("xtensor/0.21.3@")
-        # self.requires("dataframe/1.6.0@")
+        self.requires("dataframe/1.7.0@")
         # self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))
 
     def _build_with_qmake(self):
-        tools.mkdir(self._build_subfolder)
-        with tools.chdir(self._build_subfolder):
+        tools.mkdir(self.build_subfolder(kind_="qbuild"))
+        with tools.chdir(self.build_subfolder(kind_="qbuild")):
             pass
             # try:
             #     cmd = "rm -fv .qmake.stash"
@@ -131,8 +130,8 @@ class AbquantConan(ConanFile):
 
     def _build_with_cmake(self):
         self.output.info("Building with CMake")
-        tools.mkdir(self._build_subfolder)
-        with tools.chdir(self._build_subfolder):
+        tools.mkdir(self.build_subfolder(kind_="cbuild"))
+        with tools.chdir(self.build_subfolder(kind_="cbuild")):
             pass
         self._build_with_cmake_bind11()
 
