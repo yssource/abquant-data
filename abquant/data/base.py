@@ -136,3 +136,10 @@ def create_stock_info(codes):
     broker = get_broker()
     s = broker.Stock(codes=codes)
     s.create_info()
+
+
+@time_counter
+def create_stock_financial():
+    broker = get_broker()
+    s = broker.Stock()
+    s.create_financial()

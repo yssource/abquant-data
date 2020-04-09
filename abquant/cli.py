@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """Console script for abquant."""
-import sys
 import click
 import json
 from abquant.utils.logger import set_loggers
@@ -12,6 +11,7 @@ from abquant.data.base import (
     create_stock_xdxr,
     create_stock_block,
     create_stock_info,
+    create_stock_financial,
     create_base,
 )
 
@@ -149,3 +149,9 @@ def stock_info(codes):
 def stock_block():
     """stock block."""
     create_stock_block()
+
+
+@stock.command("financial")
+def stock_financial():
+    """stock financial."""
+    create_stock_financial()

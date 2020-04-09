@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import codecs
 import configparser
 import os
 import platform
 from pathlib import Path
-import codecs
+from typing import Dict, List, Union
+
 import yaml
+
 import simplejson as json
 from abquant.utils.logger import user_log as ulog
 
@@ -14,9 +19,21 @@ xdg_config_home = (
     else Path("C:")
 )
 
+xdg_data_home = (
+    Path(os.getenv("XDG_DATA_HOME", ""))
+    if "Windows" not in platform.platform()
+    else Path("C:")
+)
+
 abquant_home = (
     xdg_config_home / "abquant"
     if xdg_config_home.exists()
+    else Path.home() / ".abquant"
+)
+
+abquant_data_home = (
+    xdg_data_home / "abquant"
+    if xdg_data_home.exists()
     else Path.home() / ".abquant"
 )
 
@@ -28,11 +45,12 @@ class Setting(object):
     FUTURE_IP_JSON = abquant_home / "config/future_ip.json"
     NETWORK_IP_INI = abquant_home / "config/network.ini"
     ERROR_CODES_JSON = abquant_home / "log/error_codes.json"
+    DOWNLOAD_PATH = abquant_data_home / "download"
 
     config = configparser.ConfigParser()
-    info_ip_list = []
-    stock_ip_list = []
-    future_ip_list = []
+    info_ip_list: List[Dict[str, Union[str, int]]] = []
+    stock_ip_list: List[Dict[str, Union[str, int]]] = []
+    future_ip_list: List[Dict[str, Union[str, int]]] = []
 
     DBNAME = ""
 
@@ -40,6 +58,11 @@ class Setting(object):
         self.mongo_uri = uri or Setting.get_mongo()
         self.username = None
         self.password = None
+
+    @staticmethod
+    def make_download_path():
+        if not Setting.DOWNLOAD_PATH.exists():
+            Path.mkdir(Setting.DOWNLOAD_PATH)
 
     @staticmethod
     def get_mongo():

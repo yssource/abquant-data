@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import time
-import csv
 import json
-import numpy as np
-import pandas as pd
-from enum import Enum, EnumMeta
+import hashlib
+
 
 def time_counter(func):
     from abquant.utils.logger import system_log as slog
@@ -28,3 +26,35 @@ def to_json_from_pandas(data):
     if "date" in data.columns:
         data.date = data.date.apply(str)
     return json.loads(data.to_json(orient="records"))
+
+
+def util_file_md5(filename):
+    """
+    explanation:
+        获取文件的MD5值
+
+    params:
+        * filename ->:
+            meaning: 文件路径
+            type: null
+            optional: [null]
+
+    return:
+        str
+
+    demonstrate:
+        Not described
+
+    output:
+        Not described
+    """
+
+    with open(filename, mode="rb") as f:
+        d = hashlib.md5()
+        while True:
+            # 128 is smaller than the typical filesystem block
+            buf = f.read(4096)
+            if not buf:
+                break
+            d.update(buf)
+        return d.hexdigest()

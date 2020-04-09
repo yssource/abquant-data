@@ -4,10 +4,10 @@ from .tdx_api import get_stock_list
 from abquant.helper import to_json_from_pandas
 from abquant.utils.logger import system_log as slog
 import pymongo
-import concurrent
 from abquant.config import Setting
 from abquant.utils.datetime import now_time
 from abquant.utils.tdx import query_stock_day, stock_to_fq, save_error_log
+from abquant.utils.tdx_financial import download_financialzip, parse_filelist
 from abquant.data.tdx_api import (
     get_stock_day,
     get_index_day,
@@ -19,11 +19,11 @@ from abquant.data.tdx_api import (
 
 from abquant.data.base import ISecurity, ISecurityVisitor
 from tqdm.auto import tqdm, trange
-from tqdm.contrib.concurrent import process_map, thread_map
 from concurrent.futures import ThreadPoolExecutor
 from threading import RLock
 from functools import partial
 import datetime
+import os
 
 
 # class Stock(object):
@@ -288,7 +288,7 @@ class Stock(ISecurity):
                 begin = datetime.datetime.now()
                 df = get_stock_info(str(code))
                 if df is None or df.empty:
-                    slog.warn("df is empty. {}|{}|{}".format(code))
+                    slog.warn("df is empty. {}".format(code))
                     return
                 coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
@@ -336,13 +336,63 @@ class Stock(ISecurity):
         with ThreadPoolExecutor(max_workers=4) as p:
             p.map(partial(saving_work), brokers_api)
 
+    def create_financial(self, *args, **kwargs):
+        """save stock fundamentals
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        Setting.make_download_path()
+        return
+        download_financialzip()
+        coll = self._db.financial
+        coll.create_index(
+            [("code", pymongo.ASCENDING), ("report_date", pymongo.ASCENDING)],
+            unique=True,
+        )
+        for item in os.listdir(Setting.DOWNLOAD_PATH):
+            if item[0:4] != "gpcw":
+                slog.debug(
+                    "file {} is not start with gpcw , seems not a financial file, ignore!".format(
+                        item
+                    )
+                )
+                continue
+
+            date = int(item.split(".")[0][-8:])
+            slog.debug("NOW SAVING {}".format(date))
+            slog.debug("在数据库中的条数 {}".format(coll.find({"report_date": date}).count()))
+            try:
+                data = to_json_from_pandas(
+                    parse_filelist([item])
+                    .reset_index()
+                    .drop_duplicates(subset=["code", "report_date"])
+                    .sort_index()
+                )
+                slog.debug("即将更新的条数 {}".format(len(data)))
+                # data["crawl_date"] = str(datetime.date.today())
+                try:
+                    for d in data:
+                        coll.update_one(
+                            {"code": d["code"], "report_date": d["report_date"]},
+                            {"$set": d},
+                            upsert=True,
+                        )
+
+                except Exception as e:
+                    if isinstance(e, MemoryError):
+                        coll.insert_many(data, ordered=True)
+                    elif isinstance(e, pymongo.bulk.BulkWriteError):
+                        pass
+            except Exception as e:
+                slog.error("似乎没有数据")
+
 
 class Future(ISecurity):
     def __init__(self, *args, **kwargs):
         "docstring"
         self.codes = kwargs.get("codes", [])
         self.freqs = []
-        pass
 
     def accept(self, visitor: ISecurityVisitor) -> None:
         visitor.create_day(self)
