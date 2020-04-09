@@ -228,7 +228,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   |------------------------------------+------------------------------------|
   | [[file:./screenshot/jimmy.wechat.png]] | [[file:./screenshot/jimmy.alipay.png]] |
 * LICENSE
-Copyright (c) 2020-2016 Jimmy M. Gong \\
+Copyright (c) 2020-2026 Jimmy M. Gong \\
 All rights reserved.
 
 除非遵守当前许可，否则不得使用本软件。

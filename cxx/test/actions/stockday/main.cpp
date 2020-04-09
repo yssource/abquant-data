@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2020-2016 Jimmy M. Gong                                    *
+ * Copyright (c) 2020-2026 Jimmy M. Gong                                    *
  * All rights reserved.                                                     *
  *                                                                          *
  * Distributed under the terms of the Apache License 2.0 License.           *
@@ -19,6 +19,7 @@
 // #include "gtest/gtest.h"
 #include <iostream>
 #include <utility>
+
 #include "string"
 
 using namespace abq;
@@ -42,6 +43,8 @@ private slots:
     // void toDataFrame_data();
     // void toDataFrame();
     // // void parse();
+    void sma_data();
+    void sma();
 };
 
 void TestStockDay::initTestCase()
@@ -58,6 +61,9 @@ void TestStockDay::initTestCase()
     // auto ind = sa.makeIndicator<StockDay>();
     auto ind = sa.makeIndicator();
     ind.hello<double>(1.1);
+    // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
+    xt::xarray<double> xs = sa.toSeries("open");
+    xt::xarray<double> rs = ind.SMA(xs, 12);
 
     StockMinAction sb(codes, start, end);
     // auto ind2 = sb.makeIndicator<StockMin>();
@@ -126,6 +132,10 @@ void TestStockDay::initTestCase()
     // df = sa.toDataFrame();
     // df = sa.to_fq(FQ_TYPE::PRE);
 }
+
+void TestStockDay::sma_data() {}
+
+void TestStockDay::sma() {}
 
 void TestStockDay::cleanupTestCase() {}
 

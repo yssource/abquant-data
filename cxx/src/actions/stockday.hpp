@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2020-2016 Jimmy M. Gong                                    *
+ * Copyright (c) 2020-2026 Jimmy M. Gong                                    *
  * All rights reserved.                                                     *
  *                                                                          *
  * Distributed under the terms of the Apache License 2.0 License.           *
@@ -62,6 +62,9 @@ public:
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
+
+    // template <>
+    xt::xarray<double> toSeries(const char*) const noexcept;
 
 private:
     QList<StockDay> m_stockdays{};
@@ -158,4 +161,12 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
+
+// template <>
+xt::xarray<double> StockDayAction::toSeries(const char* col) const noexcept
+{
+    std::vector<double> qv = toSeries<double>(col).toStdVector();
+    return xt::adapt(qv);
+}
+
 } // namespace abq
