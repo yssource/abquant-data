@@ -25,3 +25,4 @@ HEADERS += utils.hpp
 SOURCES = stockday.cpp
 SOURCES += stockmin.cpp
 SOURCES += stockxdxr.cpp
+SOURCES += indicator.cpp

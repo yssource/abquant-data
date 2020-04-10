@@ -42,7 +42,7 @@ using MyDataFrame = StdDataFrame<std::string>;
  ***************************/
 
 template <class SA>
-class StockAction;
+class Indicator;
 
 template <class SA>
 class StockAction : public TActionContext

@@ -16,12 +16,18 @@ struct PySeries {
     double data;
 };
 
+using series_t = const xt::xarray<double>&;
+
+namespace indicator
+{
+xt::xarray<double> SMA(series_t series, size_t N, size_t M);
+} // namespace indicator
+
 template <typename SA>
 class Indicator
 {
 public:
     using stockaction_type = SA;
-    using series_t         = const xt::xarray<double>&;
 
     Indicator() = default;
 
@@ -84,16 +90,6 @@ void Indicator<SA>::hello(T h)
 template <typename SA>
 xt::xarray<double> Indicator<SA>::SMA(series_t series, size_t N, size_t M) const
 {
-    double preY = *series.begin();
-    std::vector<double> result;
-    result.reserve(series.size());
-    std::transform(std::begin(series), std::end(series), std::back_inserter(result), [N, M, &preY](double i) -> double {
-        auto r = ((M * i) + (N - M) * preY) / N;
-        preY = r;
-        return r;
-    });
-
-    return xt::eval(xt::adapt(result));
+    return abq::indicator::SMA(series, N, M);
 }
-
 } // namespace abq
