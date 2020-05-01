@@ -1,7 +1,10 @@
 #pragma once
 
 #include <QDebug>
+#include <stdexcept>
 
+#include "DataFrame/DataFrame.h"
+#include "DataFrame/DataFrameStatsVisitors.h"
 #include "abquant/actions/stock.hpp"
 #include "xtensor/xadapt.hpp"
 #include "xtensor/xarray.hpp"
@@ -21,6 +24,7 @@ using series_t = const xt::xarray<double>&;
 namespace indicator
 {
 xt::xarray<double> SMA(series_t series, size_t N, size_t M);
+xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, size_t N);
 } // namespace indicator
 
 template <typename SA>
@@ -52,7 +56,7 @@ public:
 
     // 威廉 SMA 算法
     xt::xarray<double> SMA(series_t series, size_t N, size_t M = 1) const;
-    // auto DIFF(xt::xarray<size_t>, xt::xarray<double>, size_t);
+    xt::xarray<double> DIFF(const char* col, size_t N = 1) const;
     // xt::xarray<double> HHV(xt::xarray<double>, size_t);
     // xt::xarray<double> LLV(xt::xarray<double>, size_t);
     // void SUM(size_t);
@@ -72,8 +76,6 @@ template <typename SA>
 Indicator<SA>::Indicator(stockaction_type* sa) : m_sa(sa)
 {
     auto qs = sa->getStocks();
-    // auto qs = sa->getCodes();
-    // qDebug() << "indicator qs count: " << qs.count() << " : " << qs <<"\n";
     qDebug() << "indicator qs count: " << qs.count() << " : "
              << "qs"
              << "\n";
@@ -92,4 +94,22 @@ xt::xarray<double> Indicator<SA>::SMA(series_t series, size_t N, size_t M) const
 {
     return abq::indicator::SMA(series, N, M);
 }
+
+template <typename SA>
+xt::xarray<double> Indicator<SA>::DIFF(const char* col, size_t N) const
+{
+    std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};
+    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
+        QString msg = QString(col) + QString(" series are not available for DIFF.");
+        throw std::runtime_error(msg.toStdString());
+    }
+
+    auto df = m_sa->toDataFrame();
+
+    DiffVisitor<double> diff_visit(N, false);
+    const auto& result = df.template single_act_visit<double>(col, diff_visit).get_result();
+
+    return xt::eval(xt::adapt(result));
+}
+
 } // namespace abq
