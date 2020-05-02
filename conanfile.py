@@ -60,7 +60,7 @@ class AbquantConan(ConanFile):
             del self.options.fPIC
 
     def requirements(self):
-        self.requires("qt/5.12.6@{}/{}".format("bincrafters", "stable"))
+        self.requires("qt/5.14.2@{}/{}".format("bincrafters", "stable"))
         self.requires("xtensor/0.21.3@")
         self.requires("dataframe/1.7.0@")
         # self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))

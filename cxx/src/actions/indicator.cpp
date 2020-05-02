@@ -20,7 +20,7 @@ xt::xarray<double> SMA(series_t series, size_t N, size_t M)
     return xt::eval(xt::adapt(result));
 }
 
-xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, size_t N)
+xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N)
 {
     std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {

@@ -12,6 +12,8 @@
 
 namespace abq
 {
+using namespace hmdf;
+
 // template<typename T>
 struct PySeries {
     size_t index;
@@ -24,7 +26,7 @@ using series_t = const xt::xarray<double>&;
 namespace indicator
 {
 xt::xarray<double> SMA(series_t series, size_t N, size_t M);
-xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, size_t N);
+xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N);
 } // namespace indicator
 
 template <typename SA>
@@ -56,7 +58,7 @@ public:
 
     // 威廉 SMA 算法
     xt::xarray<double> SMA(series_t series, size_t N, size_t M = 1) const;
-    xt::xarray<double> DIFF(const char* col, size_t N = 1) const;
+    xt::xarray<double> DIFF(const char* col, long N = 1) const;
     // xt::xarray<double> HHV(xt::xarray<double>, size_t);
     // xt::xarray<double> LLV(xt::xarray<double>, size_t);
     // void SUM(size_t);
@@ -96,7 +98,7 @@ xt::xarray<double> Indicator<SA>::SMA(series_t series, size_t N, size_t M) const
 }
 
 template <typename SA>
-xt::xarray<double> Indicator<SA>::DIFF(const char* col, size_t N) const
+xt::xarray<double> Indicator<SA>::DIFF(const char* col, long N) const
 {
     std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
