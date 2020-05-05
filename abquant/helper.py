@@ -2,6 +2,8 @@
 import time
 import json
 import hashlib
+from typing import Union, Optional, List, Tuple, Iterable, Callable
+from functools import lru_cache
 
 
 def time_counter(func):
@@ -58,3 +60,28 @@ def util_file_md5(filename):
                 break
             d.update(buf)
         return d.hexdigest()
+
+
+@lru_cache(maxsize=256)
+def normalize_code(code: str, kind: str = "cs") -> str:
+    if ".XSHG" in code or ".XSHE" in code:
+        return code
+    if code.startswith("399"):
+        return f"{code}.XSHE"
+    if kind in ["cs", "CS"]:
+        if code.startswith("6"):
+            return f"{code}.XSHG"
+        elif code[0] in ["3", "0"]:
+            return f"{code}.XSHE"
+        else:
+            raise RuntimeError("Unknown code")
+    if kind in ["indx", "INDX", "index", "INDEX"]:
+        if code.startswith("0"):
+            return f"{code}.XSHG"
+        if code.startswith("3"):
+            return f"{code}.XSHE"
+
+
+@lru_cache(maxsize=256)
+def normalize_code_list(codes: Tuple[str], kind: str = "cs") -> Tuple[str]:
+    return [normalize_code(code, kind) for code in codes]
