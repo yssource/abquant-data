@@ -19,7 +19,6 @@ public:
     PyStockMin(std::vector<std::string> codes, const string& start, const string& end, const string& sfreq = "5min")
         : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}
     {
-        Abquant::start();
         MIN_FREQ freq;
         if (QString::fromStdString(m_sfreq) == QString("5min")) {
             freq = MIN_FREQ::FIVE;

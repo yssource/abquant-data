@@ -15,8 +15,6 @@ namespace abq
 StockXdxrAction::StockXdxrAction(QStringList codes, int category) : StockAction(codes), m_category{category}
 {
     m_stockxdxrs = run<StockXdxr>(codes, category);
-
-    cout << "xdxraction init len(m_stockxdxrs)" << m_stockxdxrs.count() << "\n";
 }
 
 MyDataFrame StockXdxrAction::toDataFrame() const

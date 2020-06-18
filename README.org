@@ -155,6 +155,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
    #+name: cpp-data-using
    #+begin_src C++ :exports code
      #include <chrono>
+
      #include "abquant/actions/abquant.hpp"
      #include "abquant/actions/stockmin.hpp"
      #include "abquant/actions/utils.hpp"
@@ -181,10 +182,12 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
              // 分钟后复权
              // sma.toFq(FQ_TYPE::POST);
          }
-         auto finish_ = std::chrono::high_resolution_clock::now();
+         auto finish_                          = std::chrono::high_resolution_clock::now();
          std::chrono::duration<double> elapsed = finish_ - begin;
          qDebug() << "Elapsed time: " << elapsed.count() << " s\n";
 
+         // abq exit_point
+         Abquant::finish();
          return 0;
      }
    #+end_src
@@ -209,6 +212,30 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
             2019-01-14  10.22  10.11  10.25  10.07   500443.0  5.078629e+08  1.547395e+09
             2019-01-15  10.11  10.24  10.28  10.09   542160.0  5.530273e+08  1.547482e+09
    #+end_example
+*** 注意 entry_point && exit_point
+    #+name: note_c++
+    #+begin_src C++ :exports code
+      int main(int argc, char* argv[])
+      {
+          // abq entry_point
+          Abquant::start();
+          // Your C++ code here.
+          // abq exit_point
+          Abquant::finish();
+          return 0;
+      }
+     #+end_src
+     #+name: note_python
+     #+begin_src python :exports code
+       from pyabquant import PyAbquant
+
+       # abq entry_point
+       PyAbquant.start()
+       # Your python code here.
+       # abq exit_point
+       PyAbquant.finish()
+     #+end_src
+
 *** plotting
    [[file:./screenshot/abqstockday.png]]
 * 开发初衷

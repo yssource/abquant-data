@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+from pyabquant import PyAbquant
 from abqstockmin import PyStockMin as stockmin
 
 
@@ -15,4 +16,6 @@ class MainTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    PyAbquant.start()
     unittest.main()
+    PyAbquant.finish()

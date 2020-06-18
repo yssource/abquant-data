@@ -22,7 +22,6 @@ public:
     PyStockDay(std::vector<std::string> codes, const string& start, const string& end)
         : m_codes{codes}, m_start{start}, m_end{end}
     {
-        Abquant::start();
         QStringList qcodes;
         for (auto c : codes) {
             qcodes << QString::fromStdString(c);

@@ -21,6 +21,7 @@
 #include "tkvsdatabasepool.h"
 #ifdef QT_SQL_LIB
 #include <TActionThread>
+
 #include "tsqldatabasepool.h"
 #endif
 
@@ -152,6 +153,7 @@ public:
         static Abquant inst;
         return inst;
     }
+    static void finish() { _exit(0); }
     void hello() { return; }
 
 private:
