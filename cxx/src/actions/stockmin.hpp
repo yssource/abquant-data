@@ -59,7 +59,7 @@ public:
     inline QList<StockMin> getStocks() const { return m_stockmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };
 
-    MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE);
+    MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
     MyDataFrame toDataFrame() const;
 
     template <typename T>

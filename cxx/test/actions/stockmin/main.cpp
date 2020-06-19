@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     // QStringList codes = {"000001"};
     const char* start = "2017-01-01";
     const char* end   = "2019-12-01";
-    MIN_FREQ freq = MIN_FREQ::FIVE;
+    MIN_FREQ freq     = MIN_FREQ::FIVE;
 
     StockMinAction sma(codes, start, end, freq);
     // auto df2 = sma.toFq(FQ_TYPE::PRE);
@@ -33,12 +33,14 @@ int main(int argc, char* argv[])
     auto begin = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < N; ++i) {
         qDebug() << i;
-        sma.toFq(FQ_TYPE::PRE);
+        auto df = sma.toFq(FQ_TYPE::PRE);
+        // df.write<std::ostream, std::string, double, int>(std::cout);
     }
-    auto finish_ = std::chrono::high_resolution_clock::now();
+    auto finish_                          = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish_ - begin;
     qDebug() << "Elapsed time: " << elapsed.count() << " s\n";
     // qDebug() << sma << "\n";
 
+    Abquant::finish();
     return 0;
 }

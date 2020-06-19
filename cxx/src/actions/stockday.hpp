@@ -28,7 +28,7 @@ public:
     //! Default constructor
     StockDayAction() = default;
 
-    StockDayAction(QStringList codes, const char* start, const char* end);
+    StockDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr = FQ_TYPE::NONE);
 
     //! Copy constructor
     StockDayAction(const StockDayAction& other) = delete;
@@ -52,16 +52,24 @@ public:
         std::swap(m_start, other.m_start);
         std::swap(m_end, other.m_end);
         std::swap(m_stockdays, other.m_stockdays);
+        std::swap(m_xdxr, other.m_xdxr);
         return *this;
     };
 
     inline QList<StockDay> getStocks() const { return m_stockdays; };
     inline QVector<const char*> getColumns() const { return m_columns; };
-    MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE);
+    const MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
     MyDataFrame toDataFrame() const;
+    std::shared_ptr<MyDataFrame> getDataFrame() const;
+    vector<double> getOpen() const;
+    void setDataFrame();
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
+
+    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
+    // MyDataFrame for binding
+    std::vector<double> get_pyseries(const char*) const noexcept;
 
     // template <>
     xt::xarray<double> toSeries(const char*) const noexcept;
@@ -72,6 +80,8 @@ private:
     QStringList m_codes{};
     const char* m_start{};
     const char* m_end{};
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
+    std::shared_ptr<MyDataFrame> m_df{nullptr};
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockDayAction& sa)
@@ -103,6 +113,36 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
+
+    if constexpr (std::is_same_v<T, double>) {
+        if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
+            std::shared_ptr<MyDataFrame> df;
+
+            std::vector<T> seriese;
+
+            try {
+                // df = toFq(m_xdxr);
+                df = getDataFrame();
+
+                // df->write<std::ostream, std::string, double, int>(std::cout);
+                const char* colname;
+                if (QString(col) == QString("code")) {
+                    colname = "lhs.code";
+                } else if (QString(col) == QString("date")) {
+                    colname = "lhs.date";
+                } else {
+                    colname = col;
+                }
+
+                seriese = df->get_column<T>(colname);
+            } catch (...) {
+                std::cout << " ... "
+                          << "\n";
+            }
+            return QVector<T>::fromStdVector(seriese);
+        }
+    }
+
     for (auto s : getStocks()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {

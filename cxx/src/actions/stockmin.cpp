@@ -17,7 +17,7 @@ StockMinAction::StockMinAction(QStringList codes, const char* start, const char*
     m_stockmins = run<StockMin>(codes, start, end, freq);
 }
 
-MyDataFrame StockMinAction::toFq(FQ_TYPE fq)
+MyDataFrame StockMinAction::toFq(FQ_TYPE fq) const
 {
     MyDataFrame qs;
     if (fq == FQ_TYPE::NONE) {

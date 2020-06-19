@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from pyabquant import PyAbquant
-from abqstockday import PyStockDay as stockday
+
 import pandas as pd
 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
+from abqstockday import PyStockDay as stockday
+from pyabquant import FQ_TYPE, PyAbquant
+
+pd.set_option("display.max_rows", None)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", None)
+
 
 class MainTest(unittest.TestCase):
     def testDay(self):
         codes = ["000001"]
         start = "2019-01-01"
         end = "2019-12-01"
-        sd = stockday(codes, start, end)
+        sd = stockday(codes, start, end, FQ_TYPE.PRE)
+
+        # fq = sd.toQfq()
+        # print(fq)
+        # self.assertTrue(fq > 0)
 
         open_ = sd.toSeries("open")
         close = sd.toSeries("close")
@@ -46,7 +53,8 @@ class MainTest(unittest.TestCase):
         print(df[:10])
 
         self.assertTrue(len(open_) > 0)
-        self.assertEqual(open_[0], 9.39)
+        # self.assertEqual(open_[0], 9.39)
+        self.assertAlmostEqual(open_[0], 9.39, delta=0.001)
 
 
 if __name__ == "__main__":

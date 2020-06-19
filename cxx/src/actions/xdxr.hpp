@@ -34,7 +34,7 @@ template <class SA>
 class Xdxr
 {
 public:
-    Xdxr(SA& sa)
+    Xdxr(const SA& sa)
     {
         m_codes                              = sa.getCodes();
         std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(m_codes, 1);

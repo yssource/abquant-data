@@ -72,12 +72,22 @@ void TestStockDay::initTestCase()
     ind2.hello<std::string>(std::move(s));
 
     // StockDayAction sa(codes, start, end);
-    // auto m_codes = sa.getCodes();
-    // auto df = sa.toFq(FQ_TYPE::PRE);
-    // // auto df = sa.toFq(FQ_TYPE::POST);
-    // qDebug() << "m_codes main: " << m_codes << "\n";
-    // qDebug() << sa << "\n";
+    auto m_codes = sa.getCodes();
+    auto df = sa.toFq(FQ_TYPE::PRE);
+    // auto df = sa.toFq(FQ_TYPE::POST);
+    qDebug() << "m_codes main: " << m_codes << "\n";
+    df.write<std::ostream, std::string, double, int>(std::cout);
+    qDebug() << sa << "\n";
 
+    sa.setDataFrame();
+    auto ddff = sa.getDataFrame();
+    auto ooopen = sa.getOpen();
+    std::cout << ooopen.size() << "\n";
+
+    StockDayAction sa2(codes, start, end, FQ_TYPE::PRE);
+    sa2.setDataFrame();
+    auto xls2 = sa2.toSeries("open");
+    std::cout << xls2.size() << "\n";
     // StockMinAction sb(codes, start, end);
     // // auto df2 = sb.toFq(FQ_TYPE::PRE);
     // auto df2 = sb.toFq(FQ_TYPE::POST);

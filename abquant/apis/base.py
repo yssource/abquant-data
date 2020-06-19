@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from typing import Union, Iterable, Optional
+from typing import List, Union, Iterable, Optional
+from pyabquant import FQ_TYPE
 import pandas as pd
 import datetime
 
@@ -10,7 +11,7 @@ def get_price(
     start_date: Union[datetime.date, str],
     end_date: Optional[Union[datetime.date, datetime.datetime, str]] = None,
     frequency: Optional[str] = "1d",
-    fields: Optional[Iterable[str]] = None,
+    fields: List[str] = [],
     adjust_type: Optional[str] = "pre",
     skip_suspended: Optional[bool] = False,
     expect_df: Optional[bool] = False,
@@ -91,21 +92,29 @@ def get_price(
     if isinstance(order_book_ids, (str,)):
         order_book_ids = order_book_ids.split()
 
+    assert adjust_type in [
+        "pre",
+        None,
+        "post",
+    ], f"{adjust_type} must be one of 前复权 - pre，后复权 - post，不复权 - none"
+
+    if adjust_type == "pre":
+        fq = FQ_TYPE.PRE
+    elif adjust_type == "post":
+        fq = FQ_TYPE.POST
+    else:
+        fq = FQ_TYPE.NONE
+
+    print(f"adjust_type 000 is {fq}")
+    print(f"adjust_type PyAbquant is {FQ_TYPE.PRE}")
     if frequency in ["1d"]:
         from abqstockday import PyStockDay as stockday
 
-        sdm = stockday(order_book_ids, start_date, end_date)
+        sdm = stockday(order_book_ids, start_date, end_date, fq)
     else:
         from abqstockmin import PyStockMin as stockmin
 
         sdm = stockmin(order_book_ids, start_date, end_date, frequency)
-
-    if adjust_type == "pre":
-        fq = sdm.toQfq()
-    # elif adjust_type == "post":
-    #     fq = sdm.toPfq()
-    else:
-        fq = sdm
 
     date = sdm.toSeries_string("date")
     code = sdm.toSeries_string("code")

@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "abquant/actions/abquant.hpp"
+#include "abquant/actions/utils.hpp"
 
 // using namespace std;
 namespace abq
@@ -13,32 +14,13 @@ namespace abq
 class PyAbquant
 {
 public:
-    static void start()
-    {
-        cout << "pyabquant start 2 ... "
-             << "\n";
-        Abquant::start();
-    }
-    static void finish()
-    {
-        cout << "pyabquant finish ... "
-             << "\n";
-        Abquant::finish();
-    }
+    static void start() { Abquant::start(); }
+    static void finish() { Abquant::finish(); }
 
-    PyAbquant()
-    {
-        std::cout << "pyabquant start ....000000.. "
-                  << "\n";
-    };
-    ~PyAbquant()
-    {
-        std::cout << "pyabquant dddd..... ....000000.. "
-                  << "\n";
-    }
+    PyAbquant()  = default;
+    ~PyAbquant() = default;
 
 private:
-    // = default;
     PyAbquant(const PyAbquant&) = delete;
     PyAbquant& operator=(const PyAbquant&) = delete;
 };
@@ -71,6 +53,12 @@ PYBIND11_MODULE(pyabquant, m)
 
         finish static void function.
     )pbdoc");
+
+    py::enum_<FQ_TYPE>(m, "FQ_TYPE", py::arithmetic(), "FQ_TYPE::PRE, FQ_TYPE::NONE, FQ_TYPE::POST")
+        .value("PRE", FQ_TYPE::PRE, "Docstring for PRE")
+        .value("NONE", FQ_TYPE::NONE, "Docstring for NONE")
+        .value("POST", FQ_TYPE::POST, "Docstring for POST")
+        .export_values();
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

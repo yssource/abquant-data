@@ -34,6 +34,7 @@ public:
     size_t toQfq()
     {
         auto fq = m_sma.toFq(FQ_TYPE::PRE);
+        // fq.write<std::ostream, std::string, double, int>(std::cout);
         return fq.get_index().size();
     }
 

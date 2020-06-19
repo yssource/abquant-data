@@ -11,21 +11,22 @@
 
 namespace abq
 {
-StockDayAction::StockDayAction(QStringList codes, const char* start, const char* end)
-    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}
+StockDayAction::StockDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr)
+    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_xdxr{xdxr}
 {
     m_stockdays = run<StockDay>(codes, start, end);
 }
 
-MyDataFrame StockDayAction::toFq(FQ_TYPE fq)
+const MyDataFrame StockDayAction::toFq(FQ_TYPE fq) const
 {
-    MyDataFrame qs;
-    if (fq == FQ_TYPE::NONE) {
-        return qs;
-    }
+    // const MyDataFrame& qs;
+    // if (fq == FQ_TYPE::NONE) {
+    //     return qs;
+    // }
     auto x  = Xdxr<StockDayAction>(*this);
     auto df = toDataFrame();
-    qs      = x.getXdxr(df, fq);
+    auto qs = x.getXdxr(df, fq);
+    // qs.write<std::ostream, std::string, double, int>(std::cout);
     return qs;
 }
 
@@ -55,7 +56,6 @@ MyDataFrame StockDayAction::toDataFrame() const
         std::vector<double> date_stamp;
         std::vector<double> if_trade;
 
-        cout << "len(m_stockdays)" << m_stockdays.count() << "\n";
         foreach (auto s, m_stockdays) {
             datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());
             open.push_back(s.open());
@@ -76,10 +76,86 @@ MyDataFrame StockDayAction::toDataFrame() const
                          std::make_pair("amount", amount), std::make_pair("date", date), std::make_pair("code", code),
                          std::make_pair("date_stamp", date_stamp), std::make_pair("if_trade", if_trade));
 
-        // df.write<std::ostream, unsigned long, std::string, double, int>(std::cout);
+        // df.write<std::ostream, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }
     return df;
 };
+
+std::shared_ptr<MyDataFrame> StockDayAction::getDataFrame() const
+{
+    try {
+        // m_df->write<std::ostream, std::string, double, int>(std::cout);
+    } catch (const std::exception& e) {
+        std::cout << e.what();
+    } catch (const std::overflow_error& e) {
+        // this executes if f() throws std::overflow_error (same type rule)
+        std::cout << e.what();
+    } catch (const std::runtime_error& e) {
+        // this executes if f() throws std::underflow_error (base class rule)
+        std::cout << e.what();
+    } catch (...) {
+        // this executes if f() throws std::string or int or any other unrelated type
+        std::cout << "error \n";
+    }
+    return m_df;
+}
+
+vector<double> StockDayAction::getOpen() const
+{
+    vector<double> open;
+    if (m_df != nullptr) {
+        try {
+            // m_df->write<std::ostream, std::string, double, int>(std::cout);
+            open = m_df->template get_column<double>("open");
+        } catch (const std::exception& e) {
+            std::cout << e.what();
+        }
+    }
+    return open;
+}
+
+void StockDayAction::setDataFrame()
+{
+    MyDataFrame df = toFq(m_xdxr);
+    m_df           = std::make_shared<MyDataFrame>(df);
+    // m_df->write<std::ostream, std::string, double, int>(std::cout);
+}
+
+vector<double> StockDayAction::get_pyseries(const char* col) const noexcept
+{
+    vector<double> series;
+    auto cols = getColumns();
+    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
+        return series;
+    }
+
+    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
+        std::shared_ptr<MyDataFrame> df;
+
+        try {
+            // df = toFq(m_xdxr);
+            df = getDataFrame();
+
+            // df->write<std::ostream, std::string, double, int>(std::cout);
+            const char* colname;
+            if (QString(col) == QString("code")) {
+                colname = "lhs.code";
+            } else if (QString(col) == QString("date")) {
+                colname = "lhs.date";
+            } else {
+                colname = col;
+            }
+
+            series = df->get_column<double>(colname);
+
+        } catch (...) {
+            std::cout << " error ... "
+                      << "\n";
+        }
+    }
+    return series;
+}
+
 } // namespace abq
