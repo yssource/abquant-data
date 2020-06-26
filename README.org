@@ -33,7 +33,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 * 构建
   作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
-  你需要安装好 clang++/llvm python pip conan cmake/qmake 等基础开发工具
+  你需要安装好 clang++/llvm ccache ninja python pip conan cmake/qmake 等基础开发工具
   - 核心模块 cpp
   - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
   - 用户接口层 python

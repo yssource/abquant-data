@@ -117,13 +117,10 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     if constexpr (std::is_same_v<T, double>) {
         if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
             std::shared_ptr<MyDataFrame> df;
-
-            std::vector<T> seriese;
+            std::vector<T> stdv_series;
 
             try {
-                // df = toFq(m_xdxr);
                 df = getDataFrame();
-
                 // df->write<std::ostream, std::string, double, int>(std::cout);
                 const char* colname;
                 if (QString(col) == QString("code")) {
@@ -133,13 +130,12 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
                 } else {
                     colname = col;
                 }
-
-                seriese = df->get_column<T>(colname);
+                stdv_series = df->get_column<T>(colname);
             } catch (...) {
-                std::cout << " ... "
+                std::cout << "errors with StockDayAction::toSeries ..."
                           << "\n";
             }
-            return QVector<T>::fromStdVector(seriese);
+            return QVector<T>::fromStdVector(stdv_series);
         }
     }
 

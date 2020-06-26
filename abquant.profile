@@ -5,7 +5,6 @@ arch=x86_64
 arch_build=x86_64
 compiler=clang
 compiler.version=10
-# compiler.libcxx=libc++
 compiler.libcxx=libstdc++11
 # compiler.libcxx=libstdc++
 # build_type=Release
@@ -16,6 +15,8 @@ qt:qttools=True
 qt:qtwebsockets=True
 [build_requires]
 [env]
-CC=/usr/bin/clang
-CXX=/usr/bin/clang++
+CC=$PROFILE_DIR/ccache-clang
+CXX=$PROFILE_DIR/ccache-clang++
+# CC=/usr/bin/clang
+# CXX=/usr/bin/clang++
 CONAN_CMAKE_GENERATOR=Ninja
