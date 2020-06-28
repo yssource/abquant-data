@@ -15,6 +15,7 @@ def get_price(code, start, end):
     except Exception:
         return ""
 
+
 def test_singleton():
     ida = IndexDayAction.getInstance()
     ida2 = IndexDayAction.getInstance()

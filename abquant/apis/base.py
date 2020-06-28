@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Union, Iterable, Optional
-from pyabquant import FQ_TYPE
-import pandas as pd
 import datetime
+from typing import Iterable, List, Optional, Union
+from abquant.utils.code import code_tolist
+
+import pandas as pd
+
+from pyabquant import FQ_TYPE
 
 
 def get_price(
@@ -75,6 +78,17 @@ def get_price(
         #...
     """
 
+    # import pudb; pudb.set_trace()
+    order_book_ids = code_tolist(order_book_ids)
+
+    if fields is None:
+        fields = []
+
+    if isinstance(start_date, (datetime.datetime,)):
+        start_date = start_date.strftime("%Y-%m-%d %H:%M:%S")
+    if isinstance(end_date, (datetime.datetime,)):
+        end_date = end_date.strftime("%Y-%m-%d %H:%M:%S")
+
     for field in fields:
         assert field in [
             "open",
@@ -112,9 +126,10 @@ def get_price(
 
         sdm = stockday(order_book_ids, start_date, end_date, fq)
     else:
+
         from abqstockmin import PyStockMin as stockmin
 
-        sdm = stockmin(order_book_ids, start_date, end_date, frequency)
+        sdm = stockmin(order_book_ids, start_date, end_date, frequency, fq)
 
     date = sdm.toSeries_string("date")
     code = sdm.toSeries_string("code")

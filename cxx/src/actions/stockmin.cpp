@@ -11,13 +11,13 @@
 
 namespace abq
 {
-StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq)
-    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}
+StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq, FQ_TYPE xdxr)
+    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}, m_xdxr{xdxr}
 {
     m_stockmins = run<StockMin>(codes, start, end, freq);
 }
 
-MyDataFrame StockMinAction::toFq(FQ_TYPE fq) const
+const MyDataFrame StockMinAction::toFq(FQ_TYPE fq) const
 {
     MyDataFrame qs;
     if (fq == FQ_TYPE::NONE) {
@@ -90,5 +90,61 @@ MyDataFrame StockMinAction::toDataFrame() const
     }
     return df;
 };
+
+std::shared_ptr<MyDataFrame> StockMinAction::getDataFrame() const { return m_df; }
+
+vector<double> StockMinAction::getOpen() const
+{
+    vector<double> open;
+    if (m_df != nullptr) {
+        try {
+            // m_df->write<std::ostream, std::string, double, int>(std::cout);
+            open = m_df->template get_column<double>("open");
+        } catch (const std::exception& e) {
+            std::cout << e.what();
+        }
+    }
+    return open;
+}
+
+void StockMinAction::setDataFrame()
+{
+    MyDataFrame df = toFq(m_xdxr);
+    m_df           = std::make_shared<MyDataFrame>(df);
+    // m_df->write<std::ostream, std::string, double, int>(std::cout);
+}
+
+vector<double> StockMinAction::get_pyseries(const char* col) const noexcept
+{
+    vector<double> series;
+    auto cols = getColumns();
+    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
+        return series;
+    }
+
+    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
+        std::shared_ptr<MyDataFrame> df;
+
+        try {
+            df = getDataFrame();
+            // df->write<std::ostream, std::string, double, int>(std::cout);
+            const char* colname;
+            if (QString(col) == QString("code")) {
+                colname = "lhs.code";
+            } else if (QString(col) == QString("date")) {
+                colname = "lhs.date";
+            } else if (QString(col) == QString("datetime")) {
+                colname = "lhs.datetime";
+            } else {
+                colname = col;
+            }
+            series = df->get_column<double>(colname);
+        } catch (...) {
+            std::cout << " error ... "
+                      << "\n";
+        }
+    }
+    return series;
+}
 
 } // namespace abq

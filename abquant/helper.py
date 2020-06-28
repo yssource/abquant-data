@@ -80,8 +80,9 @@ def normalize_code(code: str, kind: str = "cs") -> str:
             return f"{code}.XSHG"
         if code.startswith("3"):
             return f"{code}.XSHE"
+    return code
 
 
 @lru_cache(maxsize=256)
-def normalize_code_list(codes: Tuple[str], kind: str = "cs") -> Tuple[str]:
+def normalize_code_list(codes: Tuple[str], kind: str = "cs") -> Iterable[str]:
     return [normalize_code(code, kind) for code in codes]

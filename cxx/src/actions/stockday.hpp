@@ -132,7 +132,7 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
                 }
                 stdv_series = df->get_column<T>(colname);
             } catch (...) {
-                std::cout << "errors with StockDayAction::toSeries ..."
+                std::cout << "Errors with StockDayAction::toSeries ..."
                           << "\n";
             }
             return QVector<T>::fromStdVector(stdv_series);

@@ -83,24 +83,7 @@ MyDataFrame StockDayAction::toDataFrame() const
     return df;
 };
 
-std::shared_ptr<MyDataFrame> StockDayAction::getDataFrame() const
-{
-    try {
-        // m_df->write<std::ostream, std::string, double, int>(std::cout);
-    } catch (const std::exception& e) {
-        std::cout << e.what();
-    } catch (const std::overflow_error& e) {
-        // this executes if f() throws std::overflow_error (same type rule)
-        std::cout << e.what();
-    } catch (const std::runtime_error& e) {
-        // this executes if f() throws std::underflow_error (base class rule)
-        std::cout << e.what();
-    } catch (...) {
-        // this executes if f() throws std::string or int or any other unrelated type
-        std::cout << "error \n";
-    }
-    return m_df;
-}
+std::shared_ptr<MyDataFrame> StockDayAction::getDataFrame() const { return m_df; }
 
 vector<double> StockDayAction::getOpen() const
 {
@@ -135,9 +118,7 @@ vector<double> StockDayAction::get_pyseries(const char* col) const noexcept
         std::shared_ptr<MyDataFrame> df;
 
         try {
-            // df = toFq(m_xdxr);
             df = getDataFrame();
-
             // df->write<std::ostream, std::string, double, int>(std::cout);
             const char* colname;
             if (QString(col) == QString("code")) {
@@ -147,9 +128,7 @@ vector<double> StockDayAction::get_pyseries(const char* col) const noexcept
             } else {
                 colname = col;
             }
-
             series = df->get_column<double>(colname);
-
         } catch (...) {
             std::cout << " error ... "
                       << "\n";

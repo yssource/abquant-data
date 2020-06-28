@@ -16,8 +16,9 @@ namespace abq
 class PyStockMin
 {
 public:
-    PyStockMin(std::vector<std::string> codes, const string& start, const string& end, const string& sfreq = "5min")
-        : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}
+    PyStockMin(std::vector<std::string> codes, const string& start, const string& end, const string& sfreq = "5min",
+               FQ_TYPE xdxr = FQ_TYPE::NONE)
+        : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}, m_xdxr{xdxr}
     {
         MIN_FREQ freq;
         if (QString::fromStdString(m_sfreq) == QString("5min")) {
@@ -28,21 +29,36 @@ public:
         for (auto c : m_codes) {
             qcodes << QString::fromStdString(c);
         }
-        m_sma = StockMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq);
+        m_sma = StockMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq, m_xdxr);
+        m_sma.setDataFrame();
     };
 
     size_t toQfq()
     {
-        auto fq = m_sma.toFq(FQ_TYPE::PRE);
+        // const auto fq = m_sma.toFq(FQ_TYPE::PRE);
+        auto fq = m_sma.getDataFrame();
+        try {
+            auto fq2 = m_sma.getOpen();
+        } catch (const std::exception& e) {
+            std::cout << e.what();
+        }
+
         // fq.write<std::ostream, std::string, double, int>(std::cout);
-        return fq.get_index().size();
+        fq->write<std::ostream, std::string, double, int>(std::cout);
+        return fq->get_index().size();
+        // return fq.get_index().size();
     }
 
     template <class T>
     std::vector<T> toSeries(const string& col) const noexcept
     {
-        auto seriese = m_sma.toSeries<T>(col.c_str());
-        return seriese.toStdVector();
+        if constexpr (std::is_same_v<T, double>) {
+            auto series = m_sma.get_pyseries(col.c_str());
+            return series;
+        }
+
+        auto series = m_sma.toSeries<T>(col.c_str());
+        return series.toStdVector();
     }
     ~PyStockMin() = default;
 
@@ -52,6 +68,7 @@ private:
     const string m_end{};
     const string m_sfreq{};
     StockMinAction m_sma{};
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
 };
 
 namespace py = pybind11;
@@ -71,7 +88,7 @@ PYBIND11_MODULE(abqstockmin, m)
     )pbdoc";
 
     py::class_<PyStockMin> sm_class(m, "PyStockMin");
-    sm_class.def(py::init<std::vector<std::string>, const string, const string, const string>())
+    sm_class.def(py::init<std::vector<std::string>, const string, const string, const string, FQ_TYPE>())
         .def("toQfq", &PyStockMin::toQfq, R"pbdoc(
         toQfq
 

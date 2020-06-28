@@ -50,12 +50,12 @@ public:
     std::vector<T> toSeries(const string& col) const noexcept
     {
         if constexpr (std::is_same_v<T, double>) {
-            auto seriese = m_sda.get_pyseries(col.c_str());
-            return seriese;
+            auto series = m_sda.get_pyseries(col.c_str());
+            return series;
         }
 
-        auto seriese = m_sda.toSeries<T>(col.c_str());
-        return seriese.toStdVector();
+        auto series = m_sda.toSeries<T>(col.c_str());
+        return series.toStdVector();
     }
     ~PyStockDay() = default;
 

@@ -762,3 +762,39 @@ def now_time():
         else str(get_real_date(str(datetime.date.today()), trade_date_sse, -1))
         + " 15:00:00"
     )
+
+
+def get_nth_trading_day(date, n=1, way=1):
+    """
+    得到上一个(n)交易日
+    :param  date: 类型 str eg: 2018-11-11
+    :param n:  整形
+    :return: 字符串 str eg: 2018-11-10
+    """
+    date = str(date)[0:10]
+    if way < 0:
+        return get_date_gap(date, n, "lt")
+    else:
+        return get_date_gap(date, n, "gt")
+
+
+def get_date_gap(date, gap, methods):
+    """
+    :param date: 字符串起始日 类型 str eg: 2018-11-11
+    :param gap: 整数 间隔多数个交易日
+    :param methods:  gt大于 ，gte 大于等于， 小于lt ，小于等于lte ， 等于===
+    :return: 字符串 eg：2000-01-01
+    """
+    try:
+        if methods in [">", "gt"]:
+            return trade_date_sse[trade_date_sse.index(date) + gap]
+        elif methods in [">=", "gte"]:
+            return trade_date_sse[trade_date_sse.index(date) + gap - 1]
+        elif methods in ["<", "lt"]:
+            return trade_date_sse[trade_date_sse.index(date) - gap]
+        elif methods in ["<=", "lte"]:
+            return trade_date_sse[trade_date_sse.index(date) - gap + 1]
+        elif methods in ["==", "=", "eq"]:
+            return date
+    except:
+        return "wrong date"

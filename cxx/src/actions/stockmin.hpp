@@ -28,7 +28,8 @@ public:
     //! Default constructor
     StockMinAction() = default;
 
-    StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE);
+    StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE,
+                   FQ_TYPE xdxr = FQ_TYPE::NONE);
 
     //! Copy constructor
     StockMinAction(const StockMinAction& other) = delete;
@@ -53,26 +54,36 @@ public:
         std::swap(m_end, other.m_end);
         std::swap(m_freq, other.m_freq);
         std::swap(m_stockmins, other.m_stockmins);
+        std::swap(m_xdxr, other.m_xdxr);
         return *this;
     }
 
     inline QList<StockMin> getStocks() const { return m_stockmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };
 
-    MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
+    const MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
     MyDataFrame toDataFrame() const;
+    std::shared_ptr<MyDataFrame> getDataFrame() const;
+    vector<double> getOpen() const;
+    void setDataFrame();
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
+
+    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
+    // MyDataFrame for binding
+    std::vector<double> get_pyseries(const char*) const noexcept;
 
 private:
     QList<StockMin> m_stockmins;
     const QVector<const char*> m_columns = {"open",     "close", "high", "low",        "vol",        "amount",
                                             "datetime", "code",  "date", "date_stamp", "time_stamp", "type"};
-    QStringList m_codes;
-    const char* m_start;
-    const char* m_end;
-    MIN_FREQ m_freq;
+    QStringList m_codes{};
+    const char* m_start{};
+    const char* m_end{};
+    MIN_FREQ m_freq{};
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
+    std::shared_ptr<MyDataFrame> m_df{nullptr};
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockMinAction& sa)
@@ -104,6 +115,34 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
+
+    if constexpr (std::is_same_v<T, double>) {
+        if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
+            std::shared_ptr<MyDataFrame> df;
+            std::vector<T> stdv_series;
+
+            try {
+                df = getDataFrame();
+                // df->write<std::ostream, std::string, double, int>(std::cout);
+                const char* colname;
+                if (QString(col) == QString("code")) {
+                    colname = "lhs.code";
+                } else if (QString(col) == QString("date")) {
+                    colname = "lhs.date";
+                } else if (QString(col) == QString("datetime")) {
+                    colname = "lhs.datetime";
+                } else {
+                    colname = col;
+                }
+                stdv_series = df->get_column<T>(colname);
+            } catch (...) {
+                std::cout << "Errors with StockMinAction::toSeries ..."
+                          << "\n";
+            }
+            return QVector<T>::fromStdVector(stdv_series);
+        }
+    }
+
     for (auto s : getStocks()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
