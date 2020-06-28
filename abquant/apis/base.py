@@ -78,18 +78,22 @@ def get_price(
         #...
     """
 
-    # import pudb; pudb.set_trace()
     order_book_ids = code_tolist(order_book_ids)
 
     if fields is None:
-        fields = []
+        fields = ["open", "close", "high", "low", "vol"]
 
     if isinstance(start_date, (datetime.datetime,)):
         start_date = start_date.strftime("%Y-%m-%d %H:%M:%S")
     if isinstance(end_date, (datetime.datetime,)):
         end_date = end_date.strftime("%Y-%m-%d %H:%M:%S")
 
+    if isinstance(fields, (str,)):
+        fields = [fields]
+
     for field in fields:
+        if field in ["volume"]:
+            field = "vol"
         assert field in [
             "open",
             "close",
@@ -99,6 +103,7 @@ def get_price(
             "amount",
             "date_stamp",
             "date",
+            "datetime",
             "code",
             "...",
         ], f"invalid {field}"
@@ -119,8 +124,6 @@ def get_price(
     else:
         fq = FQ_TYPE.NONE
 
-    print(f"adjust_type 000 is {fq}")
-    print(f"adjust_type PyAbquant is {FQ_TYPE.PRE}")
     if frequency in ["1d"]:
         from abqstockday import PyStockDay as stockday
 
@@ -129,6 +132,13 @@ def get_price(
 
         from abqstockmin import PyStockMin as stockmin
 
+        start_date = "2020-01-01 23:55:00"
+        # end_date = "2020-02-01 00:00:00"
+        end_date = "2020-02-02 00:00:00"
+        # start_date = "2020-06-10 00:00:00"
+        # end_date = "2020-06-09 23:55:00"
+
+        # TODO: Bug found, start_date/end_date make no data, core dump
         sdm = stockmin(order_book_ids, start_date, end_date, frequency, fq)
 
     date = sdm.toSeries_string("date")
@@ -137,6 +147,8 @@ def get_price(
     for field in fields:
         if field in ["code", "date"]:
             continue
+        if field in ["vol"]:
+            df["volume"] = sdm.toSeries(field)
         df[field] = sdm.toSeries(field)
     df.set_index(["code", "date"], inplace=True)
 
