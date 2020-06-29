@@ -97,7 +97,7 @@ class AbquantConan(ConanFile):
                     os.environ[var] = val
                 return val
 
-            value = _getenvpath("CC")
+            value = f"\"{_getenvpath('CC')}\""
             if value:
                 args += [
                     "QMAKE_CC=" + value,
@@ -105,7 +105,7 @@ class AbquantConan(ConanFile):
                     "QMAKE_LINK_C_SHLIB=" + value,
                 ]
 
-            value = _getenvpath("CXX")
+            value = f"\"{_getenvpath('CXX')}\""
             if value:
                 args += [
                     "QMAKE_CXX=" + value,

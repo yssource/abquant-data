@@ -15,8 +15,8 @@ qt:qttools=True
 qt:qtwebsockets=True
 [build_requires]
 [env]
-CC=$PROFILE_DIR/ccache-clang
-CXX=$PROFILE_DIR/ccache-clang++
-# CC=/usr/bin/clang
-# CXX=/usr/bin/clang++
+# CC=$PROFILE_DIR/ccache-clang
+# CXX=$PROFILE_DIR/ccache-clang++
+CC="ccache clang"
+CXX="ccache clang++"
 CONAN_CMAKE_GENERATOR=Ninja

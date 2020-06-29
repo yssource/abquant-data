@@ -127,6 +127,7 @@ MyDataFrame Xdxr<SA>::calc(MyDataFrame& df, FQ_TYPE fq) const
     xt::xarray<double> xpeigujia    = xt::adapt(peigujia);
     xt::xarray<double> xsongzhuangu = xt::adapt(songzhuangu);
 
+    // TODO: It's possible that xopen, xclose, etc., are empty, it's better to try catch
     auto xclose_sf1              = xt::roll(xclose, 1);
     *xclose_sf1.begin()          = std::numeric_limits<double>::quiet_NaN();
     xt::xarray<double> xpreclose = (xclose_sf1 * 10 - xfenhong + xpeigu * xpeigujia) / (10 + xpeigu + xsongzhuangu);

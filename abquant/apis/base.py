@@ -132,13 +132,6 @@ def get_price(
 
         from abqstockmin import PyStockMin as stockmin
 
-        start_date = "2020-01-01 23:55:00"
-        # end_date = "2020-02-01 00:00:00"
-        end_date = "2020-02-02 00:00:00"
-        # start_date = "2020-06-10 00:00:00"
-        # end_date = "2020-06-09 23:55:00"
-
-        # TODO: Bug found, start_date/end_date make no data, core dump
         sdm = stockmin(order_book_ids, start_date, end_date, frequency, fq)
 
     date = sdm.toSeries_string("date")

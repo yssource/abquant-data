@@ -15,19 +15,19 @@ StockDayAction::StockDayAction(QStringList codes, const char* start, const char*
     : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_xdxr{xdxr}
 {
     m_stockdays = run<StockDay>(codes, start, end);
+    if (m_stockdays.isEmpty()) {
+        std::cout << "No stock day data.\n";
+    }
 }
 
 const MyDataFrame StockDayAction::toFq(FQ_TYPE fq) const
 {
-    // const MyDataFrame& qs;
-    // if (fq == FQ_TYPE::NONE) {
-    //     return qs;
-    // }
     auto x  = Xdxr<StockDayAction>(*this);
     auto df = toDataFrame();
-    auto qs = x.getXdxr(df, fq);
-    // qs.write<std::ostream, std::string, double, int>(std::cout);
-    return qs;
+    if (fq == FQ_TYPE::NONE || !df.get_index().size()) {
+        return df;
+    }
+    return x.getXdxr(df, fq);
 }
 
 MyDataFrame StockDayAction::toDataFrame() const

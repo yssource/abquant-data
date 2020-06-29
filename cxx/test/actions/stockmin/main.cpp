@@ -22,11 +22,11 @@ int main(int argc, char* argv[])
 
     QStringList codes = {"000001", "000002", "000003"};
     // QStringList codes = {"000001"};
-    const char* start = "2017-01-01";
-    const char* end   = "2019-12-01";
+    const char* start = "2017-01-01 00:00:00";
+    const char* end   = "2019-12-01 23:55:00";
     MIN_FREQ freq     = MIN_FREQ::FIVE;
 
-    StockMinAction sma(codes, start, end, freq);
+    StockMinAction sma(codes, start, end, freq, FQ_TYPE::PRE);
     // auto df2 = sma.toFq(FQ_TYPE::PRE);
     // auto df3 = sma.toFq(FQ_TYPE::POST);
     int N      = 10;
@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
     auto finish_                          = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish_ - begin;
     qDebug() << "Elapsed time: " << elapsed.count() << " s\n";
-    // qDebug() << sma << "\n";
 
     Abquant::finish();
     return 0;

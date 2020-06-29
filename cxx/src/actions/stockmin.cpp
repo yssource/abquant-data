@@ -15,18 +15,19 @@ StockMinAction::StockMinAction(QStringList codes, const char* start, const char*
     : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}, m_xdxr{xdxr}
 {
     m_stockmins = run<StockMin>(codes, start, end, freq);
+    if (m_stockmins.isEmpty()) {
+        std::cout << "No stock minute data.\n";
+    }
 }
 
 const MyDataFrame StockMinAction::toFq(FQ_TYPE fq) const
 {
-    MyDataFrame qs;
-    if (fq == FQ_TYPE::NONE) {
-        return qs;
-    }
     auto x  = Xdxr<StockMinAction>(*this);
     auto df = toDataFrame();
-    qs      = x.getXdxr(df, fq);
-    return qs;
+    if (fq == FQ_TYPE::NONE || !df.get_index().size()) {
+        return df;
+    }
+    return x.getXdxr(df, fq);
 }
 
 MyDataFrame StockMinAction::toDataFrame() const
@@ -84,7 +85,7 @@ MyDataFrame StockMinAction::toDataFrame() const
                               std::make_pair("datetime", datetime), std::make_pair("code", code),
                               std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
                               std::make_pair("type", type), std::make_pair("if_trade", if_trade));
-        // df.write<std::ostream, unsigned long, std::string, double, int>(std::cout);
+        // df.write<std::ostream, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }
