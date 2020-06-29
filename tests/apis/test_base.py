@@ -4,7 +4,7 @@ from abquant.utils.logger import user_log as ulog
 
 
 def test_get_price_day_with_single_field():
-    code = "000001"
+    code = "000001.XSHE"
     start = "2020-01-01"
     end = "2020-02-01"
     fields = ["open"]
@@ -14,7 +14,7 @@ def test_get_price_day_with_single_field():
 
 
 def test_get_price_day_with_multi_fields():
-    code = "000001"
+    code = "000001.XSHE"
     start = "2020-01-01"
     end = "2020-02-01"
     fields = ["open", "close"]
@@ -25,7 +25,7 @@ def test_get_price_day_with_multi_fields():
 
 
 def test_get_price_min_with_single_field():
-    code = "000001"
+    code = "000001.XSHE"
     start = "2020-01-01 00:00:00"
     end = "2020-02-01 00:00:00"
     fields = ["open"]
@@ -35,7 +35,7 @@ def test_get_price_min_with_single_field():
 
 
 def test_get_price_min_with_multi_field():
-    code = "000001"
+    code = "000001.XSHE"
     start = "2020-01-01 00:00:00"
     end = "2020-02-01 00:00:00"
     fields = ["open", "close"]
@@ -45,7 +45,7 @@ def test_get_price_min_with_multi_field():
 
 
 def test_get_price_min_with_multi_field_without_data():
-    code = "000001"
+    code = "000001.XSHE"
     start = "2020-01-01 00:00:00"
     end = "2020-01-01 23:55:00"
     fields = ["open", "close"]

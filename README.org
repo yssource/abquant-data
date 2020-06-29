@@ -232,12 +232,25 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # abq entry_point
        PyAbquant.start()
        # Your python code here.
+
+       code = "000001.XSHE"
+       start = "2020-01-01 00:00:00"
+       end = "2020-01-01 23:55:00"
+       fields = ["open", "close"]
+       actual = get_price(code, start, end, frequency="5min", fields=fields, adjust_type="pre")
+       ulog.debug(actual)
+       assert isinstance(actual, (pd.DataFrame))
+       assert actual.empty is True
+
        # abq exit_point
        PyAbquant.finish()
      #+end_src
 
 *** plotting
    [[file:./screenshot/abqstockday.png]]
+* TODO TODO: 兼容 rqalpha apis
+  1. [x] get_price()
+  2. [x] get_fundamentals()[fn:1]
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
@@ -273,3 +286,7 @@ All rights reserved.
     许可冲突之处，以本许可为准。
 
     详细的授权流程，请联系 yssource@163.com 获取。
+
+* Footnotes
+
+[fn:1]闭源
