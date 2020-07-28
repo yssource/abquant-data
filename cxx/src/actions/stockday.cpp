@@ -16,7 +16,10 @@ StockDayAction::StockDayAction(QStringList codes, const char* start, const char*
 {
     m_stockdays = run<StockDay>(codes, start, end);
     if (m_stockdays.isEmpty()) {
-        std::cout << "No stock day data.\n";
+        qDebug() << "No stock day data.\n"
+                 << codes << "\n"
+                 << "start: " << start << "\n"
+                 << "end: " << end << "\n";
     }
 }
 

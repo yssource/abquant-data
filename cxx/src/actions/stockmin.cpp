@@ -16,7 +16,11 @@ StockMinAction::StockMinAction(QStringList codes, const char* start, const char*
 {
     m_stockmins = run<StockMin>(codes, start, end, freq);
     if (m_stockmins.isEmpty()) {
-        std::cout << "No stock minute data.\n";
+        qDebug() << "No stock minute data.\n"
+                 << codes << "\n"
+                 << "start: " << start << "\n"
+                 << "end: " << end << "\n"
+                 << "freq: " << freq << "\n";
     }
 }
 
