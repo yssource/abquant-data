@@ -14,6 +14,7 @@ from abquant.utils.logger import user_log as ulog
 from abquant.utils.cache import Cache
 from abquant.utils.parallelism import Parallelism
 from abquant.utils.tdx import *
+from abquant.utils.tdx import for_sh, for_sz
 from abquant.utils.datetime import *
 from abquant.config import Setting
 
@@ -231,9 +232,9 @@ def get_stock_list(type_="stock", ip=None, port=None):
             [
                 pd.concat(
                     [
-                        api.to_df(api.get_security_list(j, i * 1000))
-                        .assign(sse="sz" if j == 0 else "sh")
-                        .set_index(["code", "sse"], drop=False)
+                        api.to_df(api.get_security_list(j, i * 1000)).assign(
+                            sse="sz" if j == 0 else "sh"
+                        )
                         for i in range(int(api.get_security_count(j) / 1000) + 1)
                     ],
                     axis=0,
@@ -244,7 +245,10 @@ def get_stock_list(type_="stock", ip=None, port=None):
             axis=0,
             sort=False,
         )
-        # data.code = data.code.apply(int)
+        data = data.loc[
+            :, ["code", "volunit", "decimal_point", "name", "pre_close", "sse"]
+        ].set_index(["code", "sse"], drop=False)
+
         sz = data.query('sse=="sz"')
         sh = data.query('sse=="sh"')
 
@@ -252,24 +256,19 @@ def get_stock_list(type_="stock", ip=None, port=None):
         sh = sh.assign(sec=sh.code.apply(for_sh))
 
         if type_ in ["stock", "gp"]:
-
             return (
                 pd.concat([sz, sh], sort=False)
                 .query('sec=="stock_cn"')
                 .sort_index()
                 .assign(name=data["name"].apply(lambda x: str(x)[0:6]))
             )
-
         elif type_ in ["index", "zs"]:
-
             return (
                 pd.concat([sz, sh], sort=False)
                 .query('sec=="index_cn"')
                 .sort_index()
                 .assign(name=data["name"].apply(lambda x: str(x)[0:6]))
             )
-            # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
-            # .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
         elif type_ in ["etf", "ETF"]:
             return (
                 pd.concat([sz, sh], sort=False)
@@ -277,7 +276,6 @@ def get_stock_list(type_="stock", ip=None, port=None):
                 .sort_index()
                 .assign(name=data["name"].apply(lambda x: str(x)[0:6]))
             )
-
         else:
             return data.assign(code=data["code"].apply(lambda x: str(x))).assign(
                 name=data["name"].apply(lambda x: str(x)[0:6])
@@ -860,9 +858,9 @@ def QA_fetch_get_index_list(ip=None, port=None):
             [
                 pd.concat(
                     [
-                        api.to_df(api.get_security_list(j, i * 1000))
-                        .assign(sse="sz" if j == 0 else "sh")
-                        .set_index(["code", "sse"], drop=False)
+                        api.to_df(api.get_security_list(j, i * 1000)).assign(
+                            sse="sz" if j == 0 else "sh"
+                        )
                         for i in range(int(api.get_security_count(j) / 1000) + 1)
                     ],
                     axis=0,
@@ -873,7 +871,10 @@ def QA_fetch_get_index_list(ip=None, port=None):
             axis=0,
             sort=False,
         )
-        # data.code = data.code.apply(int)
+        data = data.loc[
+            :, ["code", "volunit", "decimal_point", "name", "pre_close", "sse"]
+        ].set_index(["code", "sse"], drop=False)
+
         sz = data.query('sse=="sz"')
         sh = data.query('sse=="sh"')
 
