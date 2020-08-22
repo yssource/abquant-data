@@ -14,8 +14,9 @@ from abquant.utils.logger import user_log as ulog
 from abquant.utils.cache import Cache
 from abquant.utils.parallelism import Parallelism
 from abquant.utils.tdx import *
-from abquant.utils.tdx import for_sh, for_sz
+from abquant.utils.tdx import for_sh, for_sz, select_market_code, select_type
 from abquant.utils.datetime import *
+from abquant.utils.datetime import get_trade_gap, make_datestamp, make_timestamp
 from abquant.config import Setting
 
 global best_ip
@@ -323,7 +324,7 @@ def get_security_bars(code, _type, lens, ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type_=_type,
+                type=_type,
                 code=str(code),
             )
             .set_index("datetime", drop=False, inplace=False)
@@ -556,7 +557,7 @@ def get_stock_min(code, start, end, frequence="1min", ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type_=type_,
+                type=type_,
             )
             .set_index("datetime", drop=False, inplace=False)[start:end]
         )
@@ -833,7 +834,7 @@ def get_index_min(code, start, end, frequence="1min", ip=None, port=None):
                 date=data["datetime"].apply(lambda x: str(x)[0:10]),
                 date_stamp=data["datetime"].apply(lambda x: make_datestamp(x)),
                 time_stamp=data["datetime"].apply(lambda x: make_timestamp(x)),
-                type_=type_,
+                type=type_,
             )
             .set_index("datetime", drop=False, inplace=False)[start:end]
         )

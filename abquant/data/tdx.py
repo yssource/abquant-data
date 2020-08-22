@@ -87,11 +87,14 @@ class Stock(ISecurity):
                         "df is empty. {}|{}|{}".format(code, start_time, end_time)
                     )
                     return
-                coll.insert_many(to_json_from_pandas(df))
+
+                df_tmp = df.iloc[1:]
+                coll.insert_many(to_json_from_pandas(df_tmp))
+                start_time_plus_one = df.iloc[1]["date"]
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
                 text = "{}, {} -> {}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code), start_time, end_time, interval,
+                    "{} {}".format(stockOrIndex, code), start_time_plus_one, end_time, interval,
                 )
                 for _ in trange(df.size, desc=text):
                     pass
@@ -161,13 +164,15 @@ class Stock(ISecurity):
                             )
                         )
                         continue
-                    coll.insert_many(to_json_from_pandas(df))
+                    df_tmp = df.iloc[1:]
+                    coll.insert_many(to_json_from_pandas(df_tmp))
+                    start_time_plus_one = df.iloc[1]["datetime"]
                     finish = datetime.datetime.now()
                     interval = (finish - begin).total_seconds()
                     text = "{}, {}, {} -> {}, {:<04.2}s".format(
                         "{} {}".format(stockOrIndex, code),
                         freq,
-                        start_time,
+                        start_time_plus_one,
                         end_time,
                         interval,
                     )
