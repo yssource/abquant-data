@@ -28,8 +28,11 @@
 #include <variant>
 
 #include "DataFrame/DataFrame.h"
-#include "abquant/actions/indicator.hpp"
+// #include "abquant/actions/indicator.hpp"
 #include "abquant/actions/utils.hpp"
+#include "xtensor/xadapt.hpp"
+#include "xtensor/xarray.hpp"
+#include "xtensor/xio.hpp"
 
 namespace abq
 {
@@ -41,8 +44,8 @@ using MyDataFrame = StdDataFrame<std::string>;
  * IndexAction declaration *
  ***************************/
 
-template <class IA>
-class Indicator;
+// template <class IA>
+// class Indicator;
 
 template <class IA>
 class IndexAction : public TActionContext
@@ -59,7 +62,7 @@ public:
 
     // TODO: friend class Indicator<S, derived_type, IndexAction>
     QStringList getCodes() const;
-    Indicator<self_type> makeIndicator();
+    // Indicator<self_type> makeIndicator();
 
 protected:
     //! Default constructor
@@ -104,7 +107,7 @@ protected:
 
 private:
     friend IA;
-    friend class Indicator<self_type>;
+    // friend class Indicator<self_type>;
     QStringList m_codes;
     const char* m_start;
     const char* m_end;
@@ -136,7 +139,7 @@ IndexAction<IA>::IndexAction(QStringList codes) : m_codes{codes}
  * Returns a pointer to the actual derived type of the IndexAction.
  */
 template <class IA>
-    inline auto IndexAction<IA>::derived_cast() & noexcept -> derived_type*
+inline auto IndexAction<IA>::derived_cast() & noexcept -> derived_type*
 {
     return static_cast<derived_type*>(this);
 }
@@ -145,7 +148,7 @@ template <class IA>
  * Returns a constant reference to the actual derived type of the IndexAction.
  */
 template <class IA>
-    inline auto IndexAction<IA>::derived_cast() const & noexcept -> const derived_type&
+inline auto IndexAction<IA>::derived_cast() const& noexcept -> const derived_type&
 {
     return *static_cast<const derived_type*>(this);
 }
@@ -154,7 +157,7 @@ template <class IA>
  * Returns a constant reference to the actual derived type of the IndexAction.
  */
 template <class IA>
-    inline auto IndexAction<IA>::derived_cast() && noexcept -> derived_type
+inline auto IndexAction<IA>::derived_cast() && noexcept -> derived_type
 {
     return *static_cast<derived_type*>(this);
 }
@@ -193,8 +196,8 @@ template <class IA>
 template <typename T>
 QVector<T> IndexAction<IA>::toSeries(const char* col) const noexcept
 {
-    auto sa = derived_cast();
-    return sa->toSeries(col);
+    auto ia = derived_cast();
+    return ia->toSeries(col);
 }
 
 template <class IA>
@@ -203,11 +206,11 @@ QList<I> IndexAction<IA>::get_price(const QStringList codes, const char* start, 
 {
     double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
     double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
-    auto sa        = derived_cast();
-    TDatabaseContext::setCurrentDatabaseContext(sa);
+    auto ia        = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(ia);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<I> indexes = S::get_price(codes, start_d, end_d);
+    QList<I> indexes = I::get_price(codes, start_d, end_d);
     commitTransactions();
     return indexes;
 }
@@ -218,11 +221,11 @@ QList<I> IndexAction<IA>::get_price(const QStringList codes, const char* start, 
 {
     double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
     double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
-    auto sa        = derived_cast();
-    TDatabaseContext::setCurrentDatabaseContext(sa);
+    auto ia        = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(ia);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<I> indexes = S::get_price(codes, start_d, end_d, freq);
+    QList<I> indexes = I::get_price(codes, start_d, end_d, freq);
     commitTransactions();
     return indexes;
 }
@@ -231,11 +234,11 @@ template <class IA>
 template <typename I>
 QList<I> IndexAction<IA>::get_price(const QStringList codes, int category)
 {
-    auto sa = derived_cast();
-    TDatabaseContext::setCurrentDatabaseContext(sa);
+    auto ia = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(ia);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<I> indexes = S::get_price(codes, category);
+    QList<I> indexes = I::get_price(codes, category);
     commitTransactions();
     return indexes;
 }
@@ -249,15 +252,15 @@ QStringList IndexAction<IA>::getCodes() const
 template <class IA>
 inline auto IndexAction<IA>::getIndexes()
 {
-    auto sa = derived_cast();
-    return sa->getIndexes();
+    auto ia = derived_cast();
+    return ia->getIndexes();
 }
 
-template <class IA>
-inline auto IndexAction<IA>::makeIndicator() -> Indicator<self_type>
-{
-    auto sa = derived_cast();
-    return Indicator<self_type>(sa);
-}
+// template <class IA>
+// inline auto IndexAction<IA>::makeIndicator() -> Indicator<self_type>
+// {
+//     auto ia = derived_cast();
+//     return Indicator<self_type>(ia);
+// }
 
 } // namespace abq

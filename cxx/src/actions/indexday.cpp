@@ -11,8 +11,8 @@
 
 namespace abq
 {
-IndexDayAction::IndexDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr)
-    : IndexAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_xdxr{xdxr}
+IndexDayAction::IndexDayAction(QStringList codes, const char* start, const char* end)
+    : IndexAction(codes), m_codes{codes}, m_start{start}, m_end{end}
 {
     m_indexdays = run<IndexDay>(codes, start, end);
     if (m_indexdays.isEmpty()) {
@@ -94,7 +94,7 @@ vector<double> IndexDayAction::getOpen() const
 
 void IndexDayAction::setDataFrame()
 {
-    MyDataFrame df = toFq(m_xdxr);
+    MyDataFrame df = toDataFrame();
     m_df           = std::make_shared<MyDataFrame>(df);
     // m_df->write<std::ostream, std::string, double, int>(std::cout);
 }
@@ -107,25 +107,15 @@ vector<double> IndexDayAction::get_pyseries(const char* col) const noexcept
         return series;
     }
 
-    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-        std::shared_ptr<MyDataFrame> df;
+    std::shared_ptr<MyDataFrame> df;
 
-        try {
-            df = getDataFrame();
-            // df->write<std::ostream, std::string, double, int>(std::cout);
-            const char* colname;
-            if (QString(col) == QString("code")) {
-                colname = "lhs.code";
-            } else if (QString(col) == QString("date")) {
-                colname = "lhs.date";
-            } else {
-                colname = col;
-            }
-            series = df->get_column<double>(colname);
-        } catch (...) {
-            std::cout << " error ... "
-                      << "\n";
-        }
+    try {
+        df = getDataFrame();
+        // df->write<std::ostream, std::string, double, int>(std::cout);
+        series = df->get_column<double>(col);
+    } catch (...) {
+        std::cout << " error ... "
+                  << "\n";
     }
     return series;
 }

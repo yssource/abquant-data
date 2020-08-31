@@ -15,34 +15,34 @@
 
 #include "abquant/actions/index.hpp"
 #include "abquant/actions/utils.hpp"
-#include "abquant/models/indexday.h" //  include the model class
+#include "abquant/models/indexmin.h" //  include the model class
 
 namespace abq
 {
 using namespace std;
 
-class IndexDayAction : public IndexAction<IndexDayAction>
+class IndexMinAction : public IndexAction<IndexMinAction>
 {
 public:
     //! Default constructor
-    IndexDayAction() = default;
+    IndexMinAction() = default;
 
-    IndexDayAction(QStringList codes, const char* start, const char* end);
+    IndexMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq = MIN_FREQ::ONE);
 
     //! Copy constructor
-    IndexDayAction(const IndexDayAction& other) = delete;
+    IndexMinAction(const IndexMinAction& other) = delete;
 
     //! Move constructor
-    IndexDayAction(IndexDayAction&& other) noexcept = delete;
+    IndexMinAction(IndexMinAction&& other) noexcept = delete;
 
     //! Destructor
-    ~IndexDayAction() noexcept = default;
+    virtual ~IndexMinAction() noexcept = default;
 
     //! Copy assignment operator
-    IndexDayAction& operator=(const IndexDayAction& other) = default;
+    IndexMinAction& operator=(const IndexMinAction& other) = default;
 
     //! Move assignment operator
-    IndexDayAction& operator=(IndexDayAction&& other) noexcept
+    IndexMinAction& operator=(IndexMinAction&& other) noexcept
     {
         if (&other == this) {
             return *this;
@@ -50,12 +50,14 @@ public:
         std::swap(m_codes, other.m_codes);
         std::swap(m_start, other.m_start);
         std::swap(m_end, other.m_end);
-        std::swap(m_indexdays, other.m_indexdays);
+        std::swap(m_freq, other.m_freq);
+        std::swap(m_indexmins, other.m_indexmins);
         return *this;
-    };
+    }
 
-    inline QList<IndexDay> getIndexes() const { return m_indexdays; };
+    inline QList<IndexMin> getIndexes() const { return m_indexmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };
+
     MyDataFrame toDataFrame() const;
     std::shared_ptr<MyDataFrame> getDataFrame() const;
     vector<double> getOpen() const;
@@ -68,31 +70,30 @@ public:
     // MyDataFrame for binding
     std::vector<double> get_pyseries(const char*) const noexcept;
 
-    // template <>
-    xt::xarray<double> toSeries(const char*) const noexcept;
-
 private:
-    QList<IndexDay> m_indexdays{};
-    const QVector<const char*> m_columns{"open", "close", "high", "low", "vol", "amount", "date", "code", "date_stamp"};
+    QList<IndexMin> m_indexmins;
+    const QVector<const char*> m_columns = {"open",     "close", "high", "low",        "vol",        "amount",
+                                            "datetime", "code",  "date", "date_stamp", "time_stamp", "type"};
     QStringList m_codes{};
     const char* m_start{};
     const char* m_end{};
+    MIN_FREQ m_freq{};
     std::shared_ptr<MyDataFrame> m_df{nullptr};
 
 private:
-    friend inline QDebug operator<<(QDebug d, const IndexDayAction& ia)
+    friend inline QDebug operator<<(QDebug d, const IndexMinAction& sa)
     {
-        QVector<const char*> columns = ia.getColumns();
+        QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = ia.getIndexes();
+        auto qs = sa.getIndexes();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
         for (auto s : qs) {
             QList<QVariant> valuelist;
             valuelist << QVariant(s.open()) << QVariant(s.close()) << QVariant(s.high()) << QVariant(s.low())
-                      << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.date()) << QVariant(s.code())
-                      << QVariant(s.dateStamp());
+                      << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.datetime()) << QVariant(s.date())
+                      << QVariant(s.code()) << QVariant(s.dateStamp()) << QVariant(s.timeStamp()) << QVariant(s.type());
             d << valuelist;
             qv << valuelist;
             d << QVariant("\n");
@@ -102,7 +103,7 @@ private:
 };
 
 template <typename T>
-QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
+QVector<T> IndexMinAction::toSeries(const char* col) const noexcept
 {
     QVector<T> series;
     auto cols = getColumns();
@@ -148,8 +149,8 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
             }
         }
         if constexpr (std::is_same_v<T, std::string>) {
-            if (QString("date") == QString(col)) {
-                series << s.date().toStdString();
+            if (QString("datetime") == QString(col)) {
+                series << s.datetime().toStdString();
                 continue;
             }
         }
@@ -159,21 +160,31 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
                 continue;
             }
         }
+        if constexpr (std::is_same_v<T, std::string>) {
+            if (QString("date") == QString(col)) {
+                series << s.date().toStdString();
+                continue;
+            }
+        }
         if constexpr (std::is_same_v<T, double>) {
             if (QString("date_stamp") == QString(col)) {
                 series << s.dateStamp();
                 continue;
             }
         }
+        if constexpr (std::is_same_v<T, double>) {
+            if (QString("time_stamp") == QString(col)) {
+                series << s.timeStamp();
+                continue;
+            }
+        }
+        if constexpr (std::is_same_v<T, std::string>) {
+            if (QString("type") == QString(col)) {
+                series << s.type().toStdString();
+                continue;
+            }
+        }
     }
     return series;
 }
-
-// template <>
-xt::xarray<double> IndexDayAction::toSeries(const char* col) const noexcept
-{
-    std::vector<double> qv = toSeries<double>(col).toStdVector();
-    return xt::adapt(qv);
-}
-
 } // namespace abq

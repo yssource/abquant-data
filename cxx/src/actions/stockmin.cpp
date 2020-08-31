@@ -7,7 +7,9 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#pragma once
 #include "stockmin.hpp"
+// #include "abquant/actions/stockmin.hpp"
 
 namespace abq
 {

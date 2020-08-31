@@ -5,6 +5,7 @@
 
 #include "DataFrame/DataFrame.h"
 #include "DataFrame/DataFrameStatsVisitors.h"
+#include "abquant/actions/index.hpp"
 #include "abquant/actions/stock.hpp"
 #include "xtensor/xadapt.hpp"
 #include "xtensor/xarray.hpp"

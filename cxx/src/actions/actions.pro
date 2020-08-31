@@ -16,8 +16,8 @@ LIBS += -L$$PWD/../../../lib -labqmodel
 
 HEADERS = index.hpp
 HEADERS += indexday.hpp
-
-HEADERS = stock.hpp
+HEADERS += indexmin.hpp
+HEADERS += stock.hpp
 HEADERS += stockday.hpp
 HEADERS += stockmin.hpp
 HEADERS += stockxdxr.hpp
@@ -26,8 +26,8 @@ HEADERS += indicator.hpp
 HEADERS += utils.hpp
 
 SOURCES = indexday.cpp
-
-SOURCES = stockday.cpp
+SOURCES += indexmin.cpp
+SOURCES += stockday.cpp
 SOURCES += stockmin.cpp
 SOURCES += stockxdxr.cpp
 SOURCES += indicator.cpp

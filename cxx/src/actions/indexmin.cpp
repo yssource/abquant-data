@@ -8,33 +8,25 @@
  ****************************************************************************/
 
 #pragma once
-#include "abquant/actions/stockday.hpp"
+#include "indexmin.hpp"
+// #include "abquant/actions/indexmin.hpp"
 
 namespace abq
 {
-StockDayAction::StockDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr)
-    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_xdxr{xdxr}
+IndexMinAction::IndexMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+    : IndexAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}
 {
-    m_stockdays = run<StockDay>(codes, start, end);
-    if (m_stockdays.isEmpty()) {
-        qDebug() << "No stock day data.\n"
+    m_indexmins = run<IndexMin>(codes, start, end, freq);
+    if (m_indexmins.isEmpty()) {
+        qDebug() << "No index minute data.\n"
                  << codes << "\n"
                  << "start: " << start << "\n"
-                 << "end: " << end << "\n";
+                 << "end: " << end << "\n"
+                 << "freq: " << freq << "\n";
     }
 }
 
-const MyDataFrame StockDayAction::toFq(FQ_TYPE fq) const
-{
-    auto x  = Xdxr<StockDayAction>(*this);
-    auto df = toDataFrame();
-    if (fq == FQ_TYPE::NONE || !df.get_index().size()) {
-        return df;
-    }
-    return x.getXdxr(df, fq);
-}
-
-MyDataFrame StockDayAction::toDataFrame() const
+MyDataFrame IndexMinAction::toDataFrame() const
 {
     MyDataFrame df;
     try {
@@ -44,9 +36,12 @@ MyDataFrame StockDayAction::toDataFrame() const
         // low" : 49.0,
         // vol" : 32768.5,
         // amount" : 5000.0,
+        // datetime" : "2018-08-24 09:31:00",
         // date" : "1991-04-03",
         // code" : "000001",
         // date_stamp" : 670608000.0
+        // time_stamp" : 670608000.0
+        // type" : "1min",
 
         std::vector<std::string> datetimeCodeIdx;
         std::vector<double> open;
@@ -55,31 +50,37 @@ MyDataFrame StockDayAction::toDataFrame() const
         std::vector<double> low;
         std::vector<double> vol;
         std::vector<double> amount;
+        std::vector<std::string> datetime;
         std::vector<std::string> date;
         std::vector<std::string> code;
         std::vector<double> date_stamp;
+        std::vector<double> time_stamp;
+        std::vector<std::string> type;
         std::vector<double> if_trade;
 
-        foreach (auto s, m_stockdays) {
-            datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());
+        foreach (auto s, m_indexmins) {
+            datetimeCodeIdx.push_back((s.datetime() + QString("_") + s.code()).toStdString());
             open.push_back(s.open());
             close.push_back(s.close());
             high.push_back(s.high());
             low.push_back(s.low());
             vol.push_back(s.vol());
             amount.push_back(s.amount());
+            datetime.push_back(s.datetime().toStdString());
             date.push_back(s.date().toStdString());
             code.push_back(s.code().toStdString());
             date_stamp.push_back(s.dateStamp());
+            time_stamp.push_back(s.timeStamp());
+            type.push_back(s.type().toStdString());
             if_trade.push_back(1);
         }
 
-        int rc =
-            df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
-                         std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
-                         std::make_pair("amount", amount), std::make_pair("date", date), std::make_pair("code", code),
-                         std::make_pair("date_stamp", date_stamp), std::make_pair("if_trade", if_trade));
-
+        int rc = df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
+                              std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
+                              std::make_pair("amount", amount), std::make_pair("date", date),
+                              std::make_pair("datetime", datetime), std::make_pair("code", code),
+                              std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
+                              std::make_pair("type", type), std::make_pair("if_trade", if_trade));
         // df.write<std::ostream, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
@@ -87,9 +88,9 @@ MyDataFrame StockDayAction::toDataFrame() const
     return df;
 };
 
-std::shared_ptr<MyDataFrame> StockDayAction::getDataFrame() const { return m_df; }
+std::shared_ptr<MyDataFrame> IndexMinAction::getDataFrame() const { return m_df; }
 
-vector<double> StockDayAction::getOpen() const
+vector<double> IndexMinAction::getOpen() const
 {
     vector<double> open;
     if (m_df != nullptr) {
@@ -103,14 +104,14 @@ vector<double> StockDayAction::getOpen() const
     return open;
 }
 
-void StockDayAction::setDataFrame()
+void IndexMinAction::setDataFrame()
 {
-    MyDataFrame df = toFq(m_xdxr);
+    MyDataFrame df = toDataFrame();
     m_df           = std::make_shared<MyDataFrame>(df);
     // m_df->write<std::ostream, std::string, double, int>(std::cout);
 }
 
-vector<double> StockDayAction::get_pyseries(const char* col) const noexcept
+vector<double> IndexMinAction::get_pyseries(const char* col) const noexcept
 {
     vector<double> series;
     auto cols = getColumns();
@@ -118,25 +119,15 @@ vector<double> StockDayAction::get_pyseries(const char* col) const noexcept
         return series;
     }
 
-    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-        std::shared_ptr<MyDataFrame> df;
+    std::shared_ptr<MyDataFrame> df;
 
-        try {
-            df = getDataFrame();
-            // df->write<std::ostream, std::string, double, int>(std::cout);
-            const char* colname;
-            if (QString(col) == QString("code")) {
-                colname = "lhs.code";
-            } else if (QString(col) == QString("date")) {
-                colname = "lhs.date";
-            } else {
-                colname = col;
-            }
-            series = df->get_column<double>(colname);
-        } catch (...) {
-            std::cout << " error ... "
-                      << "\n";
-        }
+    try {
+        df = getDataFrame();
+        // df->write<std::ostream, std::string, double, int>(std::cout);
+        series = df->get_column<double>(col);
+    } catch (...) {
+        std::cout << " error ... "
+                  << "\n";
     }
     return series;
 }

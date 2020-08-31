@@ -7,11 +7,12 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#include <QDebug>
 #include <chrono>
-// #include <iostream>
+#include <iostream>
 
 #include "abquant/actions/abquant.hpp"
-#include "abquant/actions/stockmin.hpp"
+#include "abquant/actions/indexmin.hpp"
 #include "abquant/actions/utils.hpp"
 
 using namespace abq;
@@ -26,16 +27,16 @@ int main(int argc, char* argv[])
     const char* end   = "2019-12-01 23:55:00";
     MIN_FREQ freq     = MIN_FREQ::FIVE;
 
-    StockMinAction sma(codes, start, end, freq, FQ_TYPE::PRE);
-    // auto df2 = sma.toFq(FQ_TYPE::PRE);
-    // auto df3 = sma.toFq(FQ_TYPE::POST);
+    IndexMinAction ima(codes, start, end, freq);
+    ima.setDataFrame();
+
     int N      = 10;
     auto begin = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < N; ++i) {
         // qDebug() << i;
         std::cout << i << "\n";
-        auto df = sma.toFq(FQ_TYPE::PRE);
-        // df.write<std::ostream, std::string, double, int>(std::cout);
+        auto df = ima.getDataFrame();
+        // df->write<std::ostream, std::string, double, int>(std::cout);
     }
     auto finish_                          = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish_ - begin;
