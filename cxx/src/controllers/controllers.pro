@@ -21,5 +21,7 @@ HEADERS += stockxdxrcontroller.h
 SOURCES += stockxdxrcontroller.cpp
 HEADERS += stockdaycontroller.h
 SOURCES += stockdaycontroller.cpp
+HEADERS += indexmincontroller.h
+SOURCES += indexmincontroller.cpp
 HEADERS += stockmincontroller.h
 SOURCES += stockmincontroller.cpp
