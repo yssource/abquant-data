@@ -3,7 +3,7 @@
 # HEADER_CLASSES += ../include/abquant/helpers/applicationhelper.h
 # HEADER_CLASSES += ../include/abquant/models/indexday.h ../include/abquant/models/stockday.h ../include/abquant/models/stockmin.h ../include/abquant/models/stockxdxr.h ../include/abquant/models/mongoobjects/indexdayobject.h ../include/abquant/models/mongoobjects/stockdayobject.h ../include/abquant/models/mongoobjects/stockminobject.h ../include/abquant/models/mongoobjects/stockxdxrobject.h
 
-HEADER_FILES = ./actions/stock.hpp ./actions/stockday.hpp ./actions/stockmin.hpp ./actions/stockxdxr.hpp ./actions/xdxr.hpp ./actions/indicator.hpp
+HEADER_FILES = ./actions/index.hpp ./actions/indexday.hpp ./actions/stock.hpp ./actions/stockday.hpp ./actions/stockmin.hpp ./actions/stockxdxr.hpp ./actions/xdxr.hpp ./actions/indicator.hpp
 HEADER_FILES += ./controllers/applicationcontroller.h ./controllers/indexdaycontroller.h ./controllers/stockdaycontroller.h ./controllers/indexmincontroller.h ./controllers/stockmincontroller.h ./controllers/stockxdxrcontroller.h
 HEADER_FILES += ./helpers/applicationhelper.h
-HEADER_FILES += ./models/indexday.h ./models/indexday.h ./models/indexmin.h ./models/indexxdxr.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/indexxdxrobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/indexxdxrobject.h
+HEADER_FILES += ./models/indexday.h ./models/stockday.h ./models/indexmin.h ./models/stockmin.h ./models/stockxdxr.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/stockdayobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/stockminobject.h ./models/mongoobjects/indexxdxrobject.h
