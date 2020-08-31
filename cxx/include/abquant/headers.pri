@@ -6,4 +6,4 @@
 HEADER_FILES = ./actions/stock.hpp ./actions/stockday.hpp ./actions/stockmin.hpp ./actions/stockxdxr.hpp ./actions/xdxr.hpp ./actions/indicator.hpp
 HEADER_FILES += ./controllers/applicationcontroller.h ./controllers/indexdaycontroller.h ./controllers/stockdaycontroller.h ./controllers/stockmincontroller.h ./controllers/stockxdxrcontroller.h
 HEADER_FILES += ./helpers/applicationhelper.h
-HEADER_FILES += ./models/indexday.h ./models/stockday.h ./models/stockmin.h ./models/stockxdxr.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/stockdayobject.h ./models/mongoobjects/stockminobject.h ./models/mongoobjects/stockxdxrobject.h
+HEADER_FILES += ./models/indexday.h ./models/indexday.h ./models/indexmin.h ./models/indexxdxr.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/indexxdxrobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/indexxdxrobject.h
