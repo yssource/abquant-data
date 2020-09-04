@@ -16,13 +16,23 @@
 #include "DataFrame/DataFrameStatsVisitors.h"
 #include "abquant/actions/index.hpp"
 #include "abquant/actions/stock.hpp"
+#include "abquant/actions/utils.hpp"
+#include "iostream"
 #include "xtensor/xadapt.hpp"
 #include "xtensor/xarray.hpp"
 #include "xtensor/xio.hpp"
 
 namespace abq
 {
+template <class A>
+class StockAction;
+template <class A>
+class IndexAction;
+
+// class StockDayAction;
+
 using namespace hmdf;
+// using namespace std;
 
 // template<typename T>
 struct PySeries {
@@ -39,15 +49,13 @@ xt::xarray<double> SMA(series_t series, size_t N, size_t M);
 xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N);
 } // namespace indicator
 
-template <typename SA>
+template <typename A>
 class Indicator
 {
 public:
-    using stockaction_type = SA;
-
     Indicator() = default;
 
-    Indicator(stockaction_type* sa);
+    Indicator(A* a);
 
     //! Copy constructor
     Indicator(const Indicator& other) = default;
@@ -81,34 +89,37 @@ public:
 
 private:
     const char* m_hello{"hello world!"};
-    stockaction_type* m_sa;
+    A* m_a;
 };
 
-template <typename SA>
-Indicator<SA>::Indicator(stockaction_type* sa) : m_sa(sa)
+template <typename A>
+Indicator<A>::Indicator(A* a) : m_a(a)
 {
-    auto qs = sa->getStocks();
-    qDebug() << "indicator qs count: " << qs.count() << " : "
-             << "qs"
-             << "\n";
+    using action_t = typename std::decay<typename std::remove_pointer<decltype(a)>::type>::type;
+    if constexpr (abq::is_base_of_template<IndexAction, action_t>::value) {
+        auto qs = a->getIndexes();
+    }
+    if constexpr (abq::is_base_of_template<StockAction, action_t>::value) {
+        auto qs = a->getStocks();
+    }
 }
 
-template <typename SA>
+template <typename A>
 template <typename T>
-void Indicator<SA>::hello(T h)
+void Indicator<A>::hello(T h)
 {
     qDebug() << m_hello << " "
              << "\n";
 }
 
-template <typename SA>
-xt::xarray<double> Indicator<SA>::SMA(series_t series, size_t N, size_t M) const
+template <typename A>
+xt::xarray<double> Indicator<A>::SMA(series_t series, size_t N, size_t M) const
 {
     return abq::indicator::SMA(series, N, M);
 }
 
-template <typename SA>
-xt::xarray<double> Indicator<SA>::DIFF(const char* col, long N) const
+template <typename A>
+xt::xarray<double> Indicator<A>::DIFF(const char* col, long N) const
 {
     std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
@@ -116,7 +127,7 @@ xt::xarray<double> Indicator<SA>::DIFF(const char* col, long N) const
         throw std::runtime_error(msg.toStdString());
     }
 
-    auto df = m_sa->toDataFrame();
+    auto df = m_a->toDataFrame();
 
     DiffVisitor<double> diff_visit(N, false);
     const auto& result = df.template single_act_visit<double>(col, diff_visit).get_result();

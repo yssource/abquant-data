@@ -11,23 +11,29 @@
 #include <QtTest/QtTest>
 
 #include "abquant/actions/abquant.hpp"
+#include "abquant/actions/index.hpp"
+#include "abquant/actions/indexday.hpp"
+#include "abquant/actions/indicator.hpp"
 #include "abquant/actions/stock.hpp"
 #include "abquant/actions/stockday.hpp"
 #include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/stockxdxr.hpp"
-#include "abquant/actions/indicator.hpp"
 #include "abquant/actions/utils.hpp"
 // #include "gtest/gtest.h"
 #include <iostream>
 #include <utility>
+
 #include "string"
 
 using namespace abq;
 using namespace std;
 
 static QList<StockDay> stockdays;
+static QList<IndexDay> indexdays;
 static StockDayAction sa;
-static Indicator<abq::StockAction<abq::StockDayAction>::self_type> indday;
+static IndexDayAction ia;
+static Indicator<abq::StockAction<abq::StockDayAction>::self_type> indstockday;
+static Indicator<abq::IndexAction<abq::IndexDayAction>::self_type> indindexday;
 // static MyDataFrame df;
 
 class TestIndicator : public QObject
@@ -50,22 +56,26 @@ void TestIndicator::initTestCase()
     // const char *start = "2019-06-25";
     // const char *end = "2019-06-27";
 
-    sa = StockDayAction(codes, start, end);
-    indday = sa.makeIndicator();
+    sa          = StockDayAction(codes, start, end);
+    indstockday = sa.makeIndicator();
 
+    ia          = IndexDayAction(codes, start, end);
+    indindexday = ia.makeIndicator();
 }
 
-void TestIndicator::sma_data() {
+void TestIndicator::sma_data()
+{
     QTest::addColumn<double>("open");
     // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
     xt::xarray<double> xs = sa.toSeries("open");
-    xt::xarray<double> rs = indday.SMA(xs, 12);
+    xt::xarray<double> rs = indstockday.SMA(xs, 12);
     QTest::newRow("1") << rs(0);
 }
 
-void TestIndicator::sma() {
+void TestIndicator::sma()
+{
     QFETCH(double, open);
-    double expected          = 9.11;
+    double expected = 9.11;
     QCOMPARE(open, expected);
 }
 

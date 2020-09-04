@@ -8,14 +8,19 @@
  ****************************************************************************/
 
 #pragma once
+#include <QtCore/QDebug>
 #include <QtCore/QVariant>
 #include <QtCore/QVariantMap>
 #include <QtCore/QVector>
 #include <algorithm>
 #include <cmath>
 #include <exception>
+#include <functional>
 #include <iostream>
 #include <limits>
+#include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "DataFrame/DataFrame.h"
@@ -67,5 +72,16 @@ inline QDebug operator<<(QDebug debug, MIN_FREQ freq)
     }
     return debug;
 }
+
+template <template <typename...> class base, typename derived>
+struct is_base_of_template_impl {
+    template <typename... Ts>
+    static constexpr std::true_type test(const base<Ts...>*);
+    static constexpr std::false_type test(...);
+    using type = decltype(test(std::declval<derived*>()));
+};
+
+template <template <typename...> class base, typename derived>
+using is_base_of_template = typename is_base_of_template_impl<base, derived>::type;
 
 } // namespace abq

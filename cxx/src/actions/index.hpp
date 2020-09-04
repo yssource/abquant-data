@@ -28,7 +28,7 @@
 #include <variant>
 
 #include "DataFrame/DataFrame.h"
-// #include "abquant/actions/indicator.hpp"
+#include "abquant/actions/indicator.hpp"
 #include "abquant/actions/utils.hpp"
 #include "xtensor/xadapt.hpp"
 #include "xtensor/xarray.hpp"
@@ -44,8 +44,8 @@ using MyDataFrame = StdDataFrame<std::string>;
  * IndexAction declaration *
  ***************************/
 
-// template <class IA>
-// class Indicator;
+template <class IA>
+class Indicator;
 
 template <class IA>
 class IndexAction : public TActionContext
@@ -62,7 +62,7 @@ public:
 
     // TODO: friend class Indicator<S, derived_type, IndexAction>
     QStringList getCodes() const;
-    // Indicator<self_type> makeIndicator();
+    Indicator<self_type> makeIndicator();
 
 protected:
     //! Default constructor
@@ -107,7 +107,7 @@ protected:
 
 private:
     friend IA;
-    // friend class Indicator<self_type>;
+    friend class Indicator<self_type>;
     QStringList m_codes;
     const char* m_start;
     const char* m_end;
@@ -256,11 +256,11 @@ inline auto IndexAction<IA>::getIndexes()
     return ia->getIndexes();
 }
 
-// template <class IA>
-// inline auto IndexAction<IA>::makeIndicator() -> Indicator<self_type>
-// {
-//     auto ia = derived_cast();
-//     return Indicator<self_type>(ia);
-// }
+template <class IA>
+inline auto IndexAction<IA>::makeIndicator() -> Indicator<self_type>
+{
+    auto ia = derived_cast();
+    return Indicator<self_type>(ia);
+}
 
 } // namespace abq
