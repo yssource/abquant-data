@@ -150,6 +150,8 @@ class Abquant
 public:
     static Abquant& start()
     {
+        // FIXME: don't know why qDebug makes a segmentation fault(core dumped), if there is no qDeubg here.
+        qDebug() << "Abquant starts ...";
         static Abquant inst;
         return inst;
     }
