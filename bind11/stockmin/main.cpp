@@ -21,7 +21,7 @@ public:
         : m_codes{codes}, m_start{start}, m_end{end}, m_sfreq{sfreq}, m_xdxr{xdxr}
     {
         MIN_FREQ freq;
-        if (QString::fromStdString(m_sfreq) == QString("5min")) {
+        if (QString::fromStdString(m_sfreq) == QString("5min") || QString::fromStdString(m_sfreq) == QString("5m")) {
             freq = MIN_FREQ::FIVE;
         }
 
