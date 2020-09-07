@@ -1,4 +1,5 @@
 add_subdirectory(abquant)
+add_subdirectory(indexday)
 add_subdirectory(stockday)
 add_subdirectory(stockmin)
 add_subdirectory(test)
