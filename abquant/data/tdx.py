@@ -348,7 +348,7 @@ class Stock(ISecurity):
             client {[type]} -- [description] (default: {DATABASE})
         """
         Setting.make_download_path()
-        return
+        # return
         download_financialzip()
         coll = self._db.financial
         coll.create_index(
