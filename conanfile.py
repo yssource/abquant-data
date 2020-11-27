@@ -124,9 +124,9 @@ class AbquantConan(ConanFile):
                 else:
                     self.run("mingw32-make", run_environment=True)
             else:
-                cmd = "bear make"
+                cmd = "bear -- make"
                 self.output.info(cmd)
-                self.run("bear make", run_environment=True)
+                self.run("bear -- make", run_environment=True)
 
     def _build_with_cmake(self):
         self.output.info("Building with CMake")
