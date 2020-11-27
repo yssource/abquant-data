@@ -12,6 +12,9 @@ LIBS += -L$$PWD/../../../lib -labqhelper
 MOC_DIR = .obj/
 OBJECTS_DIR = .obj/
 
+HEADERS += mongoobjects/emconceptbaseobject.h
+HEADERS += emconceptbase.h
+SOURCES += emconceptbase.cpp
 HEADERS += mongoobjects/indexdayobject.h
 HEADERS += indexday.h
 SOURCES += indexday.cpp

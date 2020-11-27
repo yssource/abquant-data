@@ -14,6 +14,7 @@ DESTDIR = $$PWD/../../../lib
 
 LIBS += -L$$PWD/../../../lib -labqmodel
 
+HEADERS = emconceptbase.hpp
 HEADERS = index.hpp
 HEADERS += indexday.hpp
 HEADERS += indexmin.hpp
@@ -25,6 +26,7 @@ HEADERS += xdxr.hpp
 HEADERS += indicator.hpp
 HEADERS += utils.hpp
 
+SOURCES = emconceptbase.cpp
 SOURCES = indexday.cpp
 SOURCES += indexmin.cpp
 SOURCES += stockday.cpp

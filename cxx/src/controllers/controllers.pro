@@ -15,6 +15,8 @@ OBJECTS_DIR = .obj/
 
 HEADERS += applicationcontroller.h
 SOURCES += applicationcontroller.cpp
+HEADERS += emconceptbasecontroller.h
+SOURCES += emconceptbasecontroller.cpp
 HEADERS += indexdaycontroller.h
 SOURCES += indexdaycontroller.cpp
 HEADERS += stockxdxrcontroller.h
