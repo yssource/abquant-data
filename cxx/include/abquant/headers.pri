@@ -3,7 +3,7 @@
 # HEADER_CLASSES += ../include/abquant/helpers/applicationhelper.h
 # HEADER_CLASSES += ../include/abquant/models/indexday.h ../include/abquant/models/stockday.h ../include/abquant/models/stockmin.h ../include/abquant/models/stockxdxr.h ../include/abquant/models/mongoobjects/indexdayobject.h ../include/abquant/models/mongoobjects/stockdayobject.h ../include/abquant/models/mongoobjects/stockminobject.h ../include/abquant/models/mongoobjects/stockxdxrobject.h
 
-HEADER_FILES = ./actions/emconceptbase.hpp ./actions/index.hpp ./actions/indexday.hpp ./actions/indexmin.hpp ./actions/stock.hpp ./actions/stockday.hpp ./actions/stockmin.hpp ./actions/stockxdxr.hpp ./actions/xdxr.hpp ./actions/indicator.hpp
+HEADER_FILES = ./actions/emconcept.hpp ./actions/emconceptbase.hpp ./actions/index.hpp ./actions/indexday.hpp ./actions/indexmin.hpp ./actions/stock.hpp ./actions/stockday.hpp ./actions/stockmin.hpp ./actions/stockxdxr.hpp ./actions/xdxr.hpp ./actions/indicator.hpp
 HEADER_FILES += ./controllers/applicationcontroller.h ./controllers/emconceptbasecontroller.h ./controllers/indexdaycontroller.h ./controllers/indexmincontroller.h ./controllers/stockdaycontroller.h ./controllers/stockmincontroller.h ./controllers/stockxdxrcontroller.h
 HEADER_FILES += ./helpers/applicationhelper.h
 HEADER_FILES += ./models/emconceptbase.h ./models/indexday.h ./models/indexmin.h ./models/stockday.h ./models/stockmin.h ./models/stockxdxr.h ./models/mongoobjects/emconceptbaseobject.h ./models/mongoobjects/indexdayobject.h ./models/mongoobjects/indexminobject.h ./models/mongoobjects/stockdayobject.h ./models/mongoobjects/stockminobject.h ./models/mongoobjects/stockxdxrobject.h
