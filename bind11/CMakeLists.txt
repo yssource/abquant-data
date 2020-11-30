@@ -1,5 +1,6 @@
 add_subdirectory(abquant)
 add_subdirectory(emconceptbase)
+add_subdirectory(emconcepthistory)
 add_subdirectory(indexday)
 add_subdirectory(indexmin)
 add_subdirectory(stockday)
