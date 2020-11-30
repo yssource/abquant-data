@@ -3,6 +3,7 @@
 #include <TreeFrogModel>
 
 #include "abquant/models/mongoobjects/emconcepthistoryobject.h"
+#include "iostream"
 
 EmConceptHistory::EmConceptHistory() : TAbstractModel(), d(new EmConceptHistoryObject())
 {
@@ -61,6 +62,10 @@ void EmConceptHistory::setVolume(double volume) { d->volume = volume; }
 double EmConceptHistory::amount() const { return d->amount; }
 
 void EmConceptHistory::setAmount(double amount) { d->amount = amount; }
+
+double EmConceptHistory::amplitude() const { return d->amplitude; }
+
+void EmConceptHistory::setAmplitude(double amplitude) { d->amplitude = amplitude; }
 
 double EmConceptHistory::riseFallPct() const { return d->rise_fall_pct; }
 
@@ -134,15 +139,17 @@ EmConceptHistory EmConceptHistory::get(const QString& id)
     return EmConceptHistory(mapper.findByObjectId(id));
 }
 
-QList<EmConceptHistory> EmConceptHistory::get_price(const QStringList& codes, double start, double end)
+QList<EmConceptHistory> EmConceptHistory::get_price(const QStringList& cst_codes, double start, double end)
 {
+    QStringList codes{};
+    foreach (QString code, cst_codes)
+        codes << code.toUpper();
     TMongoODMapper<EmConceptHistoryObject> mapper;
     // mapper.setSortOrder(EmConceptHistoryObject::Date, Tf::DescendingOrder);
     TCriteria cri;
     // QDateTime start_ = QDateTime::fromString(start, Qt::ISODate);
     cri.add(EmConceptHistoryObject::MktCode, TMongo::In,
             codes); // AND add to the end operator
-
     cri.add(EmConceptHistoryObject::DateStamp, TMongo::GreaterThan,
             start); // AND add to the end operator
 

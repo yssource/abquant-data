@@ -12,7 +12,7 @@
 
 #include "abquant/actions/abquant.hpp"
 #include "abquant/actions/emconcept.hpp"
-#include "abquant/actions/emconceptbase.hpp"
+#include "abquant/actions/emconcepthistory.hpp"
 // #include "abquant/actions/indexmin.hpp"
 #include "abquant/actions/utils.hpp"
 // #include "gtest/gtest.h"
@@ -24,11 +24,11 @@
 using namespace abq;
 using namespace std;
 
-static QList<EmConceptBase> emconceptbases;
-static EmConceptBaseAction ca;
+static QList<EmConceptHistory> emconcepthistorys;
+static EmConceptHistoryAction ca;
 // static MyDataFrame df;
 
-class TestEmConceptBase : public QObject
+class TestEmConceptHistory : public QObject
 {
     Q_OBJECT
 private slots:
@@ -36,19 +36,21 @@ private slots:
     void cleanupTestCase();
     void f8_turnover_data();
     void f8_turnover();
-    void f14_name_data();
-    void f14_name();
+    void mkt_code_data();
+    void mkt_code();
 };
 
-void TestEmConceptBase::initTestCase()
+void TestEmConceptHistory::initTestCase()
 {
-    QStringList codes = {"bk0980", "bk0990"};
-    // QStringList codes = {"bk0990"};
-    ca = EmConceptBaseAction(codes);
+    QStringList codes = {"90.bk0980", "90.bk0990"};
+    // QStringList codes = {"90.bk0990"};
+    const char* start = "2017-01-01";
+    const char* end   = "2019-12-01";
+    ca                = EmConceptHistoryAction(codes, start, end);
     qDebug() << ca << "\n";
 }
 
-void TestEmConceptBase::f8_turnover_data()
+void TestEmConceptHistory::f8_turnover_data()
 {
     QTest::addColumn<double>("f8_turnover");
     // xt::xarray<double> xs = xt::adapt(ca.toSeries<double>("f8_turnover").toStdVector());
@@ -56,29 +58,29 @@ void TestEmConceptBase::f8_turnover_data()
     QTest::newRow("1") << xs(0);
 }
 
-void TestEmConceptBase::f8_turnover()
+void TestEmConceptHistory::f8_turnover()
 {
     QFETCH(double, f8_turnover);
-    double expected = 1.06;
+    double expected = 1.69;
     qFuzzyCompare(f8_turnover, expected);
 }
 
-void TestEmConceptBase::f14_name_data()
+void TestEmConceptHistory::mkt_code_data()
 {
-    QTest::addColumn<QString>("f14_name");
-    xt::xarray<std::string> xs = xt::adapt(ca.toSeries<std::string>("f14_name").toStdVector());
+    QTest::addColumn<QString>("mkt_code");
+    xt::xarray<std::string> xs = xt::adapt(ca.toSeries<std::string>("mkt_code").toStdVector());
     QTest::newRow("1") << QString::fromStdString(xs(0));
 }
 
-void TestEmConceptBase::f14_name()
+void TestEmConceptHistory::mkt_code()
 {
-    QFETCH(QString, f14_name);
-    QString expected = "债转股";
-    QCOMPARE(f14_name, expected);
+    QFETCH(QString, mkt_code);
+    QString expected = "90.BK0980";
+    QCOMPARE(mkt_code, expected);
 }
 
-void TestEmConceptBase::cleanupTestCase() {}
+void TestEmConceptHistory::cleanupTestCase() {}
 
-// ABQ_TEST_SQLLESS_MAIN(TestEmConceptBase)
-ABQ_TEST_MAIN(TestEmConceptBase)
+// ABQ_TEST_SQLLESS_MAIN(TestEmConceptHistory)
+ABQ_TEST_MAIN(TestEmConceptHistory)
 #include "main.moc"

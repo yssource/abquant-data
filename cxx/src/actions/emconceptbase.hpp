@@ -56,17 +56,18 @@ public:
 
     inline QList<EmConceptBase> getEmConceptes() const { return m_emconceptbases; };
     inline QVector<const char*> getColumns() const { return m_columns; };
-    // MyDataFrame toDataFrame() const;
-    // std::shared_ptr<MyDataFrame> getDataFrame() const;
-    // vector<double> getOpen() const;
-    // void setDataFrame();
+    MyDataFrame toDataFrame() const;
+    std::shared_ptr<MyDataFrame> getDataFrame() const;
+    vector<std::string> get_f14_name() const;
+    vector<int> get_f104_bk_rise_cnt() const;
+    void setDataFrame();
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
 
-    // // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
-    // // MyDataFrame for binding
-    // std::vector<double> get_pyseries(const char*) const noexcept;
+    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
+    // MyDataFrame for binding
+    std::vector<double> get_pyseries(const char*) const noexcept;
 
     // template <>
     xt::xarray<double> toSeries(const char*) const noexcept;
@@ -78,7 +79,7 @@ private:
     QStringList m_codes{};
     const char* m_start{};
     const char* m_end{};
-    // std::shared_ptr<MyDataFrame> m_df{nullptr};
+    std::shared_ptr<MyDataFrame> m_df{nullptr};
 
 private:
     friend inline QDebug operator<<(QDebug d, const EmConceptBaseAction& ia)

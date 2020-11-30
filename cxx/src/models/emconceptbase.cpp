@@ -7,11 +7,9 @@
 
 EmConceptBase::EmConceptBase() : TAbstractModel(), d(new EmConceptBaseObject())
 {
-    d->f104_bk_rise_cnt = 0;
-    d->f105_bk_fall_cnt = 0;
-    // d->f12_code            = 0;
-    d->f13_market = 0;
-    // d->f14_name            = 0;
+    d->f104_bk_rise_cnt    = 0;
+    d->f105_bk_fall_cnt    = 0;
+    d->f13_market          = 0;
     d->f3_bk_rise_fall_pct = 0;
     d->f8_turnover         = 0;
 }
@@ -103,9 +101,10 @@ EmConceptBase EmConceptBase::get(const QString& id)
     return EmConceptBase(mapper.findByObjectId(id));
 }
 
-QList<EmConceptBase> EmConceptBase::get_blocks(QStringList& codes)
+QList<EmConceptBase> EmConceptBase::get_blocks(const QStringList& cst_codes)
 {
-    foreach (QString code, codes)
+    QStringList codes{};
+    foreach (QString code, cst_codes)
         codes << code.toUpper();
     TMongoODMapper<EmConceptBaseObject> mapper;
     // mapper.setSortOrder(EmConceptBaseObject::F12Code, Tf::DescendingOrder);

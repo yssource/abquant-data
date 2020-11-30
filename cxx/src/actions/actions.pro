@@ -16,6 +16,7 @@ LIBS += -L$$PWD/../../../lib -labqmodel
 
 HEADERS = emconcept.hpp
 HEADERS += emconceptbase.hpp
+HEADERS += emconcepthistory.hpp
 HEADERS += index.hpp
 HEADERS += indexday.hpp
 HEADERS += indexmin.hpp
@@ -28,6 +29,7 @@ HEADERS += indicator.hpp
 HEADERS += utils.hpp
 
 SOURCES = emconceptbase.cpp
+SOURCES += emconcepthistory.cpp
 SOURCES += indexday.cpp
 SOURCES += indexmin.cpp
 SOURCES += stockday.cpp

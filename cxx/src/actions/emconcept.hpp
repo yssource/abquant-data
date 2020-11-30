@@ -88,23 +88,23 @@ protected:
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
 
-    // MyDataFrame toDataFrame();
-    // template <typename C>
-    // QList<C> run(const QStringList codes, const char* start, const char* end);
+    MyDataFrame toDataFrame();
+    template <typename C>
+    QList<C> run(const QStringList codes, const char* start, const char* end);
     // template <typename C>
     // QList<C> run(const QStringList codes, const char* start, const char* end, MIN_FREQ freq);
     // template <typename C>
     // QList<C> run(const QStringList codes, int category = 1);
     template <typename C>
-    QList<C> run(QStringList codes);
-    // template <typename C>
-    // QList<C> get_price(const QStringList codes, const char* start, const char* end);
+    QList<C> run(const QStringList codes);
+    template <typename C>
+    QList<C> get_price(const QStringList codes, const char* start, const char* end);
     // template <typename C>
     // QList<C> get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq);
     // template <typename C>
     // QList<C> get_price(const QStringList codes, int category);
     template <typename C>
-    QList<C> get_blocks(QStringList codes);
+    QList<C> get_blocks(const QStringList codes);
 
     auto getEmConceptes();
 
@@ -165,15 +165,15 @@ inline auto EmConceptAction<CA>::derived_cast() && noexcept -> derived_type
     return *static_cast<derived_type*>(this);
 }
 
-// template <class CA>
-// template <typename C>
-// QList<C> EmConceptAction<CA>::run(const QStringList codes, const char* start, const char* end)
-// {
-//     QFuture<QList<C>> future = QtConcurrent::run(this, &self_type::get_price<C>, codes, start, end);
+template <class CA>
+template <typename C>
+QList<C> EmConceptAction<CA>::run(QStringList codes, const char* start, const char* end)
+{
+    QFuture<QList<C>> future = QtConcurrent::run(this, &self_type::get_price<C>, codes, start, end);
 
-//     QList<C> em_concepts = future.result();
-//     return em_concepts;
-// }
+    QList<C> em_concepts = future.result();
+    return em_concepts;
+}
 
 // template <class CA>
 // template <typename C>
@@ -213,20 +213,20 @@ QVector<T> EmConceptAction<CA>::toSeries(const char* col) const noexcept
     return ca->toSeries(col);
 }
 
-// template <class CA>
-// template <typename C>
-// QList<C> EmConceptAction<CA>::get_price(const QStringList codes, const char* start, const char* end)
-// {
-//     double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
-//     double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
-//     auto ca        = derived_cast();
-//     TDatabaseContext::setCurrentDatabaseContext(ca);
-//     bool EnableTransactions = true;
-//     setTransactionEnabled(EnableTransactions);
-//     QList<C> em_concepts = C::get_price(codes, start_d, end_d);
-//     commitTransactions();
-//     return em_concepts;
-// }
+template <class CA>
+template <typename C>
+QList<C> EmConceptAction<CA>::get_price(const QStringList codes, const char* start, const char* end)
+{
+    double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch() * 1000;
+    double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch() * 1000;
+    auto ca        = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(ca);
+    bool EnableTransactions = true;
+    setTransactionEnabled(EnableTransactions);
+    QList<C> em_concepts = C::get_price(codes, start_d, end_d);
+    commitTransactions();
+    return em_concepts;
+}
 
 // template <class CA>
 // template <typename C>

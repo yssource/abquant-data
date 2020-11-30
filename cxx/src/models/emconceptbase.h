@@ -46,7 +46,7 @@ public:
                                 double f3BkRiseFallPct, double f8Turnover);
     static EmConceptBase create(const QVariantMap& values);
     static EmConceptBase get(const QString& id);
-    static QList<EmConceptBase> get_blocks(QStringList& codes);
+    static QList<EmConceptBase> get_blocks(const QStringList& cst_codes);
     static int count();
     static QList<EmConceptBase> getAll();
     static QJsonArray getAllJson();

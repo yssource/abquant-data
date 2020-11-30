@@ -19,101 +19,108 @@ EmConceptBaseAction::EmConceptBaseAction(QStringList codes) : EmConceptAction(co
     }
 }
 
-// MyDataFrame EmConceptBaseAction::toDataFrame() const
-// {
-//     MyDataFrame df;
-//     try {
-//         // open" : 49.0,
-//         // close" : 49.0,
-//         // high" : 49.0,
-//         // low" : 49.0,
-//         // vol" : 32768.5,
-//         // amount" : 5000.0,
-//         // date" : "1991-04-03",
-//         // code" : "000001",
-//         // date_stamp" : 670608000.0
+MyDataFrame EmConceptBaseAction::toDataFrame() const
+{
+    MyDataFrame df;
+    try {
+        // f104_bk_rise_cnt" : 21,
+        // f105_bk_fall_cnt" : 3,
+        // f12_code" : "BK0990",
+        // f13_market" : 90,
+        // f14_name" : "快递概念",
+        // f3_bk_rise_fall_pct" : 1.32,
+        // f8_turnover" : 1.29
 
-//         std::vector<std::string> datetimeCodeIdx;
-//         std::vector<double> open;
-//         std::vector<double> close;
-//         std::vector<double> high;
-//         std::vector<double> low;
-//         std::vector<double> vol;
-//         std::vector<double> amount;
-//         std::vector<std::string> date;
-//         std::vector<std::string> code;
-//         std::vector<double> date_stamp;
-//         std::vector<double> if_trade;
+        std::vector<std::string> f12_code_idx;
+        std::vector<int> f104_bk_rise_cnt;
+        std::vector<int> f105_bk_fall_cnt;
+        std::vector<std::string> f12_code;
+        std::vector<int> f13_market;
+        std::vector<std::string> f14_name;
+        std::vector<double> f3_bk_rise_fall_pct;
+        std::vector<double> f8_turnover;
 
-//         foreach (auto s, m_emconceptbases) {
-//             datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());
-//             open.push_back(s.open());
-//             close.push_back(s.close());
-//             high.push_back(s.high());
-//             low.push_back(s.low());
-//             vol.push_back(s.vol());
-//             amount.push_back(s.amount());
-//             date.push_back(s.date().toStdString());
-//             code.push_back(s.code().toStdString());
-//             date_stamp.push_back(s.dateStamp());
-//             if_trade.push_back(1);
-//         }
+        foreach (auto s, m_emconceptbases) {
+            f12_code_idx.push_back(s.f12Code().toStdString());
+            f104_bk_rise_cnt.push_back(s.f104BkRiseCnt());
+            f105_bk_fall_cnt.push_back(s.f105BkFallCnt());
+            f12_code.push_back(s.f12Code().toStdString());
+            f13_market.push_back(s.f13Market());
+            f14_name.push_back(s.f14Name().toStdString());
+            f3_bk_rise_fall_pct.push_back(s.f3BkRiseFallPct());
+            f8_turnover.push_back(s.f8Turnover());
+        }
 
-//         int rc =
-//             df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
-//                          std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
-//                          std::make_pair("amount", amount), std::make_pair("date", date), std::make_pair("code",
-//                          code), std::make_pair("date_stamp", date_stamp), std::make_pair("if_trade", if_trade));
+        int rc = df.load_data(
+            std::move(f12_code_idx), std::make_pair("f104_bk_rise_cnt", f104_bk_rise_cnt),
+            std::make_pair("f105_bk_fall_cnt", f105_bk_fall_cnt), std::make_pair("f12_code", f12_code),
+            std::make_pair("f13_market", f13_market), std::make_pair("f14_name", f14_name),
+            std::make_pair("f3_bk_rise_fall_pct", f3_bk_rise_fall_pct), std::make_pair("f8_turnover", f8_turnover));
 
-//         // df.write<std::ostream, std::string, double, int>(std::cout);
-//     } catch (exception& e) {
-//         cout << e.what() << endl;
-//     }
-//     return df;
-// };
+        // df.write<std::ostream, std::string, double, int>(std::cout);
+    } catch (exception& e) {
+        cout << e.what() << endl;
+    }
+    return df;
+}
 
-// std::shared_ptr<MyDataFrame> EmConceptBaseAction::getDataFrame() const { return m_df; }
+std::shared_ptr<MyDataFrame> EmConceptBaseAction::getDataFrame() const { return m_df; }
 
-// vector<double> EmConceptBaseAction::getOpen() const
-// {
-//     vector<double> open;
-//     if (m_df != nullptr) {
-//         try {
-//             // m_df->write<std::ostream, std::string, double, int>(std::cout);
-//             open = m_df->template get_column<double>("open");
-//         } catch (const std::exception& e) {
-//             std::cout << e.what();
-//         }
-//     }
-//     return open;
-// }
+vector<std::string> EmConceptBaseAction::get_f14_name() const
+{
+    vector<std::string> f14_name_v;
+    if (m_df != nullptr) {
+        try {
+            // m_df->write<std::ostream, std::string, double, int>(std::cout)
+            f14_name_v = m_df->template get_column<std::string>("f14_name");
+        } catch (const std::exception& e) {
+            std::cout << e.what();
+        }
+    }
+    return f14_name_v;
+}
 
-// void EmConceptBaseAction::setDataFrame()
-// {
-//     MyDataFrame df = toDataFrame();
-//     m_df           = std::make_shared<MyDataFrame>(df);
-//     // m_df->write<std::ostream, std::string, double, int>(std::cout);
-// }
+vector<int> EmConceptBaseAction::get_f104_bk_rise_cnt() const
+{
+    vector<int> f104_bk_rise_cnt_v;
 
-// vector<double> EmConceptBaseAction::get_pyseries(const char* col) const noexcept
-// {
-//     vector<double> series;
-//     auto cols = getColumns();
-//     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-//         return series;
-//     }
+    if (m_df != nullptr) {
+        try {
+            // m_df->write<std::ostream, std::string, double, int>(std::cout)
+            f104_bk_rise_cnt_v = m_df->template get_column<int>("f104_bk_rise_cnt");
+        } catch (const std::exception& e) {
+            std::cout << e.what();
+        }
+    }
+    return f104_bk_rise_cnt_v;
+}
 
-//     std::shared_ptr<MyDataFrame> df;
+void EmConceptBaseAction::setDataFrame()
+{
+    MyDataFrame df = toDataFrame();
+    m_df           = std::make_shared<MyDataFrame>(df);
+    // m_df->write<std::ostream, std::string, double, int>(std::cout);
+}
 
-//     try {
-//         df = getDataFrame();
-//         // df->write<std::ostream, std::string, double, int>(std::cout);
-//         series = df->get_column<double>(col);
-//     } catch (...) {
-//         std::cout << " error ... "
-//                   << "\n";
-//     }
-//     return series;
-// }
+vector<double> EmConceptBaseAction::get_pyseries(const char* col) const noexcept
+{
+    vector<double> series;
+    auto cols = getColumns();
+    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
+        return series;
+    }
+
+    std::shared_ptr<MyDataFrame> df;
+
+    try {
+        df = getDataFrame();
+        // df->write<std::ostream, std::string, double, int>(std::cout);
+        series = df->get_column<double>(col);
+    } catch (...) {
+        std::cout << " error ... "
+                  << "\n";
+    }
+    return series;
+}
 
 } // namespace abq
