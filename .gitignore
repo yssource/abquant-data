@@ -133,3 +133,6 @@ vgcore.*
 Pipfile.lock
 
 !.envrc
+
+# premium data source
+/abquant/data/premium/
