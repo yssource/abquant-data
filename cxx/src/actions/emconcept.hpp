@@ -37,7 +37,8 @@ namespace abq
 {
 using namespace hmdf;
 using namespace std;
-using MyDataFrame = StdDataFrame<std::string>;
+using index_t     = std::string;
+using MyDataFrame = StdDataFrame<index_t>;
 
 /***************************
  * EmConceptAction declaration *

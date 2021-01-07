@@ -46,7 +46,9 @@ using series_t = const xt::xarray<double>&;
 namespace indicator
 {
 xt::xarray<double> SMA(series_t series, size_t N, size_t M);
+xt::xarray<double> REF(series_t series, int N);
 xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N);
+xt::xarray<double> MA(xt::xarray<std::string> index, series_t series, const char* col, size_t N);
 } // namespace indicator
 
 template <typename A>
@@ -76,14 +78,15 @@ public:
 
     // 威廉 SMA 算法
     xt::xarray<double> SMA(series_t series, size_t N, size_t M = 1) const;
+    xt::xarray<double> REF(series_t series, int N) const;
     xt::xarray<double> DIFF(const char* col, long N = 1) const;
+    xt::xarray<double> MA(const char* col, size_t N = 1) const;
     // xt::xarray<double> HHV(xt::xarray<double>, size_t);
     // xt::xarray<double> LLV(xt::xarray<double>, size_t);
     // void SUM(size_t);
     // auto IF_(xt::xarray<double>, xt::xarray<double>, xt::xarray<double>);
     // void MAX();
     // void MIN();
-    // void REF(int);
     // void CROSS();
     // void KDJ(size_t, size_t, size_t);
 
@@ -119,13 +122,28 @@ xt::xarray<double> Indicator<A>::SMA(series_t series, size_t N, size_t M) const
 }
 
 template <typename A>
+xt::xarray<double> Indicator<A>::REF(series_t series, int N) const
+{
+    return abq::indicator::REF(series, N);
+}
+
+template <typename A>
+xt::xarray<double> Indicator<A>::MA(const char* col, size_t N) const
+{
+    CHECK_COLUMN_EXIST(col)
+
+    auto df = m_a->toDataFrame();
+
+    SimpleRollAdopter<MinVisitor<double, index_t>, double> min_roller(MinVisitor<double, index_t>(), N);
+    const auto& result = df.template single_act_visit<double>(col, min_roller).get_result();
+
+    return xt::eval(xt::adapt(result));
+}
+
+template <typename A>
 xt::xarray<double> Indicator<A>::DIFF(const char* col, long N) const
 {
-    std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};
-    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        QString msg = QString(col) + QString(" series are not available for DIFF.");
-        throw std::runtime_error(msg.toStdString());
-    }
+    CHECK_COLUMN_EXIST(col)
 
     auto df = m_a->toDataFrame();
 

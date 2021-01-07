@@ -796,5 +796,24 @@ def get_date_gap(date, gap, methods):
             return trade_date_sse[trade_date_sse.index(date) - gap + 1]
         elif methods in ["==", "=", "eq"]:
             return date
-    except:
+    except Exception:
         return "wrong date"
+
+
+def get_last_day(date: str, n: int = 1) -> str:
+    """
+    explanation:
+       得到上一个(n)交易日
+
+    params:
+        * date->
+            含义: 日期
+            类型: str
+            参数支持: []
+        * n->
+            含义: 步长
+            类型: int
+            参数支持: [int]
+    """
+    date = str(date)[0:10]
+    return get_date_gap(date, n, "lt")
