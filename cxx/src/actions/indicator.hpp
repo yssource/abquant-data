@@ -41,14 +41,17 @@ struct PySeries {
     double data;
 };
 
-using series_t = const xt::xarray<double>&;
+using series_t     = const xt::xarray<double>&;
+using roc_return_t = std::unordered_map<const char*, xt::xarray<double>>;
 
+// abq::indicator outer interface for python biding
 namespace indicator
 {
 xt::xarray<double> SMA(series_t series, size_t N, size_t M);
 xt::xarray<double> REF(series_t series, int N);
-xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N);
-xt::xarray<double> MA(xt::xarray<std::string> index, series_t series, const char* col, size_t N);
+xt::xarray<double> DIFF(xt::xarray<index_t> index, series_t series, const char* col, long N);
+xt::xarray<double> MA(xt::xarray<index_t> index, series_t series, const char* col, size_t N);
+roc_return_t ROC(xt::xarray<index_t> index, series_t series, const char* col = "close", size_t N = 12, size_t M = 6);
 } // namespace indicator
 
 template <typename A>
@@ -81,6 +84,8 @@ public:
     xt::xarray<double> REF(series_t series, int N) const;
     xt::xarray<double> DIFF(const char* col, long N = 1) const;
     xt::xarray<double> MA(const char* col, size_t N = 1) const;
+    roc_return_t ROC(const char* col = "close", size_t N = 12, size_t M = 6) const;
+
     // xt::xarray<double> HHV(xt::xarray<double>, size_t);
     // xt::xarray<double> LLV(xt::xarray<double>, size_t);
     // void SUM(size_t);
@@ -151,6 +156,31 @@ xt::xarray<double> Indicator<A>::DIFF(const char* col, long N) const
     const auto& result = df.template single_act_visit<double>(col, diff_visit).get_result();
 
     return xt::eval(xt::adapt(result));
+}
+
+template <typename A>
+roc_return_t Indicator<A>::ROC(const char* col, size_t N, size_t M) const
+{
+    CHECK_COLUMN_EXIST(col)
+
+    auto df = m_a->toDataFrame();
+    std::vector<double> series;
+
+    try {
+        // df->write<std::ostream, std::string, double, int>(std::cout);
+        series = df->template get_column<double>(col);
+    } catch (...) {
+        std::cout << " error ... "
+                  << "\n";
+    }
+
+    auto ref   = Indicator<A>::REF(xt::adapt(series), N);
+    auto roc   = 100 * (xt::adapt(series) - ref) / ref;
+    auto rocma = Indicator<A>::MA(col, M);
+    roc_return_t result;
+    result["ROC"]   = roc;
+    result["ROCMA"] = rocma;
+    return result;
 }
 
 } // namespace abq

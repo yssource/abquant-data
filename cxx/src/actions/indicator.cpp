@@ -27,14 +27,14 @@ xt::xarray<double> SMA(series_t series, size_t N, size_t M)
     return xt::eval(xt::adapt(result));
 }
 
-xt::xarray<double> MA(xt::xarray<std::string> index, series_t series, const char* col, size_t N)
+xt::xarray<double> MA(xt::xarray<index_t> index, series_t series, const char* col, size_t N)
 {
     CHECK_COLUMN_EXIST(col)
 
     MyDataFrame::set_thread_level(10);
     MyDataFrame df;
 
-    auto idx  = std::vector<std::string>(index.begin(), index.end());
+    auto idx  = std::vector<index_t>(index.begin(), index.end());
     auto data = std::vector<double>(series.begin(), series.end());
     df.load_data(std::move(idx), std::make_pair(col, data));
     SimpleRollAdopter<MinVisitor<double, index_t>, double> min_roller(MinVisitor<double, index_t>(), N);
@@ -49,20 +49,33 @@ xt::xarray<double> REF(series_t series, int N)
     return xt::eval(result);
 }
 
-xt::xarray<double> DIFF(xt::xarray<std::string> index, series_t series, const char* col, long N)
+xt::xarray<double> DIFF(xt::xarray<index_t> index, series_t series, const char* col, long N)
 {
     CHECK_COLUMN_EXIST(col)
 
     MyDataFrame::set_thread_level(10);
     MyDataFrame df;
 
-    auto idx  = std::vector<std::string>(index.begin(), index.end());
+    auto idx  = std::vector<index_t>(index.begin(), index.end());
     auto data = std::vector<double>(series.begin(), series.end());
     df.load_data(std::move(idx), std::make_pair(col, data));
     DiffVisitor<double> diff_visit(N, false);
     const auto& result = df.single_act_visit<double>(col, diff_visit).get_result();
 
     return xt::eval(xt::adapt(result));
+}
+
+roc_return_t ROC(xt::xarray<index_t> index, series_t series, const char* col, size_t N, size_t M)
+{
+    CHECK_COLUMN_EXIST(col)
+
+    auto ref   = REF(series, N);
+    auto roc   = 100 * (series - ref) / ref;
+    auto rocma = MA(index, roc, col, M);
+    roc_return_t result;
+    result["ROC"]   = roc;
+    result["ROCMA"] = rocma;
+    return result;
 }
 
 } // namespace indicator
