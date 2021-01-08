@@ -103,6 +103,9 @@ private:
 template <typename A>
 Indicator<A>::Indicator(A* a) : m_a(a)
 {
+    // m_a->setDataFrame();
+    // auto df = m_a->getDataFrame();
+    // df.template write<std::ostream, std::string, double, int>(std::cout);
     using action_t = typename std::decay<typename std::remove_pointer<decltype(a)>::type>::type;
     if constexpr (abq::is_base_of_template<IndexAction, action_t>::value) {
         auto qs = a->getIndexes();
@@ -168,7 +171,7 @@ roc_return_t Indicator<A>::ROC(const char* col, size_t N, size_t M) const
 
     try {
         // df->write<std::ostream, std::string, double, int>(std::cout);
-        series = df->template get_column<double>(col);
+        series = df.template get_column<double>(col);
     } catch (...) {
         std::cout << " error ... "
                   << "\n";

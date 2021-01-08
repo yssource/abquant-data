@@ -89,6 +89,7 @@ vector<double> IndexDayAction::getOpen() const
             std::cout << e.what();
         }
     }
+    // std::cout << xt::adapt(open) << "\n";
     return open;
 }
 
@@ -103,6 +104,7 @@ vector<double> IndexDayAction::get_pyseries(const char* col) const noexcept
 {
     vector<double> series;
     auto cols = getColumns();
+
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }

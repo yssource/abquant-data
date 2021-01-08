@@ -22,8 +22,8 @@
 // #include "gtest/gtest.h"
 #include <iostream>
 #include <utility>
-#include "any"
 
+#include "any"
 #include "string"
 
 using namespace abq;
@@ -87,24 +87,34 @@ void TestIndicator::sma()
 
 void TestIndicator::roc_data()
 {
-    const char* col = "close";
-    QTest::addColumn<double>(col);
-    // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
-    xt::xarray<double> xs = sa.toSeries(col);
-    roc_return_t roc_map = indstockday.ROC(col, 12, 6);
-    xt::xarray<double> roc = std::any_cast<xt::xarray<double>>(roc_map["ROC"]);
-    xt::xarray<double> rocma = std::any_cast<xt::xarray<double>>(roc_map["ROCMA"]);
-    cout << roc << "\n";
-    cout << rocma << "\n";
-    QTest::newRow("1") << roc(0);
-    QTest::newRow("2") << rocma(0);
+    QTest::addColumn<double>("roc");
+    QTest::addColumn<double>("roc_result");
+    QTest::addColumn<double>("rocma");
+    QTest::addColumn<double>("rocma_result");
+
+    const char* col                 = "close";
+    xt::xarray<double> xs           = sa.toSeries(col);
+    roc_return_t roc_map            = indstockday.ROC(col, 12, 6);
+    xt::xarray<double> roc_actual   = std::any_cast<xt::xarray<double>>(roc_map["ROC"]);
+    xt::xarray<double> rocma_actual = std::any_cast<xt::xarray<double>>(roc_map["ROCMA"]);
+
+    QTest::newRow("1") << roc_actual(0) << -43.87 << rocma_actual(0) << std::numeric_limits<double>::quiet_NaN();
+    QTest::newRow("5") << roc_actual(5) << -42.30 << rocma_actual(5) << 9.13;
 }
 
 void TestIndicator::roc()
 {
-    QFETCH(double, close);
-    double expected = 9.11;
-    QCOMPARE(close, expected);
+    QFETCH(double, roc);
+    QFETCH(double, roc_result);
+    QFETCH(double, rocma);
+    QFETCH(double, rocma_result);
+
+    QCOMPARE(std::abs(roc - roc_result) < 0.1, true);
+    if (std::isnan(rocma)) {
+        QCOMPARE(std::isnan(rocma_result), true);
+    } else {
+        QCOMPARE(std::abs(rocma - rocma_result) < 0.1, true);
+    }
 }
 
 void TestIndicator::cleanupTestCase() {}
