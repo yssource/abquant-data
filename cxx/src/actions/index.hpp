@@ -63,7 +63,7 @@ public:
 
     // TODO: friend class Indicator<S, derived_type, IndexAction>
     QStringList getCodes() const;
-    Indicator<self_type> makeIndicator();
+    Indicator<derived_type> makeIndicator();
 
 protected:
     //! Default constructor
@@ -258,10 +258,10 @@ inline auto IndexAction<IA>::getIndexes()
 }
 
 template <class IA>
-inline auto IndexAction<IA>::makeIndicator() -> Indicator<self_type>
+inline auto IndexAction<IA>::makeIndicator() -> Indicator<derived_type>
 {
     auto ia = derived_cast();
-    return Indicator<self_type>(ia);
+    return Indicator<derived_type>(ia);
 }
 
 } // namespace abq

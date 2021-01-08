@@ -60,7 +60,7 @@ public:
 
     // TODO: friend class Indicator<S, derived_type, StockAction>
     QStringList getCodes() const;
-    Indicator<self_type> makeIndicator();
+    Indicator<derived_type> makeIndicator();
 
 protected:
     //! Default constructor
@@ -256,10 +256,10 @@ inline auto StockAction<SA>::getStocks()
 }
 
 template <class SA>
-inline auto StockAction<SA>::makeIndicator() -> Indicator<self_type>
+inline auto StockAction<SA>::makeIndicator() -> Indicator<derived_type>
 {
     auto sa = derived_cast();
-    return Indicator<self_type>(sa);
+    return Indicator<derived_type>(sa);
 }
 
 } // namespace abq
