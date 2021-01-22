@@ -250,11 +250,11 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
    [[file:./screenshot/abqstockday.png]]
 * TODO TODO:
   - 兼容 rqalpha apis ::
-  1. [x] get_price()
-  2. [x] get_fundamentals()[fn:1]
+  1. [X] get_price()
+  2. [X] get_fundamentals()[fn:1]
   - 东方财富 概念 apis ::
-  1. [x] easymoney concept base get_blocks()
-  2. [x] easymoney concept history get_price()
+  1. [X] easymoney concept base get_blocks()
+  2. [X] easymoney concept history get_price()
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上

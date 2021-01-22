@@ -62,8 +62,8 @@ class AbquantConan(ConanFile):
     def requirements(self):
         self.requires("qt/5.12.8@{}/{}".format("bincrafters", "stable"))
         self.requires("xtensor/0.21.3@")
-        self.requires("dataframe/1.7.0@")
-        # self.requires("pybind11/2.2.4@{}/{}".format("conan", "stable"))
+        self.requires("dataframe/1.15.0@")
+        self.requires("pybind11/2.6.1@")
 
     def _build_with_qmake(self):
         tools.mkdir(self.build_subfolder(kind_="qbuild"))

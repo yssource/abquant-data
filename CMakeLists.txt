@@ -44,7 +44,7 @@ endif()
 
 find_package(Qt5 REQUIRED Core Network Sql Xml Qml)
 # find_package(pybind11 REQUIRED)  # or add_subdirectory(pybind11)
-add_subdirectory(pybind11)
+# add_subdirectory(pybind11)
 add_subdirectory(bind11)
 
 
