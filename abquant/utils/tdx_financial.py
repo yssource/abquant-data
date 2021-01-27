@@ -35,7 +35,7 @@ from abquant.helper import util_file_md5
 参见PYTDX 1.65
 """
 
-FINANCIAL_URL = "http://data.yutiansut.com/content.txt"
+FINANCIAL_URL = 'http://down.tdx.com.cn:8001/tdxfin/gpcw.txt'
 
 
 class TdxHistoryFinancialCrawler(HistoryFinancialCrawler):
@@ -110,7 +110,7 @@ def download_financialzip():
             slog.debug("FILE {} is already in {}".format(item, Setting.DOWNLOAD_PATH))
         else:
             slog.debug("CURRENTLY GET/UPDATE {}".format(item[0:12]))
-            r = requests.get("http://data.yutiansut.com/{}".format(item))
+            r = requests.get('http://down.tdx.com.cn:8001/tdxfin/{}'.format(item))
             file = "{}{}{}".format(Setting.DOWNLOAD_PATH, os.sep, item)
 
             with open(file, "wb") as code:
