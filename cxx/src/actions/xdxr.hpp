@@ -9,14 +9,13 @@
 
 #pragma once
 
+#include <DataFrame/Vectors/HeteroVector.h>
+
 #include <memory>
 #include <type_traits>
 
 #include "DataFrame/DataFrame.h"
 #include "DataFrame/DataFrameOperators.h"
-// #include "DataFrame/DataFrameVisitors.h"
-#include <DataFrame/Vectors/HeteroVector.h>
-
 #include "DataFrame/Utils/DateTime.h"
 #include "abquant/actions/stockxdxr.hpp"
 #include "abquant/actions/utils.hpp"
@@ -38,14 +37,14 @@ public:
     {
         m_codes                              = sa.getCodes();
         std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(m_codes, 1);
-        m_xdxr_df                            = sap->toDataFrame();
+        m_xdxr_df                            = sap->getDataFrame();
     };
 
     ~Xdxr() = default;
-    MyDataFrame getXdxr(MyDataFrame& df, FQ_TYPE fq);
+    MyDataFramePtr getXdxr(const MyDataFramePtr df, FQ_TYPE fq);
 
 private:
-    void fillConcatDataframe(MyDataFrame& df) const;
+    void fillConcatDataframe(MyDataFramePtr df) const;
     /**
      *  \brief concat, minic pandas' concat
      *
@@ -55,33 +54,36 @@ private:
      *  \param MyDataFrame rdf: right side df, stockxdxr info
      *  \return return MyDataFrame
      */
-    MyDataFrame concat(MyDataFrame& ldf, MyDataFrame& rdf) const;
-    MyDataFrame calc(MyDataFrame& df, FQ_TYPE fq) const;
+    MyDataFramePtr concat(const MyDataFramePtr ldf, const MyDataFrame& rdf) const;
+    MyDataFramePtr calc(const MyDataFramePtr df, FQ_TYPE fq) const;
     QStringList m_codes;
-    MyDataFrame m_xdxr_df;
+    MyDataFramePtr m_xdxr_df;
 };
 
 template <class SA>
-MyDataFrame Xdxr<SA>::getXdxr(MyDataFrame& df, FQ_TYPE fq)
+MyDataFramePtr Xdxr<SA>::getXdxr(const MyDataFramePtr df, FQ_TYPE fq)
 {
-    MyDataFrame rdf = concat(df, m_xdxr_df);
+    // df->template write<std::ostream, index_t, double, int>(std::cout);
+    MyDataFramePtr rdf = concat(df, *m_xdxr_df);
+    // rdf->template write<std::ostream, index_t, double, int>(std::cout);
     fillConcatDataframe(rdf);
     return calc(rdf, fq);
 }
 
 template <class SA>
-MyDataFrame Xdxr<SA>::concat(MyDataFrame& ldf, MyDataFrame& rdf) const
+MyDataFramePtr Xdxr<SA>::concat(const MyDataFramePtr ldf, const MyDataFrame& rdf) const
 {
-    MyDataFrame join_df =
-        ldf.join_by_index<std::decay_t<decltype(rdf)>, std::string, double, int>(rdf, join_policy::left_right_join);
-    return join_df;
+    MyDataFrame df =
+        ldf->join_by_index<std::decay_t<decltype(rdf)>, index_t, double, int>(rdf, join_policy::left_right_join);
+    return std::make_shared<MyDataFrame>(df);
+    // return std::make_unique<MyDataFrame>(df);
 }
 
 template <class SA>
-void Xdxr<SA>::fillConcatDataframe(MyDataFrame& df) const
+void Xdxr<SA>::fillConcatDataframe(MyDataFramePtr df) const
 {
-    df.fill_missing<double, 1>({"if_trade"}, fill_policy::value, {0});
-    df.fill_missing<double, 6>(
+    df->fill_missing<double, 1>({"if_trade"}, fill_policy::value, {0});
+    df->fill_missing<double, 6>(
         {
             "open",
             "close",
@@ -91,7 +93,7 @@ void Xdxr<SA>::fillConcatDataframe(MyDataFrame& df) const
             "category",
         },
         fill_policy::fill_forward);
-    df.fill_missing<double, 4>(
+    df->fill_missing<double, 4>(
         {
             "fenhong",
             "peigu",
@@ -99,23 +101,23 @@ void Xdxr<SA>::fillConcatDataframe(MyDataFrame& df) const
             "songzhuangu",
         },
         fill_policy::value, {0});
-    df.fill_missing<double, 1>({"if_trade"}, fill_policy::value, {1});
+    df->fill_missing<double, 1>({"if_trade"}, fill_policy::value, {1});
 }
 
 template <class SA>
-MyDataFrame Xdxr<SA>::calc(MyDataFrame& df, FQ_TYPE fq) const
+MyDataFramePtr Xdxr<SA>::calc(const MyDataFramePtr df, FQ_TYPE fq) const
 {
-    auto lhs_code    = df.get_column<string>("lhs.code");
-    auto rhs_code    = df.get_column<string>("rhs.code");
-    auto open        = df.get_column<double>("open");
-    auto close       = df.get_column<double>("close");
-    auto high        = df.get_column<double>("high");
-    auto low         = df.get_column<double>("low");
-    auto vol         = df.get_column<double>("vol");
-    auto fenhong     = df.get_column<double>("fenhong");
-    auto peigu       = df.get_column<double>("peigu");
-    auto peigujia    = df.get_column<double>("peigujia");
-    auto songzhuangu = df.get_column<double>("songzhuangu");
+    auto lhs_code    = df->get_column<string>("lhs.code");
+    auto rhs_code    = df->get_column<string>("rhs.code");
+    auto open        = df->get_column<double>("open");
+    auto close       = df->get_column<double>("close");
+    auto high        = df->get_column<double>("high");
+    auto low         = df->get_column<double>("low");
+    auto vol         = df->get_column<double>("vol");
+    auto fenhong     = df->get_column<double>("fenhong");
+    auto peigu       = df->get_column<double>("peigu");
+    auto peigujia    = df->get_column<double>("peigujia");
+    auto songzhuangu = df->get_column<double>("songzhuangu");
 
     xt::xarray<double> xopen        = xt::adapt(open);
     xt::xarray<double> xclose       = xt::adapt(close);
@@ -164,27 +166,27 @@ MyDataFrame Xdxr<SA>::calc(MyDataFrame& df, FQ_TYPE fq) const
     xpreclose = xpreclose * adj;
     xvol      = xvol / adj;
 
-    df.load_column<double>("open", {xopen.begin(), xopen.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("high", {xhigh.begin(), xhigh.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("close", {xclose.begin(), xclose.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("low", {xlow.begin(), xlow.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("preclose", {xpreclose.begin(), xpreclose.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("vol", {xvol.begin(), xvol.end()}, nan_policy::pad_with_nans);
-    df.load_column<double>("adj", {adj.begin(), adj.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("open", {xopen.begin(), xopen.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("high", {xhigh.begin(), xhigh.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("close", {xclose.begin(), xclose.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("low", {xlow.begin(), xlow.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("preclose", {xpreclose.begin(), xpreclose.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("vol", {xvol.begin(), xvol.end()}, nan_policy::pad_with_nans);
+    df->load_column<double>("adj", {adj.begin(), adj.end()}, nan_policy::pad_with_nans);
 
-    df.remove_column("fenhong");
-    df.remove_column("peigu");
-    df.remove_column("peigujia");
-    df.remove_column("songzhuangu");
-    df.remove_column("suogu");
-    df.remove_column("liquidity_before");
-    df.remove_column("liquidity_after");
+    df->remove_column("fenhong");
+    df->remove_column("peigu");
+    df->remove_column("peigujia");
+    df->remove_column("songzhuangu");
+    df->remove_column("suogu");
+    df->remove_column("liquidity_before");
+    df->remove_column("liquidity_after");
 
     auto functor = [](const std::string&, const int& if_trade, const double& open) -> bool {
         return (if_trade == 1 && open != 0);
     };
-    auto res = df.get_data_by_sel<double, double, decltype(functor), double, std::string>("if_trade", "open", functor);
-    return res;
+    auto res = df->get_data_by_sel<double, double, decltype(functor), double, std::string>("if_trade", "open", functor);
+    return std::make_shared<MyDataFrame>(res);
 }
 
 } // namespace abq

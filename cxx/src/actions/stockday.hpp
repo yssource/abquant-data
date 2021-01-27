@@ -6,11 +6,11 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
-
 #pragma once
 
 #include <QDebug>
 #include <algorithm>
+#include <experimental/propagate_const>
 #include <iostream>
 
 #include "abquant/actions/stock.hpp"
@@ -20,8 +20,6 @@
 
 namespace abq
 {
-using namespace std;
-
 class StockDayAction : public StockAction<StockDayAction>
 {
 public:
@@ -37,32 +35,27 @@ public:
     StockDayAction(StockDayAction&& other) noexcept = delete;
 
     //! Destructor
-    ~StockDayAction() noexcept = default;
+    ~StockDayAction();
 
     //! Copy assignment operator
     StockDayAction& operator=(const StockDayAction& other) = default;
 
     //! Move assignment operator
-    StockDayAction& operator=(StockDayAction&& other) noexcept
-    {
-        if (&other == this) {
-            return *this;
-        }
-        std::swap(m_codes, other.m_codes);
-        std::swap(m_start, other.m_start);
-        std::swap(m_end, other.m_end);
-        std::swap(m_stockdays, other.m_stockdays);
-        std::swap(m_xdxr, other.m_xdxr);
-        return *this;
-    };
+    StockDayAction& operator=(StockDayAction&& other) noexcept;
 
-    inline QList<StockDay> getStocks() const { return m_stockdays; };
-    inline QVector<const char*> getColumns() const { return m_columns; };
-    const MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
-    MyDataFrame toDataFrame() const;
-    std::shared_ptr<MyDataFrame> getDataFrame() const;
+    QList<StockDay> getStocks() const;
+    QVector<const char*> getColumns() const;
+    // inline QVector<const char*> getColumns() const { return pImpl->getColumns(*this); };
+
+    MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
+    // MyDataFramePtr getDataFrame() const { return m_df; }
+    MyDataFramePtr getDataFrame() const;
+    // void getName() const;
+
     vector<double> getOpen() const;
-    void setDataFrame();
+    QStringList getCodes() const;
+
+    int hello() const;
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
@@ -71,17 +64,12 @@ public:
     // MyDataFrame for binding
     std::vector<double> get_pyseries(const char*) const noexcept;
 
-    // template <>
     xt::xarray<double> toSeries(const char*) const noexcept;
 
 private:
-    QList<StockDay> m_stockdays{};
-    const QVector<const char*> m_columns{"open", "close", "high", "low", "vol", "amount", "date", "code", "date_stamp"};
-    QStringList m_codes{};
-    const char* m_start{};
-    const char* m_end{};
+    class impl;
+    std::experimental::propagate_const<std::shared_ptr<impl>> pImpl;
     FQ_TYPE m_xdxr{FQ_TYPE::NONE};
-    std::shared_ptr<MyDataFrame> m_df{nullptr};
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockDayAction& sa)
@@ -105,6 +93,13 @@ private:
     }
 };
 
+int StockDayAction::hello() const
+{
+    std::cout << "hello day"
+              << "\n";
+    return 1;
+}
+
 template <typename T>
 QVector<T> StockDayAction::toSeries(const char* col) const noexcept
 {
@@ -116,7 +111,7 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
 
     if constexpr (std::is_same_v<T, double>) {
         if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-            std::shared_ptr<MyDataFrame> df;
+            MyDataFramePtr df;
             std::vector<T> stdv_series;
 
             try {
@@ -198,10 +193,9 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     return series;
 }
 
-// template <>
-xt::xarray<double> StockDayAction::toSeries(const char* col) const noexcept
+xseries_no_cvr_t StockDayAction::toSeries(const char* col) const noexcept
 {
-    std::vector<double> qv = toSeries<double>(col).toStdVector();
+    series_no_cvr_t qv = toSeries<double>(col).toStdVector();
     return xt::adapt(qv);
 }
 

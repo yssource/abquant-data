@@ -49,6 +49,22 @@ enum class FQ_TYPE : short int {
     POST = 0xFF,
 };
 
+inline QDebug operator<<(QDebug debug, FQ_TYPE fq)
+{
+    switch (fq) {
+    case FQ_TYPE::NONE:
+        debug << "FQ_TYPE::NONE";
+        break;
+    case FQ_TYPE::PRE:
+        debug << "FQ_TYPE::PRE";
+        break;
+    case FQ_TYPE::POST:
+        debug << "FQ_TYPE::POST";
+        break;
+    }
+    return debug;
+}
+
 enum class MIN_FREQ : short int { ONE = 0x01, FIVE = 0x05, FIFTEEN = 0x0F, THIRTY = 0x1E, SIXTY = 0x3C };
 
 inline QDebug operator<<(QDebug debug, MIN_FREQ freq)

@@ -22,6 +22,7 @@ HEADERS += indexday.hpp
 HEADERS += indexmin.hpp
 HEADERS += stock.hpp
 HEADERS += stockday.hpp
+HEADERS += stockday_p.hpp
 HEADERS += stockmin.hpp
 HEADERS += stockxdxr.hpp
 HEADERS += xdxr.hpp
