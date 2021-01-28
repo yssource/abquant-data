@@ -43,8 +43,8 @@ using xseries_cst_t    = const xt::xarray<double>&;
 using xseries_t        = xt::xarray<double>&;
 using series_cst_t     = const std::vector<double>&;
 using series_t         = std::vector<double>&;
-using xseries_no_cvr_t = std::decay<xseries_t>::type;
-using series_no_cvr_t  = std::decay<series_t>::type;
+using xseries_no_cvp_t = std::decay<xseries_t>::type;
+using series_no_cvp_t  = std::decay<series_t>::type;
 
 template <class SA>
 class Indicator;

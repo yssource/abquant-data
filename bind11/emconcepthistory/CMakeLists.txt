@@ -16,9 +16,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_SQL_LIB")
 set(abqemconcepthistory_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
 set(tree_includes  "/usr/include/treefrog/")
 # set(tree_lib "/usr/lib/libtreefrog.so")
-set(abqemconcepthistory_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
+set(abquant_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
 
-set(sample_library "${abqemconcepthistory_lib_dir}/libabqcontroller.so;${abqemconcepthistory_lib_dir}/libabqhelper.so;${abqemconcepthistory_lib_dir}/libabqmodel.so;${abqemconcepthistory_lib_dir}/libabqaction.so")
+set(sample_library "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.a;/usr/lib/libtreefrog.so")
 set(bindings_library_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/)
 
 
@@ -118,4 +118,4 @@ install(TARGETS ${bindings_library}
 
 add_custom_command(TARGET ${bindings_library} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE:${bindings_library}> ${abqemconcepthistory_lib_dir})
+    $<TARGET_FILE:${bindings_library}> ${abquant_lib_dir})

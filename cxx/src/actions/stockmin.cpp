@@ -13,7 +13,7 @@
 namespace abq
 {
 StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq, FQ_TYPE xdxr)
-    : StockAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}, m_xdxr{xdxr}
+    : m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}, m_xdxr{xdxr}
 {
     m_stockmins = run<StockMin>(codes, start, end, freq);
     if (m_stockmins.isEmpty()) {
@@ -23,19 +23,19 @@ StockMinAction::StockMinAction(QStringList codes, const char* start, const char*
                  << "end: " << end << "\n"
                  << "freq: " << freq << "\n";
     }
+    setDataFrame();
 }
 
-const MyDataFrame StockMinAction::toFq(FQ_TYPE fq) const
+MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) const
 {
-    auto x  = Xdxr<StockMinAction>(*this);
-    auto df = toDataFrame();
-    if (fq == FQ_TYPE::NONE || !df.get_index().size()) {
-        return df;
+    auto x = Xdxr<StockMinAction>(*this);
+    if (fq == FQ_TYPE::NONE || !m_df->get_index().size()) {
+        return m_df;
     }
-    return x.getXdxr(df, fq);
+    return x.getXdxr(m_df, fq);
 }
 
-MyDataFrame StockMinAction::toDataFrame() const
+void StockMinAction::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -84,20 +84,18 @@ MyDataFrame StockMinAction::toDataFrame() const
             if_trade.push_back(1);
         }
 
-        int rc = df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
-                              std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
-                              std::make_pair("amount", amount), std::make_pair("date", date),
-                              std::make_pair("datetime", datetime), std::make_pair("code", code),
-                              std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
-                              std::make_pair("type", type), std::make_pair("if_trade", if_trade));
+        df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
+                     std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
+                     std::make_pair("amount", amount), std::make_pair("date", date),
+                     std::make_pair("datetime", datetime), std::make_pair("code", code),
+                     std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
+                     std::make_pair("type", type), std::make_pair("if_trade", if_trade));
         // df.write<std::ostream, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }
-    return df;
-};
-
-std::shared_ptr<MyDataFrame> StockMinAction::getDataFrame() const { return m_df; }
+    m_df = std::make_shared<MyDataFrame>(df);
+}
 
 vector<double> StockMinAction::getOpen() const
 {
@@ -111,13 +109,6 @@ vector<double> StockMinAction::getOpen() const
         }
     }
     return open;
-}
-
-void StockMinAction::setDataFrame()
-{
-    MyDataFrame df = toFq(m_xdxr);
-    m_df           = std::make_shared<MyDataFrame>(df);
-    // m_df->write<std::ostream, std::string, double, int>(std::cout);
 }
 
 vector<double> StockMinAction::get_pyseries(const char* col) const noexcept

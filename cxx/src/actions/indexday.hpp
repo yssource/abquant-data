@@ -68,9 +68,6 @@ public:
     // MyDataFrame for binding
     std::vector<double> get_pyseries(const char*) const noexcept;
 
-    // template <>
-    xt::xarray<double> toSeries(const char*) const noexcept;
-
 private:
     QList<IndexDay> m_indexdays{};
     const QVector<const char*> m_columns{"open", "close", "high", "low", "vol", "amount", "date", "code", "date_stamp"};
@@ -168,12 +165,4 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
-
-// template <>
-xt::xarray<double> IndexDayAction::toSeries(const char* col) const noexcept
-{
-    std::vector<double> qv = toSeries<double>(col).toStdVector();
-    return xt::adapt(qv);
-}
-
 } // namespace abq

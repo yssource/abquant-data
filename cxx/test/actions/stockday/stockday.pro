@@ -13,7 +13,9 @@ DEFINES += TF_DLL
 
 LIBS += -L$$PWD/../../../../lib -labqaction
 LIBS += -L$$PWD/../../../../lib -labqmodel
-# LIBS += $$CONAN_LIBDIRS_GTEST -lgtest
+# Bugfix: don't know why not include DataFrame Libs from abqbase.pri, so include
+# it again manually.
+LIBS += $$CONAN_LIBDIRS_DATAFRAME -lDataFrame
 
 SOURCES = main.cpp
 

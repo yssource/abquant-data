@@ -51,8 +51,7 @@ void TestEmConceptBase::initTestCase()
 void TestEmConceptBase::f8_turnover_data()
 {
     QTest::addColumn<double>("f8_turnover");
-    // xt::xarray<double> xs = xt::adapt(ca.toSeries<double>("f8_turnover").toStdVector());
-    xt::xarray<double> xs = ca.toSeries("f8_turnover");
+    xt::xarray<double> xs = xt::adapt(ca.toSeries<double>("f8_turnover").toStdVector());
     QTest::newRow("1") << xs(0);
 }
 

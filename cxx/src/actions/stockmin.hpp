@@ -61,11 +61,11 @@ public:
     inline QList<StockMin> getStocks() const { return m_stockmins; };
     inline QVector<const char*> getColumns() const { return m_columns; };
 
-    const MyDataFrame toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
-    MyDataFrame toDataFrame() const;
-    std::shared_ptr<MyDataFrame> getDataFrame() const;
-    vector<double> getOpen() const;
+    MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE) const;
     void setDataFrame();
+    inline MyDataFramePtr getDataFrame() const { return m_df; }
+    vector<double> getOpen() const;
+    inline QStringList getCodes() const { return m_codes; };
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;

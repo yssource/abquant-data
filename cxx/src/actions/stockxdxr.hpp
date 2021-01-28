@@ -19,6 +19,7 @@
 namespace abq
 {
 using namespace std;
+using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
 
 class StockXdxrAction : public StockAction<StockXdxrAction>
 {
@@ -36,6 +37,7 @@ public:
     //! Destructor
     virtual ~StockXdxrAction() noexcept = default;
 
+    // QStringList getCodes() const;
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
 
@@ -56,7 +58,8 @@ public:
 
     inline QList<StockXdxr> getStocks() const { return m_stockxdxrs; };
     inline QVector<const char*> getColumns() const { return m_columns; };
-    MyDataFrame toDataFrame() const;
+    void setDataFrame();
+    inline MyDataFramePtr getDataFrame() const { return m_df; }
 
 private:
     QList<StockXdxr> m_stockxdxrs;
@@ -78,6 +81,7 @@ private:
                                             "code"};
     QStringList m_codes;
     int m_category;
+    MyDataFramePtr m_df{nullptr};
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockXdxrAction& sa)

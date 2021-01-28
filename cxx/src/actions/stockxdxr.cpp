@@ -11,12 +11,13 @@
 
 namespace abq
 {
-StockXdxrAction::StockXdxrAction(QStringList codes, int category) : StockAction(codes), m_category{category}
+StockXdxrAction::StockXdxrAction(QStringList codes, int category) : m_category{category}
 {
     m_stockxdxrs = run<StockXdxr>(codes, category);
+    setDataFrame();
 }
 
-MyDataFrame StockXdxrAction::toDataFrame() const
+void StockXdxrAction::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -40,7 +41,7 @@ MyDataFrame StockXdxrAction::toDataFrame() const
         // QString category_meaning;
         // QString code;
 
-        std::vector<std::string> datetimeCodeIdx;
+        std::vector<index_t> datetimeCodeIdx;
         std::vector<double> category;
         std::vector<std::string> name;
         std::vector<double> fenhong;
@@ -79,20 +80,20 @@ MyDataFrame StockXdxrAction::toDataFrame() const
             code.push_back(s.code().toStdString());
         }
 
-        int rc = df.load_data(
-            std::move(datetimeCodeIdx), std::make_pair("category", category), std::make_pair("name", name),
-            std::make_pair("fenhong", fenhong), std::make_pair("peigujia", peigujia),
-            std::make_pair("songzhuangu", songzhuangu), std::make_pair("peigu", peigu), std::make_pair("suogu", suogu),
-            std::make_pair("liquidity_before", liquidity_before), std::make_pair("liquidity_after", liquidity_after),
-            std::make_pair("shares_before", shares_before), std::make_pair("shares_after", shares_after),
-            std::make_pair("fenshu", fenshu), std::make_pair("xingquanjia", xingquanjia), std::make_pair("date", date),
-            std::make_pair("category_meaning", category_meaning), std::make_pair("code", code));
+        df.load_data(std::move(datetimeCodeIdx), std::make_pair("category", category), std::make_pair("name", name),
+                     std::make_pair("fenhong", fenhong), std::make_pair("peigujia", peigujia),
+                     std::make_pair("songzhuangu", songzhuangu), std::make_pair("peigu", peigu),
+                     std::make_pair("suogu", suogu), std::make_pair("liquidity_before", liquidity_before),
+                     std::make_pair("liquidity_after", liquidity_after), std::make_pair("shares_before", shares_before),
+                     std::make_pair("shares_after", shares_after), std::make_pair("fenshu", fenshu),
+                     std::make_pair("xingquanjia", xingquanjia), std::make_pair("date", date),
+                     std::make_pair("category_meaning", category_meaning), std::make_pair("code", code));
         // df.write<std::ostream, unsigned long, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }
 
-    return df;
+    m_df = std::make_shared<MyDataFrame>(df);
 };
 
 } // namespace abq

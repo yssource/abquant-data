@@ -20,7 +20,7 @@
 
 namespace abq
 {
-class StockDayAction : public StockAction<StockDayAction>
+class StockDayAction : public StockAction<StockDayAction>, std::enable_shared_from_this<StockDayAction>
 {
 public:
     //! Default constructor
@@ -45,17 +45,10 @@ public:
 
     QList<StockDay> getStocks() const;
     QVector<const char*> getColumns() const;
-    // inline QVector<const char*> getColumns() const { return pImpl->getColumns(*this); };
-
     MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
-    // MyDataFramePtr getDataFrame() const { return m_df; }
     MyDataFramePtr getDataFrame() const;
-    // void getName() const;
-
     vector<double> getOpen() const;
     QStringList getCodes() const;
-
-    int hello() const;
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
@@ -63,8 +56,6 @@ public:
     // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
     // MyDataFrame for binding
     std::vector<double> get_pyseries(const char*) const noexcept;
-
-    xt::xarray<double> toSeries(const char*) const noexcept;
 
 private:
     class impl;
@@ -92,13 +83,6 @@ private:
         return d;
     }
 };
-
-int StockDayAction::hello() const
-{
-    std::cout << "hello day"
-              << "\n";
-    return 1;
-}
 
 template <typename T>
 QVector<T> StockDayAction::toSeries(const char* col) const noexcept
@@ -192,11 +176,4 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
-
-xseries_no_cvr_t StockDayAction::toSeries(const char* col) const noexcept
-{
-    series_no_cvr_t qv = toSeries<double>(col).toStdVector();
-    return xt::adapt(qv);
-}
-
 } // namespace abq

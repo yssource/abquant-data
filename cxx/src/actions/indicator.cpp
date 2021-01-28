@@ -13,7 +13,7 @@ namespace abq
 {
 namespace indicator
 {
-xt::xarray<double> SMA(series_t series, size_t N, size_t M)
+xt::xarray<double> SMA(xseries_cst_t series, size_t N, size_t M)
 {
     double preY = *series.begin();
     std::vector<double> result;
@@ -27,7 +27,7 @@ xt::xarray<double> SMA(series_t series, size_t N, size_t M)
     return xt::eval(xt::adapt(result));
 }
 
-xt::xarray<double> MA(xt::xarray<index_t> index, series_t series, const char* col, size_t N)
+xt::xarray<double> MA(xt::xarray<index_t> index, xseries_cst_t series, const char* col, size_t N)
 {
     CHECK_COLUMN_EXIST(col)
 
@@ -43,13 +43,20 @@ xt::xarray<double> MA(xt::xarray<index_t> index, series_t series, const char* co
     return xt::eval(xt::adapt(result));
 }
 
-xt::xarray<double> REF(series_t series, int N)
+xt::xarray<double> REF(xseries_cst_t series, int N)
 {
-    auto result = xt::roll(xt::adapt(series), N);
-    return xt::eval(result);
+    xt::xarray<double> result;
+    try {
+        std::cout << series << "\n";
+        result = xt::roll(series, N);
+    } catch (...) {
+        std::cout << "REF error" << "\n";
+    }
+    auto rst = xt::eval(result);
+    return rst;
 }
 
-xt::xarray<double> DIFF(xt::xarray<index_t> index, series_t series, const char* col, long N)
+xt::xarray<double> DIFF(xt::xarray<index_t> index, xseries_cst_t series, const char* col, long N)
 {
     CHECK_COLUMN_EXIST(col)
 
@@ -65,7 +72,7 @@ xt::xarray<double> DIFF(xt::xarray<index_t> index, series_t series, const char* 
     return xt::eval(xt::adapt(result));
 }
 
-roc_return_t ROC(xt::xarray<index_t> index, series_t series, const char* col, size_t N, size_t M)
+roc_return_t ROC(xt::xarray<index_t> index, xseries_cst_t series, const char* col, size_t N, size_t M)
 {
     CHECK_COLUMN_EXIST(col)
 

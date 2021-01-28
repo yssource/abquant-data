@@ -1,6 +1,7 @@
 TARGET = abqhelper
 TEMPLATE = lib
 CONFIG += shared c++17 x86_64
+# CONFIG += static c++17 x86_64
 QT += xml qml
 QT -= gui
 DEFINES += TF_DLL

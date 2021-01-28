@@ -58,43 +58,48 @@ void TestStockDay::initTestCase()
     // const char *end = "2019-06-27";
 
     StockDayAction sa(codes, start, end);
-    // auto ind = sa.makeIndicator<StockDay>();
-    auto ind = sa.makeIndicator();
-    ind.hello<double>(1.1);
-    // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
-    xt::xarray<double> xs = sa.toSeries("open");
-    xt::xarray<double> rs = ind.SMA(xs, 12);
 
-    StockMinAction sb(codes, start, end);
-    // auto ind2 = sb.makeIndicator<StockMin>();
-    auto ind2 = sb.makeIndicator();
-    std::string s{"jimmy"s};
-    ind2.hello<std::string>(std::move(s));
+    // // auto ind = sa.makeIndicator<StockDay>();
+    // auto ind = sa.makeIndicator();
+    // ind.hello<double>(1.1);
+    // // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
+    // xt::xarray<double> xs = sa.toSeries("open");
+    // xt::xarray<double> rs = ind.SMA(xs, 12);
 
-    // StockDayAction sa(codes, start, end);
-    auto m_codes = sa.getCodes();
-    auto df = sa.toFq(FQ_TYPE::PRE);
-    // auto df = sa.toFq(FQ_TYPE::POST);
-    qDebug() << "m_codes main: " << m_codes << "\n";
-    df.write<std::ostream, std::string, double, int>(std::cout);
+    // StockMinAction sb(codes, start, end);
+    // // auto ind2 = sb.makeIndicator<StockMin>();
+    // auto ind2 = sb.makeIndicator();
+    // std::string s{"jimmy"s};
+    // ind2.hello<std::string>(std::move(s));
+
+    // // StockDayAction sa(codes, start, end);
+    // auto m_codes = sa.getCodes();
+    // auto df = sa.toFq(FQ_TYPE::PRE);
+    // // auto df = sa.toFq(FQ_TYPE::POST);
+    // qDebug() << "m_codes main: " << m_codes << "\n";
+    // df->write<std::ostream, std::string, double, int>(std::cout);
     qDebug() << sa << "\n";
 
-    sa.setDataFrame();
-    auto ddff = sa.getDataFrame();
-    auto ooopen = sa.getOpen();
-    std::cout << ooopen.size() << "\n";
+    // // sa.setDataFrame();
+    // auto ddff = sa.getDataFrame();
+    // auto ooopen = sa.getOpen();
+    // std::cout << ooopen.size() << "\n";
 
-    StockDayAction sa2(codes, start, end, FQ_TYPE::PRE);
-    sa2.setDataFrame();
-    auto xls2 = sa2.toSeries("open");
-    std::cout << xls2.size() << "\n";
+    // StockDayAction sa2(codes, start, end, FQ_TYPE::PRE);
+    // // sa2.setDataFrame();
+    // auto xls2 = sa2.toSeries("open");
+    // // auto nn = sa2.getName();
+
+    // sa.getName();
+
+    // std::cout << xls2.size() << "\n";
     // StockMinAction sb(codes, start, end);
     // // auto df2 = sb.toFq(FQ_TYPE::PRE);
     // auto df2 = sb.toFq(FQ_TYPE::POST);
     // qDebug() << sb << "\n";
 
-    // StockXdxrAction sc(codes);
-    // qDebug() << sc << "\n";
+    StockXdxrAction sc(codes);
+    qDebug() << sc << "\n";
 
     // auto mm0 = sa.toSeries<std::string>("code");
     // qDebug() << "------- mm0 " << mm0.size() << "\n";

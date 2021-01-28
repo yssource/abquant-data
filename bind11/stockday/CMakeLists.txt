@@ -16,9 +16,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_SQL_LIB")
 set(abqstockday_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
 set(tree_includes  "/usr/include/treefrog/")
 # set(tree_lib "/usr/lib/libtreefrog.so")
-set(abqstockday_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
+set(abquant_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
 
-set(sample_library "${abqstockday_lib_dir}/libabqcontroller.so;${abqstockday_lib_dir}/libabqhelper.so;${abqstockday_lib_dir}/libabqmodel.so;${abqstockday_lib_dir}/libabqaction.so")
+#Bugfix: libabqaction.so -> libabqaction.a, since it is not able to port
+# DataFrame to outside for binding.
+set(sample_library "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.a;/usr/lib/libtreefrog.so")
+
 set(bindings_library_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/)
 
 
@@ -58,23 +61,23 @@ set(${bindings_library}_sources main.cpp)
 # add_library(${bindings_library} MODULE ${${bindings_library}_sources})
 pybind11_add_module(${bindings_library} SHARED ${${bindings_library}_sources} NO_EXTRAS)
 
-# target_include_directories(${bindings_library} PRIVATE ${CONAN_INCLUDE_DIRS})
+# target_include_directories(${bindings_library} PUBLIC ${CONAN_INCLUDE_DIRS})
 
 # Apply relevant include and link flags.
-target_include_directories(${bindings_library} PRIVATE ${python_include_dir})
-target_include_directories(${bindings_library} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(${bindings_library} PRIVATE ${abqstockday_include_dir})
-target_include_directories(${bindings_library} PRIVATE ${tree_includes})
+target_include_directories(${bindings_library} PUBLIC ${python_include_dir})
+target_include_directories(${bindings_library} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${bindings_library} PUBLIC ${abqstockday_include_dir})
+target_include_directories(${bindings_library} PUBLIC ${tree_includes})
 
-target_include_directories(${bindings_library} PRIVATE "${Qt5Core_INCLUDE_DIRS}")
-target_include_directories(${bindings_library} PRIVATE "${Qt5Network_INCLUDE_DIRS}")
-target_include_directories(${bindings_library} PRIVATE "${Qt5Sql_INCLUDE_DIRS}")
-target_include_directories(${bindings_library} PRIVATE "${Qt5Xml_INCLUDE_DIRS}")
-target_include_directories(${bindings_library} PRIVATE "${Qt5Qml_INCLUDE_DIRS}")
-# target_include_directories(${bindings_library} PRIVATE "${QtTest_INCLUDE_DIRS}")
-target_include_directories(${bindings_library} PRIVATE ${pybind11_INCLUDE_DIRS})
+target_include_directories(${bindings_library} PUBLIC "${Qt5Core_INCLUDE_DIRS}")
+target_include_directories(${bindings_library} PUBLIC "${Qt5Network_INCLUDE_DIRS}")
+target_include_directories(${bindings_library} PUBLIC "${Qt5Sql_INCLUDE_DIRS}")
+target_include_directories(${bindings_library} PUBLIC "${Qt5Xml_INCLUDE_DIRS}")
+target_include_directories(${bindings_library} PUBLIC "${Qt5Qml_INCLUDE_DIRS}")
+# target_include_directories(${bindings_library} PUBLIC "${QtTest_INCLUDE_DIRS}")
+target_include_directories(${bindings_library} PUBLIC ${pybind11_INCLUDE_DIRS})
 
-target_link_libraries(${bindings_library} PRIVATE ${sample_library} ${CONAN_LIBS})
+target_link_libraries(${bindings_library} PUBLIC ${sample_library} ${CONAN_LIBS})
 set_property(TARGET ${bindings_library} PROPERTY CXX_STANDARD 17)
 
 # Adjust the name of generated module.
@@ -97,7 +100,7 @@ if (WIN32)
     list(GET python_linking_data 0 python_libdir)
     list(GET python_linking_data 1 python_lib)
     find_library(python_link_flags ${python_lib} PATHS ${python_libdir} HINTS ${python_libdir})
-    target_link_libraries(${bindings_library} PRIVATE ${python_link_flags})
+    target_link_libraries(${bindings_library} PUBLIC ${python_link_flags})
 endif()
 
 
@@ -118,4 +121,4 @@ install(TARGETS ${bindings_library}
 
 add_custom_command(TARGET ${bindings_library} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE:${bindings_library}> ${abqstockday_lib_dir})
+    $<TARGET_FILE:${bindings_library}> ${abquant_lib_dir})

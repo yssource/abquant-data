@@ -19,10 +19,6 @@ class MainTest(unittest.TestCase):
         end = "2019-12-01"
         sd = stockday(codes, start, end, FQ_TYPE.PRE)
 
-        # fq = sd.toQfq()
-        # print(fq)
-        # self.assertTrue(fq > 0)
-
         open_ = sd.toSeries("open")
         close = sd.toSeries("close")
         high = sd.toSeries("high")
@@ -55,6 +51,19 @@ class MainTest(unittest.TestCase):
         self.assertTrue(len(open_) > 0)
         # self.assertEqual(open_[0], 9.39)
         self.assertAlmostEqual(open_[0], 9.39, delta=0.001)
+
+    def test_ROC(self):
+        codes = ["000001"]
+        start = "2019-01-01"
+        end = "2019-12-01"
+        sd = stockday(codes, start, end, FQ_TYPE.PRE)
+
+        rst = sd.ROC("close", 12, 6)
+        print(rst)
+
+        fq = sd.toQfq()
+        print(fq)
+        self.assertTrue(fq > 0)
 
 
 if __name__ == "__main__":

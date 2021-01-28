@@ -26,21 +26,19 @@ MyDataFramePtr StockDayAction::getDataFrame() const { return pImpl->getDataFrame
 
 MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
 {
-    // qDebug() << fq << "\n";
     auto x = Xdxr<StockDayAction>(sa);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }
     m_df = x.getXdxr(m_df, fq);
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
     return m_df;
 }
 
 MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
 
-series_no_cvr_t StockDayAction::impl::getOpen(const StockDayAction& sa) const
+inline series_no_cvp_t StockDayAction::impl::getOpen(const StockDayAction& sa) const
 {
-    series_no_cvr_t open;
+    series_no_cvp_t open;
     if (m_df != nullptr) {
         try {
             // df->write<std::ostream, std::string, double, int>(std::cout);
@@ -52,23 +50,11 @@ series_no_cvr_t StockDayAction::impl::getOpen(const StockDayAction& sa) const
     return open;
 }
 
-series_no_cvr_t StockDayAction::getOpen() const { return pImpl->getOpen(*this); }
-
-// void StockDayAction::impl::getName(const StockDayAction& sa) const
-// {
-//     if (m_name == nullptr) {
-//     }
-//     std::cout << *(m_name.get()) << "\n";
-//     // return m_name;
-// }
-
-// void StockDayAction::getName() const { return pImpl->getName(*this); }
+series_no_cvp_t StockDayAction::getOpen() const { return pImpl->getOpen(*this); }
 
 QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
 
-QStringList StockDayAction::impl::getCodes(const StockDayAction& sa) const { return m_codes; }
-
-inline QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*this); };
+QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*this); };
 
 QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
 
@@ -83,6 +69,7 @@ StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
         return *this;
     }
     swap(pImpl, other.pImpl);
+
     return *this;
 };
 
@@ -136,13 +123,12 @@ void StockDayAction::impl::setDataFrame(const StockDayAction& sa)
         cout << e.what() << endl;
     }
 
-    // m_df = std::make_shared<MyDataFrame>(std::move(df));
     m_df = std::make_shared<MyDataFrame>(df);
 };
 
-series_no_cvr_t StockDayAction::get_pyseries(const char* col) const noexcept { return pImpl->get_pyseries(*this, col); }
+series_no_cvp_t StockDayAction::get_pyseries(const char* col) const noexcept { return pImpl->get_pyseries(*this, col); }
 
-series_no_cvr_t StockDayAction::impl::get_pyseries(const StockDayAction& sa, const char* col) const noexcept
+series_no_cvp_t StockDayAction::impl::get_pyseries(const StockDayAction& sa, const char* col) const noexcept
 {
     vector<double> series;
     auto cols = getColumns(sa);

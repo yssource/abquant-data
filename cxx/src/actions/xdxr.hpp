@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include <DataFrame/Vectors/HeteroVector.h>
-
 #include <memory>
 #include <type_traits>
 

@@ -1,7 +1,12 @@
 TARGET = abqaction
 TEMPLATE = lib
-CONFIG += shared console debug c++17
+#Bugfix: libabqaction.so -> libabqaction.a, since it is not able to port
+# DataFrame to outside for binding.
+CONFIG += static console debug c++17
+# CONFIG += shared console debug c++17
 CONFIG -= app_bundle
+
+QMAKE_CXXFLAGS += -fPIC
 
 include(../../abqbase.pri)
 include($$OUT_PWD/../../../conanbuildinfo.pri)

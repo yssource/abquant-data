@@ -7,6 +7,8 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#pragma once
+
 #include "abquant/actions/stockday.hpp"
 
 namespace abq
@@ -14,12 +16,11 @@ namespace abq
 class StockDayAction::impl
 {
 public:
-    MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
+    inline MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
     void setDataFrame(const StockDayAction& sa);
     MyDataFramePtr toFq(const StockDayAction& sa, FQ_TYPE fq);
-    series_no_cvr_t getOpen(const StockDayAction& sa) const;
-    void getName(const StockDayAction& sa) const;
-    QStringList getCodes(const StockDayAction& sa) const;
+    inline series_no_cvp_t getOpen(const StockDayAction& sa) const;
+    inline QStringList getCodes(const StockDayAction& sa) const { return m_codes; };
     inline QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
     inline QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };
 
@@ -36,7 +37,7 @@ public:
         // m_df->template write<std::ostream, index_t, double, int>(std::cout);
     }
 
-    series_no_cvr_t get_pyseries(const StockDayAction& sa, const char* col) const noexcept;
+    series_no_cvp_t get_pyseries(const StockDayAction& sa, const char* col) const noexcept;
 
 private:
     QList<StockDay> m_stockdays;
@@ -46,6 +47,5 @@ private:
     const char* m_end;
     FQ_TYPE m_xdxr{FQ_TYPE::NONE};
     MyDataFramePtr m_df{nullptr};
-    // std::shared_ptr<std::string> m_name{nullptr};
 };
 } // namespace abq

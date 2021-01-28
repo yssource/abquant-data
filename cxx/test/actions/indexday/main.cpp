@@ -61,7 +61,6 @@ void TestIndexDay::initTestCase()
     // auto ind = ia.makeIndicator<IndexDay>();
 
     auto ind = ia.makeIndicator();
-    ind.hello<double>(1.1);
 
     // // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
     // xt::xarray<double> xs = ia.toSeries("open");

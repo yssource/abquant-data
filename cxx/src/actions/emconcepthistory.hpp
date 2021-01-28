@@ -68,14 +68,11 @@ public:
     // MyDataFrame for binding
     std::vector<double> get_pyseries(const char*) const noexcept;
 
-    // template <>
-    xt::xarray<double> toSeries(const char*) const noexcept;
-
 private:
     QList<EmConceptHistory> m_emconcepthistorys{};
-    const QVector<const char*> m_columns{"date",   "open",   "close",     "high",          "low",
-                                         "volume", "amount", "amplitude", "rise_fall_pct", "rise_fall_amt",
-                                         "turnover",   "mkt_code",   "date_stamp"};
+    const QVector<const char*> m_columns{"date",     "open",     "close",     "high",          "low",
+                                         "volume",   "amount",   "amplitude", "rise_fall_pct", "rise_fall_amt",
+                                         "turnover", "mkt_code", "date_stamp"};
     QStringList m_codes{};
     const char* m_start{};
     const char* m_end{};
@@ -194,13 +191,6 @@ QVector<T> EmConceptHistoryAction::toSeries(const char* col) const noexcept
         }
     }
     return series;
-}
-
-// template <>
-xt::xarray<double> EmConceptHistoryAction::toSeries(const char* col) const noexcept
-{
-    std::vector<double> qv = toSeries<double>(col).toStdVector();
-    return xt::adapt(qv);
 }
 
 } // namespace abq
