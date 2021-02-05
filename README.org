@@ -53,14 +53,14 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 #+begin_src shell :exports code
   git clone https://github.com/yssource/abquant-data.git
   cd abquant-data && mkdir -v qbuild && cd qbuild
-  conan install .. --build missing --pr ../abquant.profile
+  conan install .. --build missing --profile ../abquant.profile
   conan build ..
   sudo make install
   sudo ldconfig
 
   # binding
   cd abquant-data && mkdir -v cbuild && cd cbuild
-  conan install .. --build missing --pr ../abquant.profile
+  conan install .. --build missing --profile ../abquant.profile
   conan build ..
 
   # todo:: qbuild, cbuild 将来会直接放在 setup.py 中作为 ext_modules 完成。
@@ -72,7 +72,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
      pip install -e .
    #+end_src
 ** 环境变量
-   请参照 .envrc 文件
+   请参照 .envrc 文件, 推荐使用 direnv 管理环境变量
    #+begin_src shell :exports code
      export ABQ_HOME=${PWD}
      export ABQ_CXX_HOME="${ABQ_HOME}/cxx"
@@ -248,7 +248,11 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 
 *** plotting
    [[file:./screenshot/abqstockday.png]]
-* TODO TODO:
+* DONE TODO:
+  CLOSED: [2021-01-28 Thu 20:50]
+  :LOGBOOK:
+  - State "DONE"       from "STARTED"    [2021-01-28 Thu 20:50]
+  :END:
   - 兼容 rqalpha apis ::
   1. [X] get_price()
   2. [X] get_fundamentals()[fn:1]

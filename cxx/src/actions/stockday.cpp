@@ -16,7 +16,7 @@ StockDayAction::StockDayAction(QStringList codes, const char* start, const char*
 {
 }
 
-MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction& sa) const
+MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
 {
     // m_df->template write<std::ostream, index_t, double, int>(std::cout);
     return m_df;
@@ -35,22 +35,6 @@ MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
 }
 
 MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
-
-inline series_no_cvp_t StockDayAction::impl::getOpen(const StockDayAction& sa) const
-{
-    series_no_cvp_t open;
-    if (m_df != nullptr) {
-        try {
-            // df->write<std::ostream, std::string, double, int>(std::cout);
-            open = m_df->template get_column<double>("open");
-        } catch (const std::exception& e) {
-            std::cout << e.what();
-        }
-    }
-    return open;
-}
-
-series_no_cvp_t StockDayAction::getOpen() const { return pImpl->getOpen(*this); }
 
 QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
 
@@ -73,7 +57,7 @@ StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
     return *this;
 };
 
-void StockDayAction::impl::setDataFrame(const StockDayAction& sa)
+void StockDayAction::impl::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -125,35 +109,5 @@ void StockDayAction::impl::setDataFrame(const StockDayAction& sa)
 
     m_df = std::make_shared<MyDataFrame>(df);
 };
-
-series_no_cvp_t StockDayAction::get_pyseries(const char* col) const noexcept { return pImpl->get_pyseries(*this, col); }
-
-series_no_cvp_t StockDayAction::impl::get_pyseries(const StockDayAction& sa, const char* col) const noexcept
-{
-    vector<double> series;
-    auto cols = getColumns(sa);
-    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        return series;
-    }
-
-    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-        try {
-            // m_df->write<std::ostream, index_t, double, int>(std::cout);
-            const char* colname;
-            if (QString(col) == QString("code")) {
-                colname = "lhs.code";
-            } else if (QString(col) == QString("date")) {
-                colname = "lhs.date";
-            } else {
-                colname = col;
-            }
-            series = m_df->get_column<double>(colname);
-        } catch (...) {
-            std::cout << " error ... "
-                      << "\n";
-        }
-    }
-    return series;
-}
 
 } // namespace abq

@@ -47,15 +47,10 @@ public:
     QVector<const char*> getColumns() const;
     MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
     MyDataFramePtr getDataFrame() const;
-    vector<double> getOpen() const;
     QStringList getCodes() const;
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
-
-    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
-    // MyDataFrame for binding
-    std::vector<double> get_pyseries(const char*) const noexcept;
 
 private:
     class impl;
@@ -91,31 +86,6 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
     auto cols = getColumns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
-    }
-
-    if constexpr (std::is_same_v<T, double>) {
-        if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-            MyDataFramePtr df;
-            std::vector<T> stdv_series;
-
-            try {
-                df = getDataFrame();
-                // df->write<std::ostream, std::string, double, int>(std::cout);
-                const char* colname;
-                if (QString(col) == QString("code")) {
-                    colname = "lhs.code";
-                } else if (QString(col) == QString("date")) {
-                    colname = "lhs.date";
-                } else {
-                    colname = col;
-                }
-                stdv_series = df->get_column<T>(colname);
-            } catch (...) {
-                std::cout << "Errors with StockDayAction::toSeries ..."
-                          << "\n";
-            }
-            return QVector<T>::fromStdVector(stdv_series);
-        }
     }
 
     for (auto s : getStocks()) {

@@ -17,10 +17,8 @@ class StockDayAction::impl
 {
 public:
     inline MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
-    void setDataFrame(const StockDayAction& sa);
     MyDataFramePtr toFq(const StockDayAction& sa, FQ_TYPE fq);
-    inline series_no_cvp_t getOpen(const StockDayAction& sa) const;
-    inline QStringList getCodes(const StockDayAction& sa) const { return m_codes; };
+    inline QStringList getCodes(const StockDayAction&) const { return m_codes; };
     inline QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
     inline QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };
 
@@ -33,11 +31,12 @@ public:
                      << "start: " << start << "\n"
                      << "end: " << end << "\n";
         }
-        setDataFrame(sa);
+        setDataFrame();
         // m_df->template write<std::ostream, index_t, double, int>(std::cout);
     }
 
-    series_no_cvp_t get_pyseries(const StockDayAction& sa, const char* col) const noexcept;
+private:
+    void setDataFrame();
 
 private:
     QList<StockDay> m_stockdays;

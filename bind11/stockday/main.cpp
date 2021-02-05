@@ -45,12 +45,6 @@ public:
     template <class T>
     std::vector<T> toSeries(const string& col) noexcept
     {
-        auto m_df = m_sda_ptr->getDataFrame();
-        if constexpr (std::is_same_v<T, double>) {
-            auto series = m_sda_ptr->get_pyseries(col.c_str());
-            return series;
-        }
-
         auto series = m_sda_ptr->toSeries<T>(col.c_str());
         return series.toStdVector();
     }
