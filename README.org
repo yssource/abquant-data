@@ -248,7 +248,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 
 *** plotting
    [[file:./screenshot/abqstockday.png]]
-* DONE TODO:
+* DONE :
   CLOSED: [2021-01-28 Thu 20:50]
   :LOGBOOK:
   - State "DONE"       from "STARTED"    [2021-01-28 Thu 20:50]
@@ -259,6 +259,16 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   - 东方财富 概念 apis ::
   1. [X] easymoney concept base get_blocks()
   2. [X] easymoney concept history get_price()
+* WAITING :
+  :LOGBOOK:
+  - State "STARTED"    from "DONE"       [2021-02-06 Sat 01:45]
+  - State "DONE"       from "STARTED"    [2021-02-06 Sat 01:45]
+  - State "STARTED"    from "DONE"       [2021-02-06 Sat 01:45]
+  - State "DONE"       from "STARTED"    [2021-02-06 Sat 01:45]
+  - State "DONE"       from "WAITING"    [2021-02-06 Sat 01:44]
+  - State "DONE"       from "STARTED"    [2021-02-06 Sat 01:43]
+  :END:
+  - Docker, K8s supported ::
 * 开发初衷
   作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
   验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上

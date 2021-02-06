@@ -3,7 +3,6 @@ project(abquant)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
-# target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CONAN_INCLUDE_DIRS})
 
 # cxx options
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
@@ -32,26 +31,12 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
-# add_definitions(-DQT_NO_KEYWORDS)
-
-# find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-# find_package(Shiboken REQUIRED)
-
-# find_program(GENERATOR generatorrunner REQUIRED)
-# if (NOT GENERATOR)
-#     message(FATAL_ERROR "You need to specify GENERATOR variable (-DGENERATOR=value)")
-# endif()
-
 find_package(Qt5 REQUIRED Core Network Sql Xml Qml)
-# find_package(pybind11 REQUIRED)  # or add_subdirectory(pybind11)
 # add_subdirectory(pybind11)
-add_subdirectory(bind11)
-
+add_subdirectory(binding)
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
 get_filename_component(QtCore_libdir ${QtCore_location} DIRECTORY)
-message(STATUS "${QtCore_libdir}")
-message(STATUS "${QtCore_location}")
 
 enable_testing()
-message(status ${CONAN_LIBS})
+# message(status ${CONAN_LIBS})
