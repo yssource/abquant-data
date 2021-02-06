@@ -16,11 +16,11 @@ namespace abq
 class StockDayAction::impl
 {
 public:
-    inline MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
+    MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
     MyDataFramePtr toFq(const StockDayAction& sa, FQ_TYPE fq);
-    inline QStringList getCodes(const StockDayAction&) const { return m_codes; };
-    inline QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
-    inline QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };
+    QStringList getCodes(const StockDayAction&) const { return m_codes; };
+    QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
+    QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };
 
     impl(StockDayAction& sa, QStringList codes, const char* start, const char* end, FQ_TYPE xdxr) : m_xdxr{xdxr}
     {

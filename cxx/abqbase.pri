@@ -54,9 +54,6 @@ windows:CONFIG(debug, debug|release) {
 
 VERSION = $$ABQ_VERSION
 
-message(===version: $${VERSION})
-message(===target.path: $${target.path})
-
 isEmpty(target.path) {
   windows {
     target.path = C:/abquant/$${VERSION}/bin
