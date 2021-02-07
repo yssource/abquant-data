@@ -54,7 +54,7 @@ public:
     {
         auto m_df        = m_sda_ptr->getDataFrame();
         auto ind         = m_sda_ptr->makeIndicator();
-        roc_return_t rst = ind.ROC(col.c_str(), N, M);
+        roc_return_t rst = ind->ROC(col.c_str(), N, M);
         // std::cout << rst["ROC"] << "\n";
         return 0;
     }

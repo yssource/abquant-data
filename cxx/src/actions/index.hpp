@@ -54,6 +54,7 @@ class IndexAction : public TActionContext
 public:
     using self_type    = IndexAction<IA>;
     using derived_type = IA;
+    using IndicatorPtr = std::shared_ptr<Indicator<derived_type>>;
 
 public:
     // derived_type &derived_cast() & noexcept;
@@ -63,7 +64,8 @@ public:
 
     // TODO: friend class Indicator<S, derived_type, IndexAction>
     QStringList getCodes() const;
-    Indicator<derived_type> makeIndicator();
+
+    IndicatorPtr makeIndicator();
 
 protected:
     //! Default constructor
@@ -258,10 +260,10 @@ inline auto IndexAction<IA>::getIndexes()
 }
 
 template <class IA>
-inline auto IndexAction<IA>::makeIndicator() -> Indicator<derived_type>
+inline auto IndexAction<IA>::makeIndicator() -> IndicatorPtr
 {
     auto ia = derived_cast();
-    return Indicator<derived_type>(ia);
+    return std::make_shared<Indicator<derived_type>>(ia);
 }
 
 } // namespace abq

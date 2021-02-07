@@ -11,9 +11,61 @@
 
 namespace abq
 {
+/*******************
+ * StockDayAction *
+ *******************/
+
 StockDayAction::StockDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr)
-    : pImpl{std::make_shared<impl>(*this, codes, start, end, xdxr)}, m_xdxr{xdxr}
+    : pImpl{std::make_shared<impl>(*this, codes, start, end, xdxr)}
 {
+}
+
+//! Destructor
+StockDayAction::~StockDayAction() noexcept = default;
+
+//! Move assignment operator
+StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
+{
+    if (&other == this) {
+        return *this;
+    }
+    swap(pImpl, other.pImpl);
+
+    return *this;
+};
+
+MyDataFramePtr StockDayAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+
+MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
+
+QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
+
+QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*this); };
+
+QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
+
+
+/***********************
+ * StockDayAction impl *
+ **********************/
+
+StockDayAction::impl::impl(StockDayAction& sa, QStringList codes, const char* start, const char* end, FQ_TYPE xdxr)
+    : m_codes{codes}
+{
+    m_stockdays = sa.run<StockDay>(codes, start, end);
+    if (m_stockdays.isEmpty()) {
+        qDebug() << "No stock day data.\n"
+                 << codes << "\n"
+                 << "start: " << start << "\n"
+                 << "end: " << end << "\n";
+    }
+    setDataFrame();
+    if (xdxr != FQ_TYPE::NONE) {
+        using action_t = typename std::decay<typename std::remove_pointer<decltype(sa)>::type>::type;
+        // m_df = sa.toFq(xdxr);
+        m_df = toFq(sa, xdxr);
+    }
+    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
 }
 
 MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
@@ -21,8 +73,6 @@ MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
     // m_df->template write<std::ostream, index_t, double, int>(std::cout);
     return m_df;
 }
-
-MyDataFramePtr StockDayAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
 
 MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
 {
@@ -33,29 +83,6 @@ MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
     m_df = x.getXdxr(m_df, fq);
     return m_df;
 }
-
-MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
-
-QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
-
-QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*this); };
-
-QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
-
-//! Destructor
-StockDayAction::~StockDayAction() noexcept = default;
-
-//! Move assignment operator
-
-StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
-{
-    if (&other == this) {
-        return *this;
-    }
-    swap(pImpl, other.pImpl);
-
-    return *this;
-};
 
 void StockDayAction::impl::setDataFrame()
 {
@@ -72,16 +99,16 @@ void StockDayAction::impl::setDataFrame()
         // date_stamp" : 670608000.0
 
         std::vector<index_t> datetimeCodeIdx;
-        std::vector<double> open;
-        std::vector<double> close;
-        std::vector<double> high;
-        std::vector<double> low;
-        std::vector<double> vol;
-        std::vector<double> amount;
+        series_no_cvp_t open;
+        series_no_cvp_t close;
+        series_no_cvp_t high;
+        series_no_cvp_t low;
+        series_no_cvp_t vol;
+        series_no_cvp_t amount;
         std::vector<std::string> date;
         std::vector<std::string> code;
-        std::vector<double> date_stamp;
-        std::vector<double> if_trade;
+        series_no_cvp_t date_stamp;
+        series_no_cvp_t if_trade;
 
         foreach (auto s, m_stockdays) {
             datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());

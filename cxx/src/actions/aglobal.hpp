@@ -7,6 +7,8 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#pragma once
+
 #include <QtCore/qglobal.h>
 
 namespace abq

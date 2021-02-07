@@ -25,20 +25,32 @@
 
 namespace abq
 {
-using namespace std;
-
 template <class SA>
 class Xdxr
 {
 public:
     Xdxr(const SA& sa)
     {
+        // m_codes                              = sa->getCodes();
         m_codes                              = sa.getCodes();
         std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(m_codes, 1);
         m_xdxr_df                            = sap->getDataFrame();
     };
 
-    ~Xdxr() = default;
+    //! Copy constructor
+    Xdxr(const Xdxr& other) = default;
+
+    //! Move constructor
+    Xdxr(Xdxr&& other) noexcept = default;
+
+    //! Copy assignment operator
+    Xdxr& operator=(const Xdxr& other) = default;
+
+    //! Move assignment operator
+    Xdxr& operator=(Xdxr&& other) noexcept = default;
+
+    ~Xdxr() noexcept = default;
+
     MyDataFramePtr getXdxr(const MyDataFramePtr df, FQ_TYPE fq);
 
 private:

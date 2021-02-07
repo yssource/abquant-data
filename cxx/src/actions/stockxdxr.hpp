@@ -18,9 +18,6 @@
 
 namespace abq
 {
-using namespace std;
-using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
-
 class StockXdxrAction : public StockAction<StockXdxrAction>
 {
 public:

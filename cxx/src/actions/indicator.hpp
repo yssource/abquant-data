@@ -14,8 +14,6 @@
 
 #include "DataFrame/DataFrame.h"
 #include "DataFrame/DataFrameStatsVisitors.h"
-#include "abquant/actions/index.hpp"
-#include "abquant/actions/stock.hpp"
 #include "abquant/actions/utils.hpp"
 #include "iostream"
 #include "xtensor/xadapt.hpp"
@@ -43,9 +41,6 @@ template <class A>
 class StockAction;
 template <class A>
 class IndexAction;
-
-using namespace hmdf;
-// using namespace std;
 
 // template<typename T>
 struct PySeries {

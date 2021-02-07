@@ -7,35 +7,83 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "stockmin.hpp"
-// #include "abquant/actions/stockmin.hpp"
+#include "abquant/actions/stockmin_p.hpp"
 
 namespace abq
 {
+/*******************
+ * StockMinAction *
+ *******************/
+
 StockMinAction::StockMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq, FQ_TYPE xdxr)
-    : m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}, m_xdxr{xdxr}
+    : pImpl{std::make_shared<impl>(*this, codes, start, end, freq, xdxr)}
 {
-    m_stockmins = run<StockMin>(codes, start, end, freq);
+}
+
+//! Destructor
+StockMinAction::~StockMinAction() noexcept = default;
+
+//! Move assignment operator
+StockMinAction& StockMinAction::operator=(StockMinAction&& other) noexcept
+{
+    if (&other == this) {
+        return *this;
+    }
+    swap(pImpl, other.pImpl);
+
+    return *this;
+};
+
+MyDataFramePtr StockMinAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+
+MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
+
+QStringList StockMinAction::getCodes() const { return pImpl->getCodes(*this); }
+
+QList<StockMin> StockMinAction::getStocks() const { return pImpl->getStocks(*this); };
+
+QVector<const char*> StockMinAction::getColumns() const { return pImpl->getColumns(*this); }
+
+/***********************
+ * StockMinAction impl *
+ **********************/
+
+StockMinAction::impl::impl(StockMinAction& sa, QStringList codes, const char* start, const char* end, MIN_FREQ freq,
+                           FQ_TYPE xdxr)
+    : m_codes{codes}
+{
+    m_stockmins = sa.run<StockMin>(codes, start, end, freq);
     if (m_stockmins.isEmpty()) {
-        qDebug() << "No stock minute data.\n"
+        qDebug() << "No stock min data.\n"
                  << codes << "\n"
                  << "start: " << start << "\n"
-                 << "end: " << end << "\n"
-                 << "freq: " << freq << "\n";
+                 << "freq: " << freq << "\n"
+                 << "end: " << end << "\n";
     }
     setDataFrame();
+    if (xdxr != FQ_TYPE::NONE) {
+        m_df = toFq(sa, xdxr);
+    }
+    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
 }
 
-MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) const
+MyDataFramePtr StockMinAction::impl::getDataFrame(const StockMinAction&) const
 {
-    auto x = Xdxr<StockMinAction>(*this);
-    if (fq == FQ_TYPE::NONE || !m_df->get_index().size()) {
+    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    return m_df;
+}
+
+MyDataFramePtr StockMinAction::impl::toFq(const StockMinAction& sa, FQ_TYPE fq)
+{
+    auto x = Xdxr<StockMinAction>(sa);
+    if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }
-    return x.getXdxr(m_df, fq);
+    m_df = x.getXdxr(m_df, fq);
+    return m_df;
 }
 
-void StockMinAction::setDataFrame()
+void StockMinAction::impl::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -52,20 +100,20 @@ void StockMinAction::setDataFrame()
         // time_stamp" : 670608000.0
         // type" : "1min",
 
-        std::vector<std::string> datetimeCodeIdx;
-        std::vector<double> open;
-        std::vector<double> close;
-        std::vector<double> high;
-        std::vector<double> low;
-        std::vector<double> vol;
-        std::vector<double> amount;
+        std::vector<index_t> datetimeCodeIdx;
+        series_no_cvp_t open;
+        series_no_cvp_t close;
+        series_no_cvp_t high;
+        series_no_cvp_t low;
+        series_no_cvp_t vol;
+        series_no_cvp_t amount;
         std::vector<std::string> datetime;
         std::vector<std::string> date;
         std::vector<std::string> code;
-        std::vector<double> date_stamp;
-        std::vector<double> time_stamp;
+        series_no_cvp_t date_stamp;
+        series_no_cvp_t time_stamp;
         std::vector<std::string> type;
-        std::vector<double> if_trade;
+        series_no_cvp_t if_trade;
 
         foreach (auto s, m_stockmins) {
             datetimeCodeIdx.push_back((s.datetime() + QString("_") + s.code()).toStdString());
@@ -95,53 +143,6 @@ void StockMinAction::setDataFrame()
         cout << e.what() << endl;
     }
     m_df = std::make_shared<MyDataFrame>(df);
-}
-
-vector<double> StockMinAction::getOpen() const
-{
-    vector<double> open;
-    if (m_df != nullptr) {
-        try {
-            // m_df->write<std::ostream, std::string, double, int>(std::cout);
-            open = m_df->template get_column<double>("open");
-        } catch (const std::exception& e) {
-            std::cout << e.what();
-        }
-    }
-    return open;
-}
-
-vector<double> StockMinAction::get_pyseries(const char* col) const noexcept
-{
-    vector<double> series;
-    auto cols = getColumns();
-    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        return series;
-    }
-
-    if (m_xdxr == FQ_TYPE::PRE || m_xdxr == FQ_TYPE::POST) {
-        std::shared_ptr<MyDataFrame> df;
-
-        try {
-            df = getDataFrame();
-            // df->write<std::ostream, std::string, double, int>(std::cout);
-            const char* colname;
-            if (QString(col) == QString("code")) {
-                colname = "lhs.code";
-            } else if (QString(col) == QString("date")) {
-                colname = "lhs.date";
-            } else if (QString(col) == QString("datetime")) {
-                colname = "lhs.datetime";
-            } else {
-                colname = col;
-            }
-            series = df->get_column<double>(colname);
-        } catch (...) {
-            std::cout << " error ... "
-                      << "\n";
-        }
-    }
-    return series;
-}
+};
 
 } // namespace abq

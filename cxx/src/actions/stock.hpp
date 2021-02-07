@@ -46,9 +46,6 @@ using series_t         = std::vector<double>&;
 using xseries_no_cvp_t = std::decay<xseries_t>::type;
 using series_no_cvp_t  = std::decay<series_t>::type;
 
-template <class SA>
-class Indicator;
-
 /***************************
  * StockAction declaration *
  ***************************/
@@ -58,6 +55,7 @@ class StockAction : public TActionContext
 public:
     using self_type    = StockAction<SA>;
     using derived_type = SA;
+    using IndicatorPtr = std::shared_ptr<Indicator<derived_type>>;
 
 public:
     // derived_type &derived_cast() & noexcept;
@@ -66,7 +64,7 @@ public:
     const derived_type& derived_cast() const& noexcept;
     derived_type derived_cast() && noexcept;
 
-    Indicator<derived_type> makeIndicator();
+    IndicatorPtr makeIndicator();
 
 protected:
     //! Default constructor
@@ -116,21 +114,6 @@ private:
 /******************************
  * StockAction implementation *
  ******************************/
-
-// template <class SA>
-// StockAction<SA>::StockAction(QStringList codes) : m_codes{codes}
-// {
-// }
-
-// since: /usr/include/treefrog/tactioncontext.h:59:20: note: 'TActionContext'
-// has been explicitly marked deleted here
-// T_DISABLE_COPY(TActionContext)
-// workaround here, SA*
-// template <class SA>
-//     inline auto StockAction<SA>::derived_cast() & noexcept -> derived_type & {
-//     return *static_cast<derived_type *>(this);
-// }
-
 /**
  * @name Downcast functions
  */
@@ -251,10 +234,10 @@ inline auto StockAction<SA>::getStocks()
 }
 
 template <class SA>
-inline auto StockAction<SA>::makeIndicator() -> Indicator<derived_type>
+inline auto StockAction<SA>::makeIndicator() -> IndicatorPtr
 {
     auto sa = derived_cast();
-    return Indicator<derived_type>(sa);
+    return std::make_shared<Indicator<derived_type>>(sa);
 }
 
 } // namespace abq
