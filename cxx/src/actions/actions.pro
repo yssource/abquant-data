@@ -31,6 +31,7 @@ HEADERS += stockday_p.hpp
 HEADERS += stockmin.hpp
 HEADERS += stockxdxr.hpp
 HEADERS += xdxr.hpp
+HEADERS += xdxr_p.hpp
 HEADERS += indicator.hpp
 HEADERS += utils.hpp
 
@@ -41,4 +42,5 @@ SOURCES += indexmin.cpp
 SOURCES += stockday.cpp
 SOURCES += stockmin.cpp
 SOURCES += stockxdxr.cpp
+SOURCES += xdxr.cpp
 SOURCES += indicator.cpp

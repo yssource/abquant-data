@@ -7,6 +7,7 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#include "abquant/actions/xdxr.hpp"
 #include "abquant/actions/stockday_p.hpp"
 
 namespace abq
@@ -76,7 +77,7 @@ MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
 
 MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
 {
-    auto x = Xdxr<StockDayAction>(sa);
+    auto x = Xdxr(sa);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }

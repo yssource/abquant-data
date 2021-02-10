@@ -82,9 +82,6 @@ public:
 
     ~Indicator() noexcept = default;
 
-    template <typename T>
-    void hello(T h);
-
     // 威廉 SMA 算法
     xt::xarray<double> SMA(xseries_cst_t series, size_t N, size_t M = 1) const;
     xt::xarray<double> REF(xseries_cst_t series, int N) const;
@@ -102,7 +99,6 @@ public:
     // void KDJ(size_t, size_t, size_t);
 
 private:
-    const char* m_hello{"hello world!"};
     const A* m_a;
 };
 
@@ -118,14 +114,6 @@ Indicator<A>::Indicator(const A* a) : m_a(std::move(a))
     if constexpr (abq::is_base_of_template<StockAction, action_t>::value) {
         auto qs = a->getStocks();
     }
-}
-
-template <typename A>
-template <typename T>
-void Indicator<A>::hello(T h)
-{
-    qDebug() << m_hello << " "
-             << "\n";
 }
 
 template <typename A>

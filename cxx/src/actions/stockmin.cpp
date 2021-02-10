@@ -7,6 +7,7 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
+#include "abquant/actions/xdxr.hpp"
 #include "abquant/actions/stockmin_p.hpp"
 
 namespace abq
@@ -75,7 +76,7 @@ MyDataFramePtr StockMinAction::impl::getDataFrame(const StockMinAction&) const
 
 MyDataFramePtr StockMinAction::impl::toFq(const StockMinAction& sa, FQ_TYPE fq)
 {
-    auto x = Xdxr<StockMinAction>(sa);
+    auto x = Xdxr(sa);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }

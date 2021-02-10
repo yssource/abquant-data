@@ -156,7 +156,6 @@ public:
         return inst;
     }
     static void finish() { _exit(0); }
-    void hello() { return; }
 
 private:
     Abquant(){ABQ_OPEN_MAIN()};

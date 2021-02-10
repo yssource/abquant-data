@@ -38,7 +38,7 @@ namespace abq
 {
 using namespace hmdf;
 using namespace std;
-using index_t = std::string;
+using index_t     = std::string;
 using MyDataFrame = StdDataFrame<index_t>;
 
 /***************************
@@ -124,15 +124,6 @@ template <class IA>
 IndexAction<IA>::IndexAction(QStringList codes) : m_codes{codes}
 {
 }
-
-// since: /usr/include/treefrog/tactioncontext.h:59:20: note: 'TActionContext'
-// has been explicitly marked deleted here
-// T_DIIABLE_COPY(TActionContext)
-// workaround here, IA*
-// template <class IA>
-//     inline auto IndexAction<IA>::derived_cast() & noexcept -> derived_type & {
-//     return *static_cast<derived_type *>(this);
-// }
 
 /**
  * @name Downcast functions
