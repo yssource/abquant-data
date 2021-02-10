@@ -7,17 +7,62 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "abquant/actions/stockxdxr.hpp"
+#include "abquant/actions/stockxdxr_p.hpp"
 
 namespace abq
 {
-StockXdxrAction::StockXdxrAction(QStringList codes, int category) : m_category{category}
+/*******************
+ * StockXdxrAction *
+ *******************/
+
+StockXdxrAction::StockXdxrAction(QStringList codes, int category)
+    : pImpl{std::make_shared<impl>(*this, codes, category)}
 {
-    m_stockxdxrs = run<StockXdxr>(codes, category);
-    setDataFrame();
 }
 
-void StockXdxrAction::setDataFrame()
+//! Destructor
+StockXdxrAction::~StockXdxrAction() noexcept = default;
+
+//! Move assignment operator
+StockXdxrAction& StockXdxrAction::operator=(StockXdxrAction&& other) noexcept
+{
+    if (&other == this) {
+        return *this;
+    }
+    swap(pImpl, other.pImpl);
+
+    return *this;
+};
+
+MyDataFramePtr StockXdxrAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+
+QList<StockXdxr> StockXdxrAction::getStocks() const { return pImpl->getStocks(*this); };
+
+QVector<const char*> StockXdxrAction::getColumns() const { return pImpl->getColumns(*this); }
+
+/***********************
+ * StockXdxrAction impl *
+ **********************/
+
+StockXdxrAction::impl::impl(StockXdxrAction& sa, QStringList codes, int category)
+{
+    m_stockxdxrs = sa.run<StockXdxr>(codes, category);
+    if (m_stockxdxrs.isEmpty()) {
+        qDebug() << "No stock xdxr data.\n"
+                 << codes << "\n"
+                 << "category: " << category << "\n";
+    }
+    setDataFrame();
+    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+}
+
+MyDataFramePtr StockXdxrAction::impl::getDataFrame(const StockXdxrAction&) const
+{
+    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    return m_df;
+}
+
+void StockXdxrAction::impl::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -42,25 +87,24 @@ void StockXdxrAction::setDataFrame()
         // QString code;
 
         std::vector<index_t> datetimeCodeIdx;
-        std::vector<double> category;
+        series_no_cvp_t category;
         std::vector<std::string> name;
-        std::vector<double> fenhong;
-        std::vector<double> peigujia;
-        std::vector<double> songzhuangu;
-        std::vector<double> peigu;
-        std::vector<double> suogu;
-        std::vector<double> liquidity_before;
-        std::vector<double> liquidity_after;
-        std::vector<double> shares_before;
-        std::vector<double> shares_after;
-        std::vector<double> fenshu;
-        std::vector<double> xingquanjia;
+        series_no_cvp_t fenhong;
+        series_no_cvp_t peigujia;
+        series_no_cvp_t songzhuangu;
+        series_no_cvp_t peigu;
+        series_no_cvp_t suogu;
+        series_no_cvp_t liquidity_before;
+        series_no_cvp_t liquidity_after;
+        series_no_cvp_t shares_before;
+        series_no_cvp_t shares_after;
+        series_no_cvp_t fenshu;
+        series_no_cvp_t xingquanjia;
         std::vector<std::string> date;
         std::vector<std::string> category_meaning;
         std::vector<std::string> code;
 
-        auto qss = getStocks();
-        foreach (auto s, qss) {
+        foreach (auto s, m_stockxdxrs) {
             datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());
             category.push_back(s.category());
             name.push_back(s.name().toStdString());

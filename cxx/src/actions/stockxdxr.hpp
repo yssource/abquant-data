@@ -6,25 +6,26 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
-
 #pragma once
 
 #include <QDebug>
 #include <algorithm>
+#include <experimental/propagate_const>
 #include <iostream>
 
 #include "abquant/actions/stock.hpp"
-#include "abquant/models/stockxdxr.h" //  include the model class
+#include "abquant/models/stockxdxr.h"
 
 namespace abq
 {
-class StockXdxrAction : public StockAction<StockXdxrAction>
+class StockXdxrAction : public StockAction<StockXdxrAction>, std::enable_shared_from_this<StockXdxrAction>
 {
 public:
     //! Default constructor
     StockXdxrAction() = default;
 
     StockXdxrAction(const QStringList codes, int category = 1);
+
     //! Copy constructor
     StockXdxrAction(const StockXdxrAction& other) = delete;
 
@@ -32,53 +33,25 @@ public:
     StockXdxrAction(StockXdxrAction&& other) noexcept = delete;
 
     //! Destructor
-    virtual ~StockXdxrAction() noexcept = default;
-
-    // QStringList getCodes() const;
-    template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    ~StockXdxrAction();
 
     //! Copy assignment operator
     StockXdxrAction& operator=(const StockXdxrAction& other) = default;
 
     //! Move assignment operator
-    StockXdxrAction& operator=(StockXdxrAction&& other) noexcept
-    {
-        if (&other == this) {
-            return *this;
-        }
-        std::swap(m_codes, other.m_codes);
-        std::swap(m_category, other.m_category);
-        std::swap(m_stockxdxrs, other.m_stockxdxrs);
-        return *this;
-    }
+    StockXdxrAction& operator=(StockXdxrAction&& other) noexcept;
 
-    inline QList<StockXdxr> getStocks() const { return m_stockxdxrs; };
-    inline QVector<const char*> getColumns() const { return m_columns; };
-    void setDataFrame();
-    inline MyDataFramePtr getDataFrame() const { return m_df; }
+    QList<StockXdxr> getStocks() const;
+    QVector<const char*> getColumns() const;
+    MyDataFramePtr getDataFrame() const;
+
+    template <typename T>
+    QVector<T> toSeries(const char*) const noexcept;
 
 private:
-    QList<StockXdxr> m_stockxdxrs;
-    const QVector<const char*> m_columns = {"category",
-                                            "name",
-                                            "fenhong",
-                                            "peigujia",
-                                            "songzhuangu",
-                                            "peigu",
-                                            "suogu",
-                                            "liquidity_before",
-                                            "liquidity_after",
-                                            "shares_before",
-                                            "shares_after",
-                                            "fenshu",
-                                            "xingquanjia",
-                                            "date",
-                                            "category_meaning",
-                                            "code"};
-    QStringList m_codes;
-    int m_category;
-    MyDataFramePtr m_df{nullptr};
+    class impl;
+    std::experimental::propagate_const<std::shared_ptr<impl>> pImpl;
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
 
 private:
     friend inline QDebug operator<<(QDebug d, const StockXdxrAction& sa)
@@ -212,5 +185,4 @@ QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
-
 } // namespace abq

@@ -16,7 +16,7 @@
 #include "abquant/actions/stock.hpp"
 #include "abquant/actions/utils.hpp"
 #include "abquant/actions/xdxr.hpp"
-#include "abquant/models/stockday.h" //  include the model class
+#include "abquant/models/stockday.h"
 
 namespace abq
 {
