@@ -24,14 +24,10 @@ using index_t        = std::string;
 using MyDataFrame    = StdDataFrame<index_t>;
 using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
 
-class StockDayAction;
-class StockMinAction;
-
 class Xdxr
 {
 public:
-    Xdxr(const StockDayAction& sa);
-    Xdxr(const StockMinAction& sa);
+    Xdxr(const QStringList& codes);
 
     //! Copy constructor
     Xdxr(const Xdxr& other) = default;

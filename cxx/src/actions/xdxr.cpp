@@ -7,8 +7,6 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "abquant/actions/stockday.hpp"
-#include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/stockxdxr.hpp"
 #include "abquant/actions/xdxr_p.hpp"
 
@@ -18,9 +16,7 @@ namespace abq
  * Xdxr *
  *******************/
 
-Xdxr::Xdxr(const StockDayAction& sa) : pImpl{std::make_shared<impl>(sa)} {}
-
-Xdxr::Xdxr(const StockMinAction& sa) : pImpl{std::make_shared<impl>(sa)} {}
+Xdxr::Xdxr(const QStringList& codes) : pImpl{std::make_shared<impl>(codes)} {}
 
 //! Destructor
 Xdxr::~Xdxr() noexcept = default;
@@ -41,17 +37,9 @@ MyDataFramePtr Xdxr::getXdxr(MyDataFramePtr df, FQ_TYPE fq) { return pImpl->getX
 /***********************
  * Xdxr impl *
  **********************/
-Xdxr::impl::impl(const StockDayAction& sa)
+Xdxr::impl::impl(const QStringList& codes)
 {
-    m_codes                              = sa.getCodes();
-    std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(m_codes, 1);
-    m_xdxr_df                            = sap->getDataFrame();
-};
-
-Xdxr::impl::impl(const StockMinAction& sa)
-{
-    m_codes                              = sa.getCodes();
-    std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(m_codes, 1);
+    std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(codes, 1);
     m_xdxr_df                            = sap->getDataFrame();
 };
 

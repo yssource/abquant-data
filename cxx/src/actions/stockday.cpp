@@ -37,7 +37,7 @@ StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
 
 MyDataFramePtr StockDayAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
 
-MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
+MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
 
 QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
 
@@ -63,8 +63,7 @@ StockDayAction::impl::impl(StockDayAction& sa, QStringList codes, const char* st
     setDataFrame();
     if (xdxr != FQ_TYPE::NONE) {
         using action_t = typename std::decay<typename std::remove_pointer<decltype(sa)>::type>::type;
-        // m_df = sa.toFq(xdxr);
-        m_df = toFq(sa, xdxr);
+        m_df = toFq(xdxr);
     }
     // m_df->template write<std::ostream, index_t, double, int>(std::cout);
 }
@@ -75,9 +74,9 @@ MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
     return m_df;
 }
 
-MyDataFramePtr StockDayAction::impl::toFq(const StockDayAction& sa, FQ_TYPE fq)
+MyDataFramePtr StockDayAction::impl::toFq(FQ_TYPE fq)
 {
-    auto x = Xdxr(sa);
+    auto x = Xdxr(m_codes);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }

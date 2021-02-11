@@ -18,7 +18,7 @@ class StockDayAction::impl
 public:
     impl(StockDayAction& sa, QStringList codes, const char* start, const char* end, FQ_TYPE xdxr);
     MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
-    MyDataFramePtr toFq(const StockDayAction& sa, FQ_TYPE fq);
+    MyDataFramePtr toFq(FQ_TYPE fq);
     QStringList getCodes(const StockDayAction&) const { return m_codes; };
     QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
     QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };

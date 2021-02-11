@@ -30,19 +30,12 @@ public:
             qcodes << QString::fromStdString(c);
         }
         m_sma = StockMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq, m_xdxr);
-        m_sma.setDataFrame();
     };
 
     size_t toQfq()
     {
         // const auto fq = m_sma.toFq(FQ_TYPE::PRE);
         auto fq = m_sma.getDataFrame();
-        try {
-            auto fq2 = m_sma.getOpen();
-        } catch (const std::exception& e) {
-            std::cout << e.what();
-        }
-
         // fq.write<std::ostream, std::string, double, int>(std::cout);
         fq->write<std::ostream, std::string, double, int>(std::cout);
         return fq->get_index().size();
@@ -52,11 +45,6 @@ public:
     template <class T>
     std::vector<T> toSeries(const string& col) const noexcept
     {
-        if constexpr (std::is_same_v<T, double>) {
-            auto series = m_sma.get_pyseries(col.c_str());
-            return series;
-        }
-
         auto series = m_sma.toSeries<T>(col.c_str());
         return series.toStdVector();
     }

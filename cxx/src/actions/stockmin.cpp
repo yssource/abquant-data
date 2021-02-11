@@ -37,7 +37,7 @@ StockMinAction& StockMinAction::operator=(StockMinAction&& other) noexcept
 
 MyDataFramePtr StockMinAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
 
-MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) { return pImpl->toFq(*this, fq); }
+MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
 
 QStringList StockMinAction::getCodes() const { return pImpl->getCodes(*this); }
 
@@ -63,7 +63,7 @@ StockMinAction::impl::impl(StockMinAction& sa, QStringList codes, const char* st
     }
     setDataFrame();
     if (xdxr != FQ_TYPE::NONE) {
-        m_df = toFq(sa, xdxr);
+        m_df = toFq(xdxr);
     }
     // m_df->template write<std::ostream, index_t, double, int>(std::cout);
 }
@@ -74,9 +74,9 @@ MyDataFramePtr StockMinAction::impl::getDataFrame(const StockMinAction&) const
     return m_df;
 }
 
-MyDataFramePtr StockMinAction::impl::toFq(const StockMinAction& sa, FQ_TYPE fq)
+MyDataFramePtr StockMinAction::impl::toFq(FQ_TYPE fq)
 {
-    auto x = Xdxr(sa);
+    auto x = Xdxr(m_codes);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
         return m_df;
     }

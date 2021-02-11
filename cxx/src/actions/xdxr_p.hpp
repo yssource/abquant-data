@@ -16,8 +16,7 @@ namespace abq
 class Xdxr::impl
 {
 public:
-    impl(const StockDayAction&);
-    impl(const StockMinAction&);
+    impl(const QStringList&);
     MyDataFramePtr getXdxr(const MyDataFramePtr df, FQ_TYPE fq);
 
 private:
