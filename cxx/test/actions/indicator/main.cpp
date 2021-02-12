@@ -31,14 +31,11 @@ using namespace std;
 
 static QList<StockDay> stockdays;
 static QList<IndexDay> indexdays;
-static StockDayAction sa;
-static IndexDayAction ia;
-// static Indicator<abq::StockAction<abq::StockDayAction>::self_type> indstockday;
-// static Indicator<abq::IndexAction<abq::IndexDayAction>::self_type> indindexday;
+static std::shared_ptr<StockDayAction> sa;
+static std::shared_ptr<IndexDayAction> ia;
 
 static std::shared_ptr<Indicator<abq::StockAction<abq::StockDayAction>::derived_type>> indstockday;
 static std::shared_ptr<Indicator<abq::IndexAction<abq::IndexDayAction>::derived_type>> indindexday;
-// static MyDataFrame df;
 
 class TestIndicator : public QObject
 {
@@ -59,22 +56,17 @@ void TestIndicator::initTestCase()
     const char* start = "2017-01-01";
     const char* end   = "2019-12-01";
 
-    // const char *start = "2019-06-25";
-    // const char *end = "2019-06-27";
+    sa = std::make_shared<StockDayAction>(codes, start, end);
+    indstockday = sa->makeIndicator();
 
-    // sa          = StockDayAction(codes, start, end);
-    StockDayAction sa2(codes, start, end);
-    indstockday = sa2.makeIndicator();
-
-    ia          = IndexDayAction(codes, start, end);
-    indindexday = ia.makeIndicator();
+    ia = std::make_shared<IndexDayAction>(codes, start, end);
+    indindexday = ia->makeIndicator();
 }
 
 void TestIndicator::sma_data()
 {
     QTest::addColumn<double>("open");
-    xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
-    // xt::xarray<double> xs = sa.toSeries("open");
+    xt::xarray<double> xs = xt::adapt(sa->toSeries<double>("open").toStdVector());
     xt::xarray<double> rs = indstockday->SMA(xs, 12);
     QTest::newRow("1") << rs(0);
 }
@@ -94,14 +86,12 @@ void TestIndicator::roc_data()
     QTest::addColumn<double>("rocma_result");
 
     const char* col       = "close";
-    xt::xarray<double> xs = xt::adapt(sa.toSeries<double>(col).toStdVector());
-    // sa.setDataFrame();
     roc_return_type roc_map         = indstockday->ROC(col, 12, 6);
-    xt::xarray<double> roc_actual   = std::any_cast<xt::xarray<double>>(roc_map["ROC"]);
-    xt::xarray<double> rocma_actual = std::any_cast<xt::xarray<double>>(roc_map["ROCMA"]);
+    series_no_cvp_type roc_actual   = roc_map["ROC"];
+    series_no_cvp_type rocma_actual = roc_map["ROCMA"];
 
-    QTest::newRow("1") << roc_actual(0) << -43.87 << rocma_actual(0) << std::numeric_limits<double>::quiet_NaN();
-    QTest::newRow("5") << roc_actual(5) << -42.30 << rocma_actual(5) << 9.13;
+    QTest::newRow("1") << roc_actual[0] << -43.87 << rocma_actual[0] << std::numeric_limits<double>::quiet_NaN();
+    QTest::newRow("5") << roc_actual[5] << -42.30 << rocma_actual[5] << 9.13;
 }
 
 void TestIndicator::roc()

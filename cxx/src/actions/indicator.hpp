@@ -169,6 +169,7 @@ roc_return_type Indicator<A>::ROC(const char* col, size_t N, size_t M) const
         std::cout << " error ... "
                   << "\n";
     }
+    // std::cout << xt::adapt(series) << "\n";
     auto ref   = Indicator<A>::REF(xt::adapt(series), N);
     auto roc   = 100 * (xt::adapt(series) - ref) / ref;
     auto rocma = Indicator<A>::MA(col, M);
