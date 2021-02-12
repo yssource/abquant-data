@@ -38,8 +38,8 @@ namespace abq
 {
 using namespace hmdf;
 using namespace std;
-using index_t     = std::string;
-using MyDataFrame = StdDataFrame<index_t>;
+using index_type  = std::string;
+using MyDataFrame = StdDataFrame<index_type>;
 
 /***************************
  * IndexAction declaration *

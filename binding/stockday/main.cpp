@@ -18,7 +18,7 @@ namespace abq
 {
 // PYBIND11_DECLARE_HOLDER_TYPE(MyDataFrame, MyDataFramePtr);
 
-using roc_return_t      = std::unordered_map<const char*, xt::xarray<double>>;
+using roc_return_type   = std::unordered_map<const char*, std::vector<double>>;
 using StockDayActionPtr = std::shared_ptr<StockDayAction>;
 
 class PyStockDay : public std::enable_shared_from_this<PyStockDay>
@@ -35,12 +35,12 @@ public:
         m_df      = m_sda_ptr->getDataFrame();
     };
 
-    size_t toQfq() noexcept
-    {
-        auto fq = m_sda_ptr->toFq(FQ_TYPE::PRE);
-        // fq->write<std::ostream, index_t, double, int>(std::cout);
-        return fq->get_index().size();
-    }
+    // size_t toQfq() noexcept
+    // {
+    //     auto fq = m_sda_ptr->toFq(FQ_TYPE::PRE);
+    //     // fq->write<std::ostream, index_type, double, int>(std::cout);
+    //     return fq->get_index().size();
+    // }
 
     template <class T>
     std::vector<T> toSeries(const string& col) noexcept
@@ -49,14 +49,12 @@ public:
         return series.toStdVector();
     }
 
-    int ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
-    // roc_return_t ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
+    roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
     {
-        auto m_df        = m_sda_ptr->getDataFrame();
-        auto ind         = m_sda_ptr->makeIndicator();
-        roc_return_t rst = ind->ROC(col.c_str(), N, M);
-        // std::cout << rst["ROC"] << "\n";
-        return 0;
+        auto m_df           = m_sda_ptr->getDataFrame();
+        auto ind            = m_sda_ptr->makeIndicator();
+        roc_return_type rst = ind->ROC(col.c_str(), N, M);
+        return rst;
     }
 
     ~PyStockDay() = default;
@@ -83,15 +81,16 @@ PYBIND11_MODULE(abqstockday, m)
         .. abqstockday:: abqstockday_module_exmaple
 
         .. autosummary::
-           :stockday: toQfq
+           :stockday: toSeries
 
-           toQfq
+           toSeries
     )pbdoc";
 
     py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
     py::class_<PyStockDay, std::shared_ptr<PyStockDay>> sm_class(m, "PyStockDay");
-    sm_class.def(py::init<std::vector<std::string>, const string, const string, FQ_TYPE>())
-        .def("toQfq", &PyStockDay::toQfq, R"pbdoc(toQfq qfq function.)pbdoc")
+    sm_class
+        .def(py::init<std::vector<std::string>, const string, const string, FQ_TYPE>())
+        // .def("toQfq", &PyStockDay::toQfq, R"pbdoc(toQfq qfq function.)pbdoc")
         .def("toSeries", &PyStockDay::toSeries<double> /* , py::return_value_policy::reference */,
              R"pbdoc(toSeries double function.)pbdoc")
         .def("toSeries_string", &PyStockDay::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc")
@@ -103,5 +102,4 @@ PYBIND11_MODULE(abqstockday, m)
     m.attr("__version__") = "dev";
 #endif
 }
-
 } // namespace abq

@@ -93,10 +93,10 @@ void TestIndicator::roc_data()
     QTest::addColumn<double>("rocma");
     QTest::addColumn<double>("rocma_result");
 
-    const char* col                 = "close";
-    xt::xarray<double> xs           = xt::adapt(sa.toSeries<double>(col).toStdVector());
+    const char* col       = "close";
+    xt::xarray<double> xs = xt::adapt(sa.toSeries<double>(col).toStdVector());
     // sa.setDataFrame();
-    roc_return_t roc_map            = indstockday->ROC(col, 12, 6);
+    roc_return_type roc_map         = indstockday->ROC(col, 12, 6);
     xt::xarray<double> roc_actual   = std::any_cast<xt::xarray<double>>(roc_map["ROC"]);
     xt::xarray<double> rocma_actual = std::any_cast<xt::xarray<double>>(roc_map["ROCMA"]);
 

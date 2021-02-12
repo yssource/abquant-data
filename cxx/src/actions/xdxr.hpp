@@ -20,8 +20,8 @@ namespace abq
 {
 using namespace std;
 using namespace hmdf;
-using index_t        = std::string;
-using MyDataFrame    = StdDataFrame<index_t>;
+using index_type     = std::string;
+using MyDataFrame    = StdDataFrame<index_type>;
 using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
 
 class Xdxr

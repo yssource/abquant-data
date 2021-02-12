@@ -45,9 +45,9 @@ Xdxr::impl::impl(const QStringList& codes)
 
 MyDataFramePtr Xdxr::impl::getXdxr(const MyDataFramePtr df, FQ_TYPE fq)
 {
-    // df->template write<std::ostream, index_t, double, int>(std::cout);
+    // df->template write<std::ostream, index_type, double, int>(std::cout);
     MyDataFramePtr rdf = concat(df, *m_xdxr_df);
-    // rdf->template write<std::ostream, index_t, double, int>(std::cout);
+    // rdf->template write<std::ostream, index_type, double, int>(std::cout);
     fillConcatDataframe(rdf);
     return calc(rdf, fq);
 }
@@ -55,7 +55,7 @@ MyDataFramePtr Xdxr::impl::getXdxr(const MyDataFramePtr df, FQ_TYPE fq)
 MyDataFramePtr Xdxr::impl::concat(const MyDataFramePtr ldf, const MyDataFrame& rdf) const
 {
     MyDataFrame df =
-        ldf->join_by_index<std::decay_t<decltype(rdf)>, index_t, double, int>(rdf, join_policy::left_right_join);
+        ldf->join_by_index<std::decay_t<decltype(rdf)>, index_type, double, int>(rdf, join_policy::left_right_join);
     return std::make_shared<MyDataFrame>(df);
 }
 

@@ -7,8 +7,8 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "abquant/actions/xdxr.hpp"
 #include "abquant/actions/stockday_p.hpp"
+#include "abquant/actions/xdxr.hpp"
 
 namespace abq
 {
@@ -45,7 +45,6 @@ QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*thi
 
 QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
 
-
 /***********************
  * StockDayAction impl *
  **********************/
@@ -62,15 +61,14 @@ StockDayAction::impl::impl(StockDayAction& sa, QStringList codes, const char* st
     }
     setDataFrame();
     if (xdxr != FQ_TYPE::NONE) {
-        using action_t = typename std::decay<typename std::remove_pointer<decltype(sa)>::type>::type;
         m_df = toFq(xdxr);
     }
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
 MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
 {
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
@@ -98,17 +96,17 @@ void StockDayAction::impl::setDataFrame()
         // code" : "000001",
         // date_stamp" : 670608000.0
 
-        std::vector<index_t> datetimeCodeIdx;
-        series_no_cvp_t open;
-        series_no_cvp_t close;
-        series_no_cvp_t high;
-        series_no_cvp_t low;
-        series_no_cvp_t vol;
-        series_no_cvp_t amount;
+        std::vector<index_type> datetimeCodeIdx;
+        series_no_cvp_type open;
+        series_no_cvp_type close;
+        series_no_cvp_type high;
+        series_no_cvp_type low;
+        series_no_cvp_type vol;
+        series_no_cvp_type amount;
         std::vector<std::string> date;
         std::vector<std::string> code;
-        series_no_cvp_t date_stamp;
-        series_no_cvp_t if_trade;
+        series_no_cvp_type date_stamp;
+        series_no_cvp_type if_trade;
 
         foreach (auto s, m_stockdays) {
             datetimeCodeIdx.push_back((s.date() + QString(" 00:00:00_") + s.code()).toStdString());
@@ -129,7 +127,7 @@ void StockDayAction::impl::setDataFrame()
                      std::make_pair("amount", amount), std::make_pair("date", date), std::make_pair("code", code),
                      std::make_pair("date_stamp", date_stamp), std::make_pair("if_trade", if_trade));
 
-        // df.template write<std::ostream, index_t, double, int>(std::cout);
+        // df.template write<std::ostream, index_type, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }

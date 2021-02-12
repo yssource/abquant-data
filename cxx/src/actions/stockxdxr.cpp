@@ -53,12 +53,12 @@ StockXdxrAction::impl::impl(StockXdxrAction& sa, QStringList codes, int category
                  << "category: " << category << "\n";
     }
     setDataFrame();
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
 MyDataFramePtr StockXdxrAction::impl::getDataFrame(const StockXdxrAction&) const
 {
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
@@ -86,20 +86,20 @@ void StockXdxrAction::impl::setDataFrame()
         // QString category_meaning;
         // QString code;
 
-        std::vector<index_t> datetimeCodeIdx;
-        series_no_cvp_t category;
+        std::vector<index_type> datetimeCodeIdx;
+        series_no_cvp_type category;
         std::vector<std::string> name;
-        series_no_cvp_t fenhong;
-        series_no_cvp_t peigujia;
-        series_no_cvp_t songzhuangu;
-        series_no_cvp_t peigu;
-        series_no_cvp_t suogu;
-        series_no_cvp_t liquidity_before;
-        series_no_cvp_t liquidity_after;
-        series_no_cvp_t shares_before;
-        series_no_cvp_t shares_after;
-        series_no_cvp_t fenshu;
-        series_no_cvp_t xingquanjia;
+        series_no_cvp_type fenhong;
+        series_no_cvp_type peigujia;
+        series_no_cvp_type songzhuangu;
+        series_no_cvp_type peigu;
+        series_no_cvp_type suogu;
+        series_no_cvp_type liquidity_before;
+        series_no_cvp_type liquidity_after;
+        series_no_cvp_type shares_before;
+        series_no_cvp_type shares_after;
+        series_no_cvp_type fenshu;
+        series_no_cvp_type xingquanjia;
         std::vector<std::string> date;
         std::vector<std::string> category_meaning;
         std::vector<std::string> code;

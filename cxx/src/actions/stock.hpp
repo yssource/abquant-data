@@ -35,16 +35,16 @@ namespace abq
 {
 using namespace std;
 using namespace hmdf;
-using index_t        = std::string;
-using MyDataFrame    = StdDataFrame<index_t>;
+using index_type     = std::string;
+using MyDataFrame    = StdDataFrame<index_type>;
 using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
 
-using xseries_cst_t    = const xt::xarray<double>&;
-using xseries_t        = xt::xarray<double>&;
-using series_cst_t     = const std::vector<double>&;
-using series_t         = std::vector<double>&;
-using xseries_no_cvp_t = std::decay<xseries_t>::type;
-using series_no_cvp_t  = std::decay<series_t>::type;
+using xseries_cst_type    = const xt::xarray<double>&;
+using xseries_type        = xt::xarray<double>&;
+using series_cst_type     = const std::vector<double>&;
+using series_type         = std::vector<double>&;
+using xseries_no_cvp_type = std::decay<xseries_type>::type;
+using series_no_cvp_type  = std::decay<series_type>::type;
 
 /***************************
  * StockAction declaration *

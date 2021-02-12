@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import math
 
 from abqstockday import PyStockDay as stockday
 from pyabquant import FQ_TYPE, PyAbquant
@@ -59,11 +60,13 @@ class MainTest(unittest.TestCase):
         sd = stockday(codes, start, end, FQ_TYPE.PRE)
 
         rst = sd.ROC("close", 12, 6)
-        print(rst)
-
-        fq = sd.toQfq()
-        print(fq)
-        self.assertTrue(fq > 0)
+        # print(rst)
+        self.assertTrue(len(rst["ROC"]) == 222)
+        self.assertTrue(len(rst["ROCMA"]) == 222)
+        self.assertAlmostEqual(rst["ROC"][0], -44.296, delta=0.01)
+        self.assertTrue(math.isnan(rst["ROCMA"][0]))
+        self.assertAlmostEqual(rst["ROC"][-1], -6.368, delta=0.01)
+        self.assertAlmostEqual(rst["ROCMA"][-1], 15.071, delta=0.01)
 
 
 if __name__ == "__main__":

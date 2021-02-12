@@ -7,8 +7,8 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "abquant/actions/xdxr.hpp"
 #include "abquant/actions/stockmin_p.hpp"
+#include "abquant/actions/xdxr.hpp"
 
 namespace abq
 {
@@ -65,12 +65,12 @@ StockMinAction::impl::impl(StockMinAction& sa, QStringList codes, const char* st
     if (xdxr != FQ_TYPE::NONE) {
         m_df = toFq(xdxr);
     }
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
 MyDataFramePtr StockMinAction::impl::getDataFrame(const StockMinAction&) const
 {
-    // m_df->template write<std::ostream, index_t, double, int>(std::cout);
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
@@ -101,20 +101,20 @@ void StockMinAction::impl::setDataFrame()
         // time_stamp" : 670608000.0
         // type" : "1min",
 
-        std::vector<index_t> datetimeCodeIdx;
-        series_no_cvp_t open;
-        series_no_cvp_t close;
-        series_no_cvp_t high;
-        series_no_cvp_t low;
-        series_no_cvp_t vol;
-        series_no_cvp_t amount;
+        std::vector<index_type> datetimeCodeIdx;
+        series_no_cvp_type open;
+        series_no_cvp_type close;
+        series_no_cvp_type high;
+        series_no_cvp_type low;
+        series_no_cvp_type vol;
+        series_no_cvp_type amount;
         std::vector<std::string> datetime;
         std::vector<std::string> date;
         std::vector<std::string> code;
-        series_no_cvp_t date_stamp;
-        series_no_cvp_t time_stamp;
+        series_no_cvp_type date_stamp;
+        series_no_cvp_type time_stamp;
         std::vector<std::string> type;
-        series_no_cvp_t if_trade;
+        series_no_cvp_type if_trade;
 
         foreach (auto s, m_stockmins) {
             datetimeCodeIdx.push_back((s.datetime() + QString("_") + s.code()).toStdString());
