@@ -15,7 +15,10 @@
 #+STARTUP: logdone
 
 * Description
-A&B professional platform for quantitative finance. God is asking & bidding Me. ABQ.
+A&B professional platform for quantitative finance. God is asking & bidding Me.
+ABQ.
+
+基于 *通达信* 数据的量化。
 
 abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交易
 - abquant-data ::
@@ -249,7 +252,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 *** plotting
    [[file:./screenshot/abqstockday.png]]
 * DONE Development:
-  CLOSED: [2021-01-28 Thu 20:50]
+  CLOSED: [2021-01-01 Fri 00:00]
   :LOGBOOK:
   - State "DONE"       from "STARTED"    [2021-01-28 Thu 20:50]
   :END:
@@ -261,13 +264,11 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   2. [X] easymoney concept history get_price()
 * WAITING Development:
   :LOGBOOK:
-  - State "STARTED"    from "DONE"       [2021-02-06 Sat 01:45]
+  - State "STARTED"    from "DONE"       [2021-02-13 Sat 00:00]
   :END:
-  - Docker, K8s supported ::
+  - 对 Docker, K8s 的支持 ::
 * 开发初衷
-  作者本人专业是理论物理，工作经验则是程序开发，对金融知识知之甚少，一点点股票交易经
-  验。很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上
-  了量化交易。
+  作者本人专业是理论物理，工作经验则是程序开发，很偶然在网上了解到了量化交易，觉得可以利用上以前的知识和经验，于是乎喜欢上了量化交易。
 
 交易三部曲，a) 数据获取 b) 策略回测 c) 模拟/实盘交易 \\
 市面上开源的 a,b,c 项目大部分都是 python 开发，但是在实践过程中性能都不理想，于是想
