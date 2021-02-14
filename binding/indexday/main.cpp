@@ -1,3 +1,4 @@
+#include <pybind11/cast.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -13,10 +14,14 @@
 #include "abquant/actions/indexday.hpp"
 #include "abquant/actions/utils.hpp"
 
-// using namespace std;
 namespace abq
 {
-class PyIndexDay
+// PYBIND11_DECLARE_HOLDER_TYPE(MyDataFrame, MyDataFramePtr);
+
+using roc_return_type   = std::unordered_map<const char*, std::vector<double>>;
+using IndexDayActionPtr = std::shared_ptr<IndexDayAction>;
+
+class PyIndexDay : public std::enable_shared_from_this<PyIndexDay>
 {
 public:
     PyIndexDay(std::vector<std::string> codes, const string& start, const string& end)
@@ -26,28 +31,35 @@ public:
         for (auto c : codes) {
             qcodes << QString::fromStdString(c);
         }
-        m_ida = IndexDayAction(qcodes, m_start.c_str(), m_end.c_str());
-        m_ida.setDataFrame();
+        m_sda_ptr = std::make_shared<IndexDayAction>(qcodes, m_start.c_str(), m_end.c_str());
+        m_df      = m_sda_ptr->getDataFrame();
     };
 
     template <class T>
-    std::vector<T> toSeries(const string& col) const noexcept
+    std::vector<T> toSeries(const string& col) noexcept
     {
-        if constexpr (std::is_same_v<T, double>) {
-            auto series = m_ida.get_pyseries(col.c_str());
-            return series;
-        }
-
-        auto series = m_ida.toSeries<T>(col.c_str());
+        auto series = m_sda_ptr->toSeries<T>(col.c_str());
         return series.toStdVector();
     }
+
+    roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
+    {
+        auto m_df           = m_sda_ptr->getDataFrame();
+        auto ind            = m_sda_ptr->makeIndicator();
+        roc_return_type rst = ind->ROC(col.c_str(), N, M);
+        return rst;
+    }
+
     ~PyIndexDay() = default;
 
 private:
     std::vector<std::string> m_codes{};
     const string m_start{};
     const string m_end{};
-    IndexDayAction m_ida{};
+    IndexDayActionPtr m_sda_ptr{nullptr};
+    IndexDayAction m_sda;
+    MyDataFramePtr m_df{nullptr};
+    std::shared_ptr<std::string> m_name{nullptr};
 };
 
 namespace py = pybind11;
@@ -58,7 +70,7 @@ PYBIND11_MODULE(abqindexday, m)
         Pybind11 IndexDay plugin
         -----------------------
 
-        .. abqindexday:: currentmodule_exmaple
+        .. abqindexday:: abqindexday_module_exmaple
 
         .. autosummary::
            :indexday: toSeries
@@ -66,11 +78,13 @@ PYBIND11_MODULE(abqindexday, m)
            toSeries
     )pbdoc";
 
-    py::class_<PyIndexDay> sm_class(m, "PyIndexDay");
+    py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
+    py::class_<PyIndexDay, std::shared_ptr<PyIndexDay>> sm_class(m, "PyIndexDay");
     sm_class.def(py::init<std::vector<std::string>, const string, const string>())
-        .def("toSeries", &PyIndexDay::toSeries<double>, R"pbdoc(toSeries double toSeries double function.)pbdoc")
-        .def("toSeries_string", &PyIndexDay::toSeries<std::string>,
-             R"pbdoc(toSeries string toSeries string function.)pbdoc");
+        .def("toSeries", &PyIndexDay::toSeries<double> /* , py::return_value_policy::reference */,
+             R"pbdoc(toSeries double function.)pbdoc")
+        .def("toSeries_string", &PyIndexDay::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc")
+        .def("ROC", &PyIndexDay::ROC, R"pbdoc(ROC function.)pbdoc");
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;
@@ -78,5 +92,4 @@ PYBIND11_MODULE(abqindexday, m)
     m.attr("__version__") = "dev";
 #endif
 }
-
 } // namespace abq

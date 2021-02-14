@@ -6,28 +6,26 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
-
 #pragma once
 
 #include <QDebug>
 #include <algorithm>
+#include <experimental/propagate_const>
 #include <iostream>
 
 #include "abquant/actions/index.hpp"
 #include "abquant/actions/utils.hpp"
-#include "abquant/models/indexday.h" //  include the model class
+#include "abquant/models/indexday.h"
 
 namespace abq
 {
-using namespace std;
-
-class IndexDayAction : public IndexAction<IndexDayAction>
+class IndexDayAction : public IndexAction<IndexDayAction>, std::enable_shared_from_this<IndexDayAction>
 {
 public:
     //! Default constructor
     IndexDayAction() = default;
 
-    IndexDayAction(QStringList codes, const char* start, const char* end);
+    IndexDayAction(QStringList codes, const char* start, const char* end, FQ_TYPE xdxr = FQ_TYPE::NONE);
 
     //! Copy constructor
     IndexDayAction(const IndexDayAction& other) = delete;
@@ -36,52 +34,33 @@ public:
     IndexDayAction(IndexDayAction&& other) noexcept = delete;
 
     //! Destructor
-    ~IndexDayAction() noexcept = default;
+    ~IndexDayAction();
 
     //! Copy assignment operator
     IndexDayAction& operator=(const IndexDayAction& other) = default;
 
     //! Move assignment operator
-    IndexDayAction& operator=(IndexDayAction&& other) noexcept
-    {
-        if (&other == this) {
-            return *this;
-        }
-        std::swap(m_codes, other.m_codes);
-        std::swap(m_start, other.m_start);
-        std::swap(m_end, other.m_end);
-        std::swap(m_indexdays, other.m_indexdays);
-        return *this;
-    };
+    IndexDayAction& operator=(IndexDayAction&& other) noexcept;
 
-    inline QList<IndexDay> getIndexes() const { return m_indexdays; };
-    inline QVector<const char*> getColumns() const { return m_columns; };
-    MyDataFrame toDataFrame() const;
-    std::shared_ptr<MyDataFrame> getDataFrame() const;
-    vector<double> getOpen() const;
-    void setDataFrame();
+    QList<IndexDay> getIndexes() const;
+    QVector<const char*> getColumns() const;
+    MyDataFramePtr getDataFrame() const;
+    QStringList getCodes() const;
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
 
-    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
-    // MyDataFrame for binding
-    std::vector<double> get_pyseries(const char*) const noexcept;
+private:
+    class impl;
+    std::experimental::propagate_const<std::shared_ptr<impl>> pImpl;
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
 
 private:
-    QList<IndexDay> m_indexdays{};
-    const QVector<const char*> m_columns{"open", "close", "high", "low", "vol", "amount", "date", "code", "date_stamp"};
-    QStringList m_codes{};
-    const char* m_start{};
-    const char* m_end{};
-    std::shared_ptr<MyDataFrame> m_df{nullptr};
-
-private:
-    friend inline QDebug operator<<(QDebug d, const IndexDayAction& ia)
+    friend inline QDebug operator<<(QDebug d, const IndexDayAction& sa)
     {
-        QVector<const char*> columns = ia.getColumns();
+        QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = ia.getIndexes();
+        auto qs = sa.getIndexes();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -106,7 +85,6 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
-
     for (auto s : getIndexes()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
@@ -165,4 +143,5 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
+
 } // namespace abq

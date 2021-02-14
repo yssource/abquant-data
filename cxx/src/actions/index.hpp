@@ -36,10 +36,18 @@
 
 namespace abq
 {
-using namespace hmdf;
 using namespace std;
-using index_type  = std::string;
-using MyDataFrame = StdDataFrame<index_type>;
+using namespace hmdf;
+using index_type     = std::string;
+using MyDataFrame    = StdDataFrame<index_type>;
+using MyDataFramePtr = std::shared_ptr<MyDataFrame>;
+
+using xseries_cst_type    = const xt::xarray<double>&;
+using xseries_type        = xt::xarray<double>&;
+using series_cst_type     = const std::vector<double>&;
+using series_type         = std::vector<double>&;
+using xseries_no_cvp_type = std::decay<xseries_type>::type;
+using series_no_cvp_type  = std::decay<series_type>::type;
 
 /***************************
  * IndexAction declaration *

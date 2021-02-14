@@ -292,8 +292,6 @@ def QA_util_stamp2datetime(timestamp):
             except:
                 return datetime.datetime.fromtimestamp(timestamp / 1000000000)
 
-    #
-
 
 def QA_util_ms_stamp(ms):
     """
@@ -328,87 +326,6 @@ def QA_util_date_valid(date):
     """
     try:
         time.strptime(date, "%Y-%m-%d")
-        return True
-    except:
-        return False
-
-
-def QA_util_realtime(strtime, client):
-    """
-    explanation:
-        查询数据库中的数据
-
-    params:
-        * strtime->
-            含义: 日期
-            类型: str
-            参数支持: []
-        * client->
-            含义: 源
-            类型: pymongo.MongoClient
-            参数支持: []
-
-    return:
-        dict
-    """
-    time_stamp = make_datestamp(strtime)
-    coll = client.quantaxis.trade_date
-    temp_str = coll.find_one({"date_stamp": {"$gte": time_stamp}})
-    time_real = temp_str["date"]
-    time_id = temp_str["num"]
-    return {"time_real": time_real, "id": time_id}
-
-
-def QA_util_id2date(idx, client):
-    """
-    explanation:
-         从数据库中查询通达信时间
-
-    params:
-        * idx->
-            含义: 数据库index
-            类型: str
-            参数支持: []
-        * client->
-            含义: 源
-            类型: pymongo.MongoClient
-            参数支持: []
-
-    return:
-        str
-    """
-    coll = client.quantaxis.trade_date
-    temp_str = coll.find_one({"num": idx})
-    return temp_str["date"]
-
-
-def QA_util_is_trade(date, code, client):
-    """
-    explanation:
-        从数据库中查询判断是否是交易日
-
-    params:
-        * date->
-            含义: 日期
-            类型: str
-            参数支持: []
-        * code->
-            含义: 代码
-            类型: str
-            参数支持: []
-        * client->
-            含义: 源
-            类型: pymongo.MongoClient
-            参数支持: []
-
-    return:
-        bool
-    """
-    coll = client.quantaxis.stock_day
-    date = str(date)[0:10]
-    is_trade = coll.find_one({"code": code, "date": date})
-    try:
-        len(is_trade)
         return True
     except:
         return False

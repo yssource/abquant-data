@@ -254,7 +254,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 * DONE Development:
   CLOSED: [2021-01-01 Fri 00:00]
   :LOGBOOK:
-  - State "DONE"       from "STARTED"    [2021-01-28 Thu 20:50]
+  - State "DONE"       from "STARTED"    [2021-01-01 Fri 00:00]
   :END:
   - 兼容 rqalpha apis ::
   1. [X] get_price()
