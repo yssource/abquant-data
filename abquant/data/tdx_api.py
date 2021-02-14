@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-# Thanks for the works from QUANTAXIS
-
 import datetime
-
-import numpy as np
 import pandas as pd
 import json
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from retrying import retry
 from abquant.utils.logger import system_log as slog
-from abquant.utils.logger import user_log as ulog
 from abquant.utils.cache import Cache
 from abquant.utils.parallelism import Parallelism
 from abquant.utils.tdx import *
@@ -66,7 +61,6 @@ def select_best_ip():
     slog.debug("Selecting the Best Server IP of TDX.")
 
     # 删除exclude ip
-    null = None
     exclude_ip = {"ip": "1.1.1.1", "port": 7709}
     default_ip = {
         "stock": {"ip": None, "port": None},
@@ -87,7 +81,7 @@ def select_best_ip():
     stock_ip_list = Setting.make_stock_ip_list()
     future_ip_list = Setting.make_future_ip_list()
 
-    if ipdefault["stock"]["ip"] == None:
+    if ipdefault["stock"]["ip"] is None:
         best_stock_ip = get_ip_list_by_ping(stock_ip_list)
     else:
         if ping(
@@ -98,7 +92,7 @@ def select_best_ip():
         else:
             slog.error("DEFAULT STOCK IP is BAD, RETESTING")
             best_stock_ip = get_ip_list_by_ping(stock_ip_list)
-    if ipdefault["future"]["ip"] == None:
+    if ipdefault["future"]["ip"] is None:
         best_future_ip = get_ip_list_by_ping(future_ip_list, _type="future")
     else:
         if ping(
@@ -281,8 +275,6 @@ def get_stock_list(type_="stock", ip=None, port=None):
             return data.assign(code=data["code"].apply(lambda x: str(x))).assign(
                 name=data["name"].apply(lambda x: str(x)[0:6])
             )
-        # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
-        #    .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
@@ -412,11 +404,6 @@ def get_stock_day(
             else:
                 slog.warn("CURRENTLY NOT SUPPORT REALTIME FUQUAN")
                 return None
-                # xdxr = get_stock_xdxr(code)
-                # if if_fq in ['01','qfq']:
-                #     return QA_data_make_qfq(data,xdxr)
-                # elif if_fq in ['02','hfq']:
-                #     return QA_data_make_hfq(data,xdxr)
     except Exception as e:
         slog.error(e)
 

@@ -4,11 +4,6 @@ from __future__ import annotations
 import abc
 from typing import List
 from abquant.helper import time_counter
-from abquant.config import Setting
-from abquant.data.tdx_api import get_stock_day
-from abquant.utils.logger import system_log as slog
-
-# from abquant.data.tdx import Stock, Future
 
 
 class ISecurity(object, metaclass=abc.ABCMeta):
@@ -66,6 +61,7 @@ def get_broker(broker="tdx"):
     from . import tdx as TDX
     from . import ths as THS
     from . import qa as QA
+
     brokers = {
         "tdx": TDX,
         "ths": THS,
@@ -79,6 +75,7 @@ def get_broker_api(broker="tdx"):
     from . import tdx_api as TDX_api
     from . import ths_api as THS_api
     from . import qa_api as QA_api
+
     brokers = {
         "tdx": TDX_api,
         "ths": THS_api,
@@ -89,7 +86,7 @@ def get_broker_api(broker="tdx"):
 
 @time_counter
 def create_base():
-    def registe_securities(
+    def regist_securities(
         securities: List[ISecurity], visitor: ISecurityVisitor
     ) -> None:
         for sec in securities:
@@ -97,7 +94,7 @@ def create_base():
 
     broker = get_broker()
     securities = [broker.Stock(), broker.Future()]
-    registe_securities(securities, SecurityVisitor())
+    regist_securities(securities, SecurityVisitor())
 
 
 @time_counter
