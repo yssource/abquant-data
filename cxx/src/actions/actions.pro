@@ -2,7 +2,7 @@ TARGET = abqaction
 TEMPLATE = lib
 #Bugfix: libabqaction.so -> libabqaction.a, since it is not able to port
 # DataFrame to outside for binding.
-CONFIG += static console debug c++17
+CONFIG += static console release c++17
 # CONFIG += shared console debug c++17
 CONFIG -= app_bundle
 

@@ -1,6 +1,6 @@
 TARGET = main
 TEMPLATE = app
-CONFIG += console debug c++17 testcase
+CONFIG += console release c++17 testcase
 CONFIG -= app_bundle
 # CONFIG += no_keywords # avoid clash with slots in Python.h
 

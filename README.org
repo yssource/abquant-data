@@ -18,11 +18,9 @@
 A&B professional platform for quantitative finance. God is asking & bidding Me.
 ABQ.
 
-基于 *通达信* 数据的量化。
-
 abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交易
 - abquant-data ::
-  开源项目
+  开源项目, 快速对 *通达信* 数据的获取，除权除息，各种指数的计算
 - abquant-strategy ::
   闭源项目，基于 zeromg/nanomsg
 - abquant-trade ::

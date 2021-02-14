@@ -32,7 +32,6 @@ public:
             qcodes << QString::fromStdString(c);
         }
         m_sda_ptr = std::make_shared<StockDayAction>(qcodes, m_start.c_str(), m_end.c_str(), m_xdxr);
-        m_df      = m_sda_ptr->getDataFrame();
     };
 
     // size_t toQfq() noexcept
@@ -51,7 +50,6 @@ public:
 
     roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
     {
-        auto m_df           = m_sda_ptr->getDataFrame();
         auto ind            = m_sda_ptr->makeIndicator();
         roc_return_type rst = ind->ROC(col.c_str(), N, M);
         return rst;
@@ -64,10 +62,7 @@ private:
     const string m_start{};
     const string m_end{};
     StockDayActionPtr m_sda_ptr{nullptr};
-    StockDayAction m_sda;
     FQ_TYPE m_xdxr{FQ_TYPE::NONE};
-    MyDataFramePtr m_df{nullptr};
-    std::shared_ptr<std::string> m_name{nullptr};
 };
 
 namespace py = pybind11;

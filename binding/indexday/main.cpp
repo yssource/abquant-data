@@ -31,21 +31,19 @@ public:
         for (auto c : codes) {
             qcodes << QString::fromStdString(c);
         }
-        m_sda_ptr = std::make_shared<IndexDayAction>(qcodes, m_start.c_str(), m_end.c_str());
-        m_df      = m_sda_ptr->getDataFrame();
+        m_ida_ptr = std::make_shared<IndexDayAction>(qcodes, m_start.c_str(), m_end.c_str());
     };
 
     template <class T>
     std::vector<T> toSeries(const string& col) noexcept
     {
-        auto series = m_sda_ptr->toSeries<T>(col.c_str());
+        auto series = m_ida_ptr->toSeries<T>(col.c_str());
         return series.toStdVector();
     }
 
     roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
     {
-        auto m_df           = m_sda_ptr->getDataFrame();
-        auto ind            = m_sda_ptr->makeIndicator();
+        auto ind            = m_ida_ptr->makeIndicator();
         roc_return_type rst = ind->ROC(col.c_str(), N, M);
         return rst;
     }
@@ -56,10 +54,7 @@ private:
     std::vector<std::string> m_codes{};
     const string m_start{};
     const string m_end{};
-    IndexDayActionPtr m_sda_ptr{nullptr};
-    IndexDayAction m_sda;
-    MyDataFramePtr m_df{nullptr};
-    std::shared_ptr<std::string> m_name{nullptr};
+    IndexDayActionPtr m_ida_ptr{nullptr};
 };
 
 namespace py = pybind11;
