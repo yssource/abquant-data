@@ -28,19 +28,13 @@ public:
         for (auto c : m_codes) {
             qcodes << QString::fromStdString(c);
         }
-        m_sma = IndexMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq);
-        m_sma.setDataFrame();
+        m_ima = IndexMinAction(qcodes, m_start.c_str(), m_end.c_str(), freq);
     };
 
     template <class T>
     std::vector<T> toSeries(const string& col) const noexcept
     {
-        if constexpr (std::is_same_v<T, double>) {
-            auto series = m_sma.get_pyseries(col.c_str());
-            return series;
-        }
-
-        auto series = m_sma.toSeries<T>(col.c_str());
+        auto series = m_ima.toSeries<T>(col.c_str());
         return series.toStdVector();
     }
     ~PyIndexMin() = default;
@@ -50,7 +44,7 @@ private:
     const string m_start{};
     const string m_end{};
     const string m_sfreq{};
-    IndexMinAction m_sma{};
+    IndexMinAction m_ima{};
 };
 
 namespace py = pybind11;

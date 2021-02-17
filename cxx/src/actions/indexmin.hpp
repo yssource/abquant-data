@@ -6,22 +6,20 @@
  *                                                                          *
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
-
 #pragma once
 
 #include <QDebug>
 #include <algorithm>
+#include <experimental/propagate_const>
 #include <iostream>
 
 #include "abquant/actions/index.hpp"
 #include "abquant/actions/utils.hpp"
-#include "abquant/models/indexmin.h" //  include the model class
+#include "abquant/models/indexmin.h"
 
 namespace abq
 {
-using namespace std;
-
-class IndexMinAction : public IndexAction<IndexMinAction>
+class IndexMinAction : public IndexAction<IndexMinAction>, std::enable_shared_from_this<IndexMinAction>
 {
 public:
     //! Default constructor
@@ -36,49 +34,27 @@ public:
     IndexMinAction(IndexMinAction&& other) noexcept = delete;
 
     //! Destructor
-    virtual ~IndexMinAction() noexcept = default;
+    ~IndexMinAction();
 
     //! Copy assignment operator
     IndexMinAction& operator=(const IndexMinAction& other) = default;
 
     //! Move assignment operator
-    IndexMinAction& operator=(IndexMinAction&& other) noexcept
-    {
-        if (&other == this) {
-            return *this;
-        }
-        std::swap(m_codes, other.m_codes);
-        std::swap(m_start, other.m_start);
-        std::swap(m_end, other.m_end);
-        std::swap(m_freq, other.m_freq);
-        std::swap(m_indexmins, other.m_indexmins);
-        return *this;
-    }
+    IndexMinAction& operator=(IndexMinAction&& other) noexcept;
 
-    inline QList<IndexMin> getIndexes() const { return m_indexmins; };
-    inline QVector<const char*> getColumns() const { return m_columns; };
-
-    MyDataFrame toDataFrame() const;
-    std::shared_ptr<MyDataFrame> getDataFrame() const;
-    vector<double> getOpen() const;
-    void setDataFrame();
+    QList<IndexMin> getIndexes() const;
+    QVector<const char*> getColumns() const;
+    MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
+    MyDataFramePtr getDataFrame() const;
+    QStringList getCodes() const;
 
     template <typename T>
     QVector<T> toSeries(const char*) const noexcept;
 
-    // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
-    // MyDataFrame for binding
-    std::vector<double> get_pyseries(const char*) const noexcept;
-
 private:
-    QList<IndexMin> m_indexmins;
-    const QVector<const char*> m_columns = {"open",     "close", "high", "low",        "vol",        "amount",
-                                            "datetime", "code",  "date", "date_stamp", "time_stamp", "type"};
-    QStringList m_codes{};
-    const char* m_start{};
-    const char* m_end{};
-    MIN_FREQ m_freq{};
-    std::shared_ptr<MyDataFrame> m_df{nullptr};
+    class impl;
+    std::experimental::propagate_const<std::shared_ptr<impl>> pImpl;
+    FQ_TYPE m_xdxr{FQ_TYPE::NONE};
 
 private:
     friend inline QDebug operator<<(QDebug d, const IndexMinAction& sa)
@@ -92,8 +68,8 @@ private:
         for (auto s : qs) {
             QList<QVariant> valuelist;
             valuelist << QVariant(s.open()) << QVariant(s.close()) << QVariant(s.high()) << QVariant(s.low())
-                      << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.datetime()) << QVariant(s.date())
-                      << QVariant(s.code()) << QVariant(s.dateStamp()) << QVariant(s.timeStamp()) << QVariant(s.type());
+                      << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.date()) << QVariant(s.code())
+                      << QVariant(s.dateStamp());
             d << valuelist;
             qv << valuelist;
             d << QVariant("\n");
@@ -110,7 +86,6 @@ QVector<T> IndexMinAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
-
     for (auto s : getIndexes()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
@@ -187,4 +162,5 @@ QVector<T> IndexMinAction::toSeries(const char* col) const noexcept
     }
     return series;
 }
+
 } // namespace abq

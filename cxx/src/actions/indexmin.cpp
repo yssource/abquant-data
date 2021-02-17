@@ -7,25 +7,67 @@
  * The full license is in the file LICENSE, distributed with this software. *
  ****************************************************************************/
 
-#include "indexmin.hpp"
-// #include "abquant/actions/indexmin.hpp"
+#include "abquant/actions/indexmin_p.hpp"
+#include "abquant/actions/xdxr.hpp"
 
 namespace abq
 {
+/*******************
+ * IndexMinAction *
+ *******************/
+
 IndexMinAction::IndexMinAction(QStringList codes, const char* start, const char* end, MIN_FREQ freq)
-    : IndexAction(codes), m_codes{codes}, m_start{start}, m_end{end}, m_freq{freq}
+    : pImpl{std::make_shared<impl>(*this, codes, start, end, freq)}
 {
-    m_indexmins = run<IndexMin>(codes, start, end, freq);
-    if (m_indexmins.isEmpty()) {
-        qDebug() << "No index minute data.\n"
-                 << codes << "\n"
-                 << "start: " << start << "\n"
-                 << "end: " << end << "\n"
-                 << "freq: " << freq << "\n";
-    }
 }
 
-MyDataFrame IndexMinAction::toDataFrame() const
+//! Destructor
+IndexMinAction::~IndexMinAction() noexcept = default;
+
+//! Move assignment operator
+IndexMinAction& IndexMinAction::operator=(IndexMinAction&& other) noexcept
+{
+    if (&other == this) {
+        return *this;
+    }
+    swap(pImpl, other.pImpl);
+
+    return *this;
+};
+
+MyDataFramePtr IndexMinAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+
+QStringList IndexMinAction::getCodes() const { return pImpl->getCodes(*this); }
+
+QList<IndexMin> IndexMinAction::getIndexes() const { return pImpl->getIndexes(*this); };
+
+QVector<const char*> IndexMinAction::getColumns() const { return pImpl->getColumns(*this); }
+
+/***********************
+ * IndexMinAction impl *
+ **********************/
+
+IndexMinAction::impl::impl(IndexMinAction& sa, QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+    : m_codes{codes}
+{
+    m_indexmins = sa.run<IndexMin>(codes, start, end, freq);
+    if (m_indexmins.isEmpty()) {
+        qDebug() << "No index min data.\n"
+                 << codes << "\n"
+                 << "start: " << start << "\n"
+                 << "freq: " << freq << "\n"
+                 << "end: " << end << "\n";
+    }
+    setDataFrame();
+}
+
+MyDataFramePtr IndexMinAction::impl::getDataFrame(const IndexMinAction&) const
+{
+    // m_df->template write<std::ostream, index_type, double, int>(std::cout);
+    return m_df;
+}
+
+void IndexMinAction::impl::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -42,20 +84,20 @@ MyDataFrame IndexMinAction::toDataFrame() const
         // time_stamp" : 670608000.0
         // type" : "1min",
 
-        std::vector<std::string> datetimeCodeIdx;
-        std::vector<double> open;
-        std::vector<double> close;
-        std::vector<double> high;
-        std::vector<double> low;
-        std::vector<double> vol;
-        std::vector<double> amount;
+        std::vector<index_type> datetimeCodeIdx;
+        series_no_cvp_type open;
+        series_no_cvp_type close;
+        series_no_cvp_type high;
+        series_no_cvp_type low;
+        series_no_cvp_type vol;
+        series_no_cvp_type amount;
         std::vector<std::string> datetime;
         std::vector<std::string> date;
         std::vector<std::string> code;
-        std::vector<double> date_stamp;
-        std::vector<double> time_stamp;
+        series_no_cvp_type date_stamp;
+        series_no_cvp_type time_stamp;
         std::vector<std::string> type;
-        std::vector<double> if_trade;
+        series_no_cvp_type if_trade;
 
         foreach (auto s, m_indexmins) {
             datetimeCodeIdx.push_back((s.datetime() + QString("_") + s.code()).toStdString());
@@ -74,61 +116,17 @@ MyDataFrame IndexMinAction::toDataFrame() const
             if_trade.push_back(1);
         }
 
-        int rc = df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
-                              std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
-                              std::make_pair("amount", amount), std::make_pair("date", date),
-                              std::make_pair("datetime", datetime), std::make_pair("code", code),
-                              std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
-                              std::make_pair("type", type), std::make_pair("if_trade", if_trade));
+        df.load_data(std::move(datetimeCodeIdx), std::make_pair("open", open), std::make_pair("close", close),
+                     std::make_pair("high", high), std::make_pair("low", low), std::make_pair("vol", vol),
+                     std::make_pair("amount", amount), std::make_pair("date", date),
+                     std::make_pair("datetime", datetime), std::make_pair("code", code),
+                     std::make_pair("date_stamp", date_stamp), std::make_pair("time_stamp", time_stamp),
+                     std::make_pair("type", type), std::make_pair("if_trade", if_trade));
         // df.write<std::ostream, std::string, double, int>(std::cout);
     } catch (exception& e) {
         cout << e.what() << endl;
     }
-    return df;
+    m_df = std::make_shared<MyDataFrame>(df);
 };
-
-std::shared_ptr<MyDataFrame> IndexMinAction::getDataFrame() const { return m_df; }
-
-vector<double> IndexMinAction::getOpen() const
-{
-    vector<double> open;
-    if (m_df != nullptr) {
-        try {
-            // m_df->write<std::ostream, std::string, double, int>(std::cout);
-            open = m_df->template get_column<double>("open");
-        } catch (const std::exception& e) {
-            std::cout << e.what();
-        }
-    }
-    return open;
-}
-
-void IndexMinAction::setDataFrame()
-{
-    MyDataFrame df = toDataFrame();
-    m_df           = std::make_shared<MyDataFrame>(df);
-    // m_df->write<std::ostream, std::string, double, int>(std::cout);
-}
-
-vector<double> IndexMinAction::get_pyseries(const char* col) const noexcept
-{
-    vector<double> series;
-    auto cols = getColumns();
-    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
-        return series;
-    }
-
-    std::shared_ptr<MyDataFrame> df;
-
-    try {
-        df = getDataFrame();
-        // df->write<std::ostream, std::string, double, int>(std::cout);
-        series = df->get_column<double>(col);
-    } catch (...) {
-        std::cout << " error ... "
-                  << "\n";
-    }
-    return series;
-}
 
 } // namespace abq

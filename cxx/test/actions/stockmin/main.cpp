@@ -26,14 +26,8 @@ int main(int argc, char* argv[])
     const char* end   = "2019-12-01 23:55:00";
     MIN_FREQ freq     = MIN_FREQ::FIVE;
 
-    StockMinAction sma(codes, start, end, freq, FQ_TYPE::PRE);
-    int N      = 10;
     auto begin = std::chrono::high_resolution_clock::now();
-    // for (int i = 0; i < N; ++i) {
-    //     std::cout << i << "\n";
-    //     MyDataFramePtr df = sma.toFq(FQ_TYPE::PRE);
-    //     // df->write<std::ostream, std::string, double, int>(std::cout);
-    // }
+    StockMinAction sma(codes, start, end, freq, FQ_TYPE::PRE);
     auto finish_                          = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish_ - begin;
     std::cout << "Elapsed time: " << elapsed.count() << " s\n";

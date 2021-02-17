@@ -29,10 +29,7 @@ class MainTest(unittest.TestCase):
         date = sm.toSeries_string("date")
         datetime = sm.toSeries_string("datetime")
         code = sm.toSeries_string("code")
-        print(date[:10])
-        print(code[:10])
         date_stamp = sm.toSeries("date_stamp")
-
         df = pd.DataFrame(
             {
                 "open": open_,
@@ -48,9 +45,7 @@ class MainTest(unittest.TestCase):
             }
         )
         df.set_index(["code", "datetime"], inplace=True)
-
         print(df[:10])
-
         self.assertTrue(len(open_) > 0)
         # self.assertEqual(open_[0], 2497.88)
         self.assertAlmostEqual(open_[0], 2497.88, delta=0.001)
