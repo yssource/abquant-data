@@ -23,10 +23,10 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import RLock
 from functools import partial
 import datetime
+import pandas as pd
 import os
 
 
-# class Stock(object):
 class Stock(ISecurity):
     def __init__(self, *args, **kwargs):
         "docstring"
@@ -94,7 +94,10 @@ class Stock(ISecurity):
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
                 text = "{}, {} -> {}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code), start_time_plus_one, end_time, interval,
+                    "{} {}".format(stockOrIndex, code),
+                    start_time_plus_one,
+                    end_time,
+                    interval,
                 )
                 for _ in trange(df.size, desc=text):
                     pass
@@ -292,8 +295,10 @@ class Stock(ISecurity):
             try:
                 begin = datetime.datetime.now()
                 df = get_stock_info(str(code))
-                if df is None or df.empty:
-                    slog.warn("df is empty. {}".format(code))
+                if isinstance(df, pd.DataFrame) and df.empty:
+                    slog.warn("df is empty.")
+                    return
+                if not isinstance(df, pd.DataFrame) and not df:
                     return
                 coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
@@ -327,12 +332,17 @@ class Stock(ISecurity):
         def saving_work(b_api):
             try:
                 begin = datetime.datetime.now()
-                data = b_api.get_stock_block()
-                coll.insert_many(to_json_from_pandas(data))
+                df = b_api.get_stock_block()
+                if isinstance(df, pd.DataFrame) and df.empty:
+                    slog.warn("df is empty.")
+                    return
+                if not isinstance(df, pd.DataFrame) and not df:
+                    return
+                coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
                 text = "stock block {}, {:<04.2}s".format(b_api.my_name(), interval)
-                for _ in trange(data.size, desc=text):
+                for _ in trange(df.size, desc=text):
                     pass
             except Exception as e:
                 slog.error("{}".format(e))
@@ -413,3 +423,59 @@ class Future(ISecurity):
         stockOrIndex = kwargs.pop("stockOrIndex", "future")
         slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
         return
+
+
+class Etf(ISecurity):
+    def __init__(self, *args, **kwargs):
+        "docstring"
+        self._client = pymongo.MongoClient(Setting.get_mongo())
+        self._db = self._client[Setting.DBNAME]
+        self.codes = kwargs.get("codes", [])
+        self.freqs = []
+
+    def accept(self, visitor: ISecurityVisitor) -> None:
+        visitor.create_day(self)
+        visitor.create_min(self)
+
+    def create_day(self, *args, **kwargs):
+        stockOrIndex = kwargs.pop("etf", "")
+        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
+        return
+
+    def create_min(self, *args, **kwargs):
+        stockOrIndex = kwargs.pop("etf", "")
+        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
+        return
+
+    def create_list(self, *args, **kwargs):
+        """save etf list
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        brokers_api = kwargs.get("brokers_api", [])
+        self._db.drop_collection("etf_list")
+        coll = self._db.etf_list
+        coll.create_index([("code", pymongo.ASCENDING)])
+
+        def saving_work(b_api):
+            try:
+                begin = datetime.datetime.now()
+                df = b_api.get_stock_list(type_="etf")
+                if isinstance(df, pd.DataFrame) and df.empty:
+                    slog.warn("df is empty.")
+                    return
+                if not isinstance(df, pd.DataFrame) and not df:
+                    return
+                coll.insert_many(to_json_from_pandas(df))
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "etf list {}, {:<04.2}s".format(b_api.my_name(), interval)
+                for _ in trange(df.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=1) as p:
+            p.map(partial(saving_work), brokers_api)

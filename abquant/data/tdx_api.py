@@ -552,7 +552,7 @@ def get_stock_min(code, start, end, frequence="1min", ip=None, port=None):
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
-def QA_fetch_get_stock_latest(code, frequence="day", ip=None, port=None):
+def get_stock_latest(code, frequence="day", ip=None, port=None):
     ip, port = get_mainmarket_ip(ip, port)
     code = [code] if isinstance(code, str) else code
     api = TdxHq_API(multithread=True)
@@ -604,7 +604,7 @@ def QA_fetch_get_stock_latest(code, frequence="day", ip=None, port=None):
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
-def QA_fetch_get_stock_realtime(code=["000001", "000002"], ip=None, port=None):
+def get_stock_realtime(code=["000001", "000002"], ip=None, port=None):
     ip, port = get_mainmarket_ip(ip, port)
     # reversed_bytes9 --> 涨速
     # active1,active2 --> 活跃度
@@ -677,7 +677,7 @@ def QA_fetch_get_stock_realtime(code=["000001", "000002"], ip=None, port=None):
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
-def QA_fetch_get_index_realtime(code=["000001"], ip=None, port=None):
+def get_index_realtime(code=["000001"], ip=None, port=None):
     ip, port = get_mainmarket_ip(ip, port)
     # reversed_bytes9 --> 涨速
     # active1,active2 --> 活跃度
@@ -830,7 +830,7 @@ def get_index_min(code, start, end, frequence="1min", ip=None, port=None):
 
 
 @retry(stop_max_attempt_number=3, wait_random_min=50, wait_random_max=100)
-def QA_fetch_get_index_list(ip=None, port=None):
+def get_index_list(ip=None, port=None):
     """获取指数列表
     Keyword Arguments:
         ip {[type_]} -- [description] (default: {None})

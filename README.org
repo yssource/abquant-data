@@ -129,6 +129,9 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 
        # 股票财务数据
        abquant stock financial
+
+       # ETF 列表获取
+       abquant etf list
        # ...
      #+end_src
 

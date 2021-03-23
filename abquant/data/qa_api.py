@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from abquant.utils.code import code_tostr
+from typing import Optional
 import pandas as pd
 
 
-def get_stock_block():
+def get_stock_block() -> Optional[pd.DataFrame]:
     """ths的版块数据
 
     Returns:
@@ -23,6 +24,10 @@ def get_stock_block():
     except Exception as e:
         print(e)
         return None
+
+
+def get_stock_list(type_=None) -> Optional[pd.DataFrame]:
+    return
 
 
 def my_name():

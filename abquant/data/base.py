@@ -140,3 +140,11 @@ def create_stock_financial():
     broker = get_broker()
     s = broker.Stock()
     s.create_financial()
+
+
+@time_counter
+def create_etf_list():
+    broker = get_broker("tdx")
+    brokers_api = [get_broker_api(b) for b in ["tdx", "ths", "qa"]]
+    e = broker.Etf()
+    e.create_list(brokers_api=brokers_api)

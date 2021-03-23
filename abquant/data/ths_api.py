@@ -1,7 +1,8 @@
+from typing import Optional
 import pandas as pd
 
 
-def get_stock_block():
+def get_stock_block() -> Optional[pd.DataFrame]:
     """ths的版块数据
 
     Returns:
@@ -13,6 +14,10 @@ def get_stock_block():
         return pd.read_csv(url).set_index("code", drop=False)
     except:
         return None
+
+
+def get_stock_list(type_=None) -> Optional[pd.DataFrame]:
+    return
 
 
 def my_name():

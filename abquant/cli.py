@@ -13,6 +13,7 @@ from abquant.data.base import (
     create_stock_info,
     create_stock_financial,
     create_base,
+    create_etf_list,
 )
 
 set_loggers()
@@ -44,6 +45,10 @@ def save_base():
 @cli.group()
 def stock():
     """Manages stocks."""
+
+@cli.group()
+def etf():
+    """Manages etf."""
 
 
 @stock.command("day")
@@ -150,8 +155,12 @@ def stock_block():
     """stock block."""
     create_stock_block()
 
-
 @stock.command("financial")
 def stock_financial():
     """stock financial."""
     create_stock_financial()
+
+@etf.command("list")
+def etf_list():
+    """etf list."""
+    create_etf_list()
