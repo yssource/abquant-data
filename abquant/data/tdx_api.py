@@ -250,14 +250,14 @@ def get_stock_list(type_="stock", ip=None, port=None):
         sz = sz.assign(sec=sz.code.apply(for_sz))
         sh = sh.assign(sec=sh.code.apply(for_sh))
 
-        if type_ in ["stock", "gp"]:
+        if type_ in ["stock", "gp", "CS"]:
             return (
                 pd.concat([sz, sh], sort=False)
                 .query('sec=="stock_cn"')
                 .sort_index()
                 .assign(name=data["name"].apply(lambda x: str(x)[0:6]))
             )
-        elif type_ in ["index", "zs"]:
+        elif type_ in ["index", "zs", "INDX"]:
             return (
                 pd.concat([sz, sh], sort=False)
                 .query('sec=="index_cn"')
