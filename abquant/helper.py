@@ -4,7 +4,7 @@ import json
 import hashlib
 from typing import Union, Optional, List, Tuple, Iterable, Callable
 from functools import lru_cache
-
+from enum import Enum, EnumMeta
 
 def time_counter(func):
     from abquant.utils.logger import system_log as slog
@@ -86,3 +86,49 @@ def normalize_code(code: str, kind: str = "cs") -> str:
 @lru_cache(maxsize=256)
 def normalize_code_list(codes: Tuple[str], kind: str = "cs") -> Iterable[str]:
     return [normalize_code(code, kind) for code in codes]
+
+
+class CustomEnumMeta(EnumMeta):
+    def __new__(metacls, cls, bases, classdict):
+        enum_class = super(CustomEnumMeta, metacls).__new__(metacls, cls, bases, classdict)
+        enum_class._member_reverse_map = {v.value: v for v in enum_class.__members__.values()}
+        return enum_class
+
+    def __contains__(cls, member):
+        if super(CustomEnumMeta, cls).__contains__(member):
+            return True
+        if isinstance(member, str):
+            return member in cls._member_reverse_map
+        return False
+
+    def __getitem__(self, item):
+        try:
+            return super(CustomEnumMeta, self).__getitem__(item)
+        except KeyError:
+            return self._member_reverse_map[item]
+
+# noinspection PyUnresolvedReferences
+class CustomEnumCore(str, Enum, metaclass=CustomEnumMeta): pass
+
+# noinspection PyUnresolvedReferences
+class CustomEnum(CustomEnumCore):
+    def __repr__(self):
+        return "%s.%s" % (
+            self.__class__.__name__, self._name_)
+
+# noinspection PyPep8Naming
+class INSTRUMENT_TYPE(CustomEnum):
+    CS = "CS"
+    FUTURE = "Future"
+    OPTION = "Option"
+    ETF = "ETF"
+    LOF = "LOF"
+    INDX = "INDX"
+    FENJI_MU = "FenjiMu"
+    FENJI_A = "FenjiA"
+    FENJI_B = "FenjiB"
+    PUBLIC_FUND = 'PublicFund'
+    BOND = "Bond"
+    CONVERTIBLE = "Convertible"
+    SPOT = "Spot"
+    REPO = "Repo"

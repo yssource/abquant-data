@@ -3,7 +3,7 @@
 from __future__ import annotations
 import abc
 from typing import List
-from abquant.helper import time_counter
+from abquant.helper import time_counter, INSTRUMENT_TYPE
 
 
 class ISecurity(object, metaclass=abc.ABCMeta):
@@ -41,12 +41,14 @@ class SecurityVisitor(ISecurityVisitor):
 
     def create_day(self, iSecurity: ISecurity):
         if getattr(iSecurity, "create_day"):
-            iSecurity.create_day(stockOrIndex="index")
+            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.INDX)
+            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.ETF)
             iSecurity.create_day()
 
     def create_min(self, iSecurity: ISecurity):
         if getattr(iSecurity, "create_min"):
-            iSecurity.create_min(stockOrIndex="index")
+            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.INDX)
+            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.ETF)
             iSecurity.create_min()
 
     def create_xdxr(self, iSecurity: ISecurity):
@@ -93,7 +95,7 @@ def create_base():
             sec.accept(visitor)
 
     broker = get_broker()
-    securities = [broker.Stock(), broker.Future()]
+    securities = [broker.Stock(), broker.Future(), broker.Etf()]
     regist_securities(securities, SecurityVisitor())
 
 
@@ -101,16 +103,16 @@ def create_base():
 def create_stock_day(codes):
     broker = get_broker()
     s = broker.Stock(codes=codes)
-    s.create_day(stockOrIndex="index")
-    s.create_day(stockOrIndex="stock")
+    s.create_day(ins_type=INSTRUMENT_TYPE.INDX)
+    s.create_day(ins_type=INSTRUMENT_TYPE.CS)
 
 
 @time_counter
 def create_stock_min(codes, freqs):
     broker = get_broker()
     s = broker.Stock(codes=codes, freqs=freqs)
-    s.create_min(stockOrIndex="index")
-    s.create_min(stockOrIndex="stock")
+    s.create_min(ins_type=INSTRUMENT_TYPE.INDX)
+    s.create_min(ins_type=INSTRUMENT_TYPE.CS)
 
 
 @time_counter
@@ -148,3 +150,10 @@ def create_etf_list():
     brokers_api = [get_broker_api(b) for b in ["tdx", "ths", "qa"]]
     e = broker.Etf()
     e.create_list(brokers_api=brokers_api)
+
+
+@time_counter
+def create_etf_day(codes):
+    broker = get_broker()
+    s = broker.Etf(codes=codes)
+    s.create_day(ins_type=INSTRUMENT_TYPE.ETF)

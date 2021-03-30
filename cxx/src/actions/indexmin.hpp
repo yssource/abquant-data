@@ -68,8 +68,9 @@ private:
         for (auto s : qs) {
             QList<QVariant> valuelist;
             valuelist << QVariant(s.open()) << QVariant(s.close()) << QVariant(s.high()) << QVariant(s.low())
+                      << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.datetime()) << QVariant(s.date())
                       << QVariant(s.vol()) << QVariant(s.amount()) << QVariant(s.date()) << QVariant(s.code())
-                      << QVariant(s.dateStamp());
+                      << QVariant(s.code()) << QVariant(s.dateStamp()) << QVariant(s.timeStamp()) << QVariant(s.type());
             d << valuelist;
             qv << valuelist;
             d << QVariant("\n");

@@ -14,6 +14,7 @@ from abquant.data.base import (
     create_stock_financial,
     create_base,
     create_etf_list,
+    create_etf_day,
 )
 
 set_loggers()
@@ -164,3 +165,29 @@ def stock_financial():
 def etf_list():
     """etf list."""
     create_etf_list()
+
+@etf.command("day")
+@click.option(
+    "ow",
+    "--overwrite",
+    flag_value=True,
+    default=False,
+    help="overwrite collection. Default=False.",
+)
+@click.option(
+    "codes", "--add", default="", help="Append etfs day collection. Default=False."
+)
+def etf_day(ow, codes):
+    """etf day."""
+    if codes and isinstance(codes, (str,)):
+        try:
+            codes = json.loads(codes)
+        except Exception:
+            slog.error("--add {} format is invalid.".format(codes))
+            slog.error(
+                'Please using such a format. --add \'["159001", "510010", "510300"]\''
+            )
+            return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
+    create_etf_day(codes)

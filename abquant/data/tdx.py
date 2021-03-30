@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from .tdx_api import get_stock_list
-from abquant.helper import to_json_from_pandas
+from abquant.helper import to_json_from_pandas, INSTRUMENT_TYPE
 from abquant.utils.logger import system_log as slog
 import pymongo
 from abquant.config import Setting
@@ -41,22 +41,26 @@ class Stock(ISecurity):
         visitor.create_xdxr(self)
 
     def create_day(self, *args, **kwargs):
-        """save index_day
+        """save INSTRUMENT_TYPE.CS or INSTRUMENT_TYPE.INDX day
 
         Keyword Arguments:
             client {[type]} -- [description] (default: {DATABASE})
         """
-        stockOrIndex = kwargs.pop("stockOrIndex", "stock")
-        stockOrIndexList = (
+        ins_type = kwargs.pop("ins_type", INSTRUMENT_TYPE.CS)
+        instruments = (
             self.codes
             if self.codes
             else (
-                get_stock_list(stockOrIndex)
-                if stockOrIndex == "index"
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.INDX
                 else get_stock_list().code.unique().tolist()
             )
         )
-        coll = self._db.index_day if stockOrIndex == "index" else self._db.stock_day
+        coll = (
+            self._db.index_day
+            if ins_type == INSTRUMENT_TYPE.INDX
+            else self._db.stock_day
+        )
         coll.create_index(
             [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
         )
@@ -64,9 +68,9 @@ class Stock(ISecurity):
 
         def saving_work(idx):
             code = (
-                stockOrIndexList.index[idx][0]
-                if stockOrIndex == "index"
-                else stockOrIndexList[idx]
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.INDX
+                else instruments[idx]
             )
             try:
                 begin = datetime.datetime.now()
@@ -79,7 +83,7 @@ class Stock(ISecurity):
                     return
                 df = (
                     get_index_day(str(code), start_time, end_time)
-                    if stockOrIndex == "index"
+                    if ins_type == INSTRUMENT_TYPE.INDX
                     else get_stock_day(str(code), start_time, end_time)
                 )
                 if df is None or df.empty:
@@ -94,7 +98,7 @@ class Stock(ISecurity):
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
                 text = "{}, {} -> {}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code),
+                    "{} {}".format(ins_type, code),
                     start_time_plus_one,
                     end_time,
                     interval,
@@ -107,9 +111,9 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(instruments))))
 
-        save_error_log(err, "{}_{}_day".format(self.getClassName(), stockOrIndex))
+        save_error_log(err, "{}_{}_day".format(self.getClassName(), ins_type))
 
     def create_min(self, *args, **kwargs):
         """save index_min
@@ -117,17 +121,21 @@ class Stock(ISecurity):
         Keyword Arguments:
             client {[type]} -- [description] (default: {DATABASE})
         """
-        stockOrIndex = kwargs.pop("stockOrIndex", "stock")
-        stockOrIndexList = (
+        ins_type = kwargs.pop("ins_type", "stock")
+        instruments = (
             self.codes
             if self.codes
             else (
-                get_stock_list(stockOrIndex)
-                if stockOrIndex == "index"
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.INDX
                 else get_stock_list().code.unique().tolist()
             )
         )
-        coll = self._db.index_min if stockOrIndex == "index" else self._db.stock_min
+        coll = (
+            self._db.index_min
+            if ins_type == INSTRUMENT_TYPE.INDX
+            else self._db.stock_min
+        )
         coll.create_index(
             [
                 ("code", pymongo.ASCENDING),
@@ -139,9 +147,9 @@ class Stock(ISecurity):
 
         def saving_work(idx):
             code = (
-                stockOrIndexList.index[idx][0]
-                if stockOrIndex == "index"
-                else stockOrIndexList[idx]
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.INDX
+                else instruments[idx]
             )
             try:
                 for freq in self.freqs:
@@ -157,7 +165,7 @@ class Stock(ISecurity):
                         continue
                     df = (
                         get_index_min(str(code), start_time, end_time, freq)
-                        if stockOrIndex == "index"
+                        if ins_type == INSTRUMENT_TYPE.INDX
                         else get_stock_min(str(code), start_time, end_time, freq)
                     )
                     if df is None or df.empty:
@@ -173,7 +181,7 @@ class Stock(ISecurity):
                     finish = datetime.datetime.now()
                     interval = (finish - begin).total_seconds()
                     text = "{}, {}, {} -> {}, {:<04.2}s".format(
-                        "{} {}".format(stockOrIndex, code),
+                        "{} {}".format(ins_type, code),
                         freq,
                         start_time_plus_one,
                         end_time,
@@ -187,9 +195,9 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(instruments))))
 
-        save_error_log(err, "{}_{}_min".format(self.getClassName(), stockOrIndex))
+        save_error_log(err, "{}_{}_min".format(self.getClassName(), ins_type))
 
     def create_xdxr(self, *args, **kwargs):
         """save stock_xdxr
@@ -197,13 +205,13 @@ class Stock(ISecurity):
         Keyword Arguments:
             client {[type]} -- [description] (default: {DATABASE})
         """
-        stockOrIndex = kwargs.pop("stockOrIndex", "")
-        stockOrIndexList = (
+        ins_type = kwargs.pop("ins_type", "")
+        instruments = (
             self.codes
             if self.codes
             else (
-                get_stock_list(stockOrIndex)
-                if stockOrIndex == "index"
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.INDX
                 else get_stock_list().code.unique().tolist()
             )
         )
@@ -219,9 +227,9 @@ class Stock(ISecurity):
 
         def saving_work(idx):
             code = (
-                stockOrIndexList.index[idx][0]
-                if stockOrIndex == "index"
-                else stockOrIndexList[idx]
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.INDX
+                else instruments[idx]
             )
             try:
                 begin = datetime.datetime.now()
@@ -248,7 +256,7 @@ class Stock(ISecurity):
                     finish = datetime.datetime.now()
                     interval = (finish - begin).total_seconds()
                     text = "{}, {:<04.2}s".format(
-                        "{} {}".format(stockOrIndex, code), interval,
+                        "{} {}".format(ins_type, code), interval,
                     )
                     for _ in trange(data.size, desc=text):
                         pass
@@ -261,23 +269,23 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(instruments))))
 
         save_error_log(err, "{}_xdxr".format(self.getClassName()))
 
     def create_info(self, *args, **kwargs):
-        """save index_day
+        """save stock_info
 
         Keyword Arguments:
             client {[type]} -- [description] (default: {DATABASE})
         """
-        stockOrIndex = kwargs.pop("stockOrIndex", "stock")
-        stockOrIndexList = (
+        ins_type = kwargs.pop("ins_type", "stock")
+        instruments = (
             self.codes
             if self.codes
             else (
-                get_stock_list(stockOrIndex)
-                if stockOrIndex == "index"
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.INDX
                 else get_stock_list().code.unique().tolist()
             )
         )
@@ -288,9 +296,9 @@ class Stock(ISecurity):
 
         def saving_work(idx):
             code = (
-                stockOrIndexList.index[idx][0]
-                if stockOrIndex == "index"
-                else stockOrIndexList[idx]
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.INDX
+                else instruments[idx]
             )
             try:
                 begin = datetime.datetime.now()
@@ -303,9 +311,7 @@ class Stock(ISecurity):
                 coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
-                text = "{}, {:<04.2}s".format(
-                    "{} {}".format(stockOrIndex, code), interval,
-                )
+                text = "{}, {:<04.2}s".format("{} {}".format(ins_type, code), interval,)
                 for _ in trange(df.size, desc=text):
                     pass
             except Exception as e:
@@ -314,9 +320,9 @@ class Stock(ISecurity):
 
         tqdm.set_lock(RLock())
         with ThreadPoolExecutor(max_workers=4) as p:
-            p.map(partial(saving_work), list(range(len(stockOrIndexList))))
+            p.map(partial(saving_work), list(range(len(instruments))))
 
-        save_error_log(err, "{}_{}_info".format(self.getClassName(), stockOrIndex))
+        save_error_log(err, "{}_{}_info".format(self.getClassName(), ins_type))
 
     def create_block(self, *args, **kwargs):
         """save stock block
@@ -415,13 +421,13 @@ class Future(ISecurity):
         visitor.create_xdxr(self)
 
     def create_day(self, *args, **kwargs):
-        stockOrIndex = kwargs.pop("stockOrIndex", "future")
-        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
+        ins_type = kwargs.pop("ins_type", "future")
+        slog.debug("{} {} day".format(self.getClassName(), ins_type))
         return
 
     def create_min(self, *args, **kwargs):
-        stockOrIndex = kwargs.pop("stockOrIndex", "future")
-        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
+        ins_type = kwargs.pop("ins_type", "future")
+        slog.debug("{} {} min {}".format(self.getClassName(), ins_type, self.freqs))
         return
 
 
@@ -438,13 +444,83 @@ class Etf(ISecurity):
         visitor.create_min(self)
 
     def create_day(self, *args, **kwargs):
-        stockOrIndex = kwargs.pop("etf", "")
-        slog.debug("{} {} day".format(self.getClassName(), stockOrIndex))
-        return
+        """save etf_day
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        ins_type = kwargs.pop("ins_type", INSTRUMENT_TYPE.ETF)
+        instruments = (
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.ETF
+                else get_stock_list().code.unique().tolist()
+            )
+        )
+        coll = (
+            self._db.index_day
+            if ins_type == INSTRUMENT_TYPE.ETF
+            else self._db.stock_day
+        )
+        coll.create_index(
+            [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
+        )
+        err = []
+
+        def saving_work(idx):
+            code = (
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.ETF
+                else instruments[idx]
+            )
+            try:
+                begin = datetime.datetime.now()
+                ref_ = coll.find({"code": str(code)[0:6]})
+                end_time = str(now_time())[0:10]
+                start_time = (
+                    ref_[ref_.count() - 1]["date"] if ref_.count() > 0 else "1990-01-01"
+                )
+                if start_time == end_time:
+                    return
+                df = (
+                    get_index_day(str(code), start_time, end_time)
+                    if ins_type == INSTRUMENT_TYPE.ETF
+                    else get_stock_day(str(code), start_time, end_time)
+                )
+                if df is None or df.empty:
+                    slog.warn(
+                        "df is empty. {}|{}|{}".format(code, start_time, end_time)
+                    )
+                    return
+
+                df_tmp = df.iloc[1:]
+                coll.insert_many(to_json_from_pandas(df_tmp))
+                start_time_plus_one = df.iloc[1]["date"]
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "{}, {} -> {}, {:<04.2}s".format(
+                    "{} {}".format(ins_type, code),
+                    start_time_plus_one,
+                    end_time,
+                    interval,
+                )
+                for _ in trange(df.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+                err.append(code)
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=4) as p:
+            p.map(partial(saving_work), list(range(len(instruments))))
+
+        save_error_log(err, "{}_{}_day".format(self.getClassName(), ins_type))
 
     def create_min(self, *args, **kwargs):
-        stockOrIndex = kwargs.pop("etf", "")
-        slog.debug("{} {} min {}".format(self.getClassName(), stockOrIndex, self.freqs))
+        ins_type = kwargs.pop(INSTRUMENT_TYPE.ETF, "")
+        slog.debug("{} {} min {}".format(self.getClassName(), ins_type, self.freqs))
         return
 
     def create_list(self, *args, **kwargs):
@@ -461,7 +537,7 @@ class Etf(ISecurity):
         def saving_work(b_api):
             try:
                 begin = datetime.datetime.now()
-                df = b_api.get_stock_list(type_="etf")
+                df = b_api.get_stock_list(type_=INSTRUMENT_TYPE.ETF)
                 if isinstance(df, pd.DataFrame) and df.empty:
                     slog.warn("df is empty.")
                     return
