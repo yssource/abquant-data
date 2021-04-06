@@ -136,6 +136,24 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # 保存所有 ETF 日线，日线指数
        abquant etf day
        abquant etf day --add '["159001", "510010", "510300"]'
+
+       # 保存所有 etf 分钟线，分钟指数
+       # Default 保存所有频率 (1min, 5min, 15min, 30min, 60min)
+       abquant etf min
+       abquant etf min --add '["159001", "510010", "510300"]'
+
+       # 保存 etf 分钟线，分钟指数不同频率数据 (1min, 5min, 15min, 30min, 60min)
+       # 1min 一分钟
+       abquant etf min "1min"
+       abquant etf min -f '["1min"]' --add '["159001", "510010", "510300"]'
+       # 5min 五分钟
+       abquant etf min -f '["5min"]'
+       abquant etf min -f '["5min"]' --add '["159001", "510010", "510300"]'
+       # ...
+       # 1min 一分钟和 5min 五分钟
+       abquant etf min -f '["1min", "5min"]'
+       abquant etf min -f '["1min", "5min"]' --add '["159001", "510010", "510300"]'
+
        # ...
      #+end_src
 

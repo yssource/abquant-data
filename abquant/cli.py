@@ -15,6 +15,7 @@ from abquant.data.base import (
     create_base,
     create_etf_list,
     create_etf_day,
+    create_etf_min,
 )
 
 set_loggers()
@@ -46,6 +47,7 @@ def save_base():
 @cli.group()
 def stock():
     """Manages stocks."""
+
 
 @cli.group()
 def etf():
@@ -156,15 +158,18 @@ def stock_block():
     """stock block."""
     create_stock_block()
 
+
 @stock.command("financial")
 def stock_financial():
     """stock financial."""
     create_stock_financial()
 
+
 @etf.command("list")
 def etf_list():
     """etf list."""
     create_etf_list()
+
 
 @etf.command("day")
 @click.option(
@@ -191,3 +196,35 @@ def etf_day(ow, codes):
     if not codes and isinstance(codes, (str,)):
         codes = []
     create_etf_day(codes)
+
+
+@etf.command("min")
+@click.option(
+    "codes", "--add", default="", help="Append etfs min collection. Default=False."
+)
+@click.option("freqs", "-f", default="", help="1min, 5min, 15min. Default=False.")
+def etf_min(codes, freqs):
+    """etf min."""
+    if codes and isinstance(codes, (str,)):
+        try:
+            codes = json.loads(codes)
+        except Exception as e:
+            slog.error("--add {} format is invalid.".format(codes))
+            slog.error(
+                'Please using such a format. --add \'["159001", "510010", "510300"]\''
+            )
+            return
+    if freqs and isinstance(freqs, (str,)):
+        try:
+            freqs = json.loads(freqs)
+        except Exception as e:
+            slog.error("-f {} format is invalid.".format(freqs))
+            slog.error(
+                'Please using such a format. --add \'["1min", "5min", "30min"]\''
+            )
+            return
+    if not codes and isinstance(codes, (str,)):
+        codes = []
+    if not freqs and isinstance(freqs, (str,)):
+        freqs = ["1min", "5min", "15min", "30min", "60min"]
+    create_etf_min(codes, freqs)

@@ -157,3 +157,10 @@ def create_etf_day(codes):
     broker = get_broker()
     s = broker.Etf(codes=codes)
     s.create_day(ins_type=INSTRUMENT_TYPE.ETF)
+
+
+@time_counter
+def create_etf_min(codes, freqs):
+    broker = get_broker()
+    s = broker.Etf(codes=codes, freqs=freqs)
+    s.create_min(ins_type=INSTRUMENT_TYPE.ETF)

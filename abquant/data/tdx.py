@@ -437,7 +437,7 @@ class Etf(ISecurity):
         self._client = pymongo.MongoClient(Setting.get_mongo())
         self._db = self._client[Setting.DBNAME]
         self.codes = kwargs.get("codes", [])
-        self.freqs = []
+        self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
         visitor.create_day(self)
@@ -519,9 +519,88 @@ class Etf(ISecurity):
         save_error_log(err, "{}_{}_day".format(self.getClassName(), ins_type))
 
     def create_min(self, *args, **kwargs):
-        ins_type = kwargs.pop(INSTRUMENT_TYPE.ETF, "")
-        slog.debug("{} {} min {}".format(self.getClassName(), ins_type, self.freqs))
-        return
+        """save etf_min
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        ins_type = kwargs.pop("ins_type", "etf")
+        instruments = (
+            self.codes
+            if self.codes
+            else (
+                get_stock_list(ins_type)
+                if ins_type == INSTRUMENT_TYPE.ETF
+                else get_stock_list().code.unique().tolist()
+            )
+        )
+        coll = (
+            self._db.index_min
+            if ins_type == INSTRUMENT_TYPE.ETF
+            else self._db.stock_min
+        )
+        coll.create_index(
+            [
+                ("code", pymongo.ASCENDING),
+                ("time_stamp", pymongo.ASCENDING),
+                ("date_stamp", pymongo.ASCENDING),
+            ]
+        )
+        err = []
+
+        def saving_work(idx):
+            code = (
+                instruments.index[idx][0]
+                if ins_type == INSTRUMENT_TYPE.ETF
+                else instruments[idx]
+            )
+            try:
+                for freq in self.freqs:
+                    begin = datetime.datetime.now()
+                    ref_ = coll.find({"code": str(code)[0:6], "type": freq})
+                    end_time = str(now_time())[0:19]
+                    start_time = (
+                        ref_[ref_.count() - 1]["datetime"]
+                        if ref_.count() > 0
+                        else "2015-01-01"
+                    )
+                    if start_time == end_time:
+                        continue
+                    df = (
+                        get_index_min(str(code), start_time, end_time, freq)
+                        if ins_type == INSTRUMENT_TYPE.ETF
+                        else get_stock_min(str(code), start_time, end_time, freq)
+                    )
+                    if df is None or df.empty:
+                        slog.warn(
+                            "df is empty. {}|{}|{}|{}".format(
+                                code, start_time, end_time, freq
+                            )
+                        )
+                        continue
+                    df_tmp = df.iloc[1:]
+                    coll.insert_many(to_json_from_pandas(df_tmp))
+                    start_time_plus_one = df.iloc[1]["datetime"]
+                    finish = datetime.datetime.now()
+                    interval = (finish - begin).total_seconds()
+                    text = "{}, {}, {} -> {}, {:<04.2}s".format(
+                        "{} {}".format(ins_type, code),
+                        freq,
+                        start_time_plus_one,
+                        end_time,
+                        interval,
+                    )
+                    for _ in trange(df.size, desc=text):
+                        pass
+            except Exception as e:
+                slog.error("{}".format(e))
+                err.append(code)
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=4) as p:
+            p.map(partial(saving_work), list(range(len(instruments))))
+
+        save_error_log(err, "{}_{}_min".format(self.getClassName(), ins_type))
 
     def create_list(self, *args, **kwargs):
         """save etf list
