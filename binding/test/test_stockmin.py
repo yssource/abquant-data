@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from abqstockmin import PyStockMin as stockmin
+from pyabqstockmin import PyStockMin as stockmin
 from pyabquant import FQ_TYPE, PyAbquant
 import pandas as pd
 

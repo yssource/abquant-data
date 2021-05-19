@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from abqstocklist import PyStockList as stocklist
+from pyabqstocklist import PyStockList as stocklist
 from pyabquant import PyAbquant
 
 import pandas as pd

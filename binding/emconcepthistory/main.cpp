@@ -52,13 +52,13 @@ private:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(abqemconcepthistory, m)
+PYBIND11_MODULE(pyabqemconcepthistory, m)
 {
     m.doc() = R"pbdoc(
         Pybind11 EmConceptHistory plugin
         -----------------------
 
-        .. abqemconcepthistory:: currentmodule_exmaple
+        .. pyabqemconcepthistory:: currentmodule_exmaple
 
         .. autosummary::
            :emconcepthistory: toSeries

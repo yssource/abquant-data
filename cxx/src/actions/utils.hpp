@@ -65,6 +65,64 @@ inline QDebug operator<<(QDebug debug, FQ_TYPE fq)
     return debug;
 }
 
+enum class INSTRUMENT_TYPE : short int {
+    CS          = 0x00,
+    FUTURE      = 0x01,
+    ETF         = 0x02,
+    INDX        = 0x03,
+    FENJI_MU    = 0x04,
+    FENJI_A     = 0x05,
+    FENJI_B     = 0x06,
+    PUBLIC_FUND = 0x07,
+    BOND        = 0x08,
+    CONVERTIBLE = 0x09,
+    SPOT        = 0x0a,
+    REPO        = 0x0b,
+};
+
+inline QDebug operator<<(QDebug debug, INSTRUMENT_TYPE ins)
+{
+    switch (ins) {
+    case INSTRUMENT_TYPE::CS:
+        debug << "INSTRUMENT_TYPE::CS";
+        break;
+    case INSTRUMENT_TYPE::FUTURE:
+        debug << "INSTRUMENT_TYPE::FUTURE";
+        break;
+    case INSTRUMENT_TYPE::ETF:
+        debug << "INSTRUMENT_TYPE::ETF";
+        break;
+    case INSTRUMENT_TYPE::INDX:
+        debug << "INSTRUMENT_TYPE::INDX";
+        break;
+    case INSTRUMENT_TYPE::FENJI_MU:
+        debug << "INSTRUMENT_TYPE::FENJI_MU";
+        break;
+    case INSTRUMENT_TYPE::FENJI_A:
+        debug << "INSTRUMENT_TYPE::FENJI_A";
+        break;
+    case INSTRUMENT_TYPE::FENJI_B:
+        debug << "INSTRUMENT_TYPE::FENJI_B";
+        break;
+    case INSTRUMENT_TYPE::PUBLIC_FUND:
+        debug << "INSTRUMENT_TYPE::PUBLIC_FUND";
+        break;
+    case INSTRUMENT_TYPE::BOND:
+        debug << "INSTRUMENT_TYPE::BOND";
+        break;
+    case INSTRUMENT_TYPE::CONVERTIBLE:
+        debug << "INSTRUMENT_TYPE::CONVERTIBLE";
+        break;
+    case INSTRUMENT_TYPE::SPOT:
+        debug << "INSTRUMENT_TYPE::SPOT";
+        break;
+    case INSTRUMENT_TYPE::REPO:
+        debug << "INSTRUMENT_TYPE::REPO";
+        break;
+    }
+    return debug;
+}
+
 enum class MIN_FREQ : short int { ONE = 0x01, FIVE = 0x05, FIFTEEN = 0x0F, THIRTY = 0x1E, SIXTY = 0x3C };
 
 inline QDebug operator<<(QDebug debug, MIN_FREQ freq)

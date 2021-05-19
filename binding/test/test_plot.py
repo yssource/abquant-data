@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from pyabquant import PyAbquant
-from abqstockday import PyStockDay as stockday
+from pyabqstockday import PyStockDay as stockday
 
 import matplotlib
 
@@ -52,7 +52,7 @@ class MainTest(unittest.TestCase):
         code = "000001"
         ax.set_title(code, fontsize="large")
         df.plot(kind="line", x="date_stamp", y="open", color="red", ax=ax)
-        img = "/tmp/abqstockday.png"
+        img = "/tmp/pyabqstockday.png"
         fig.savefig(img)
         self.assertTrue(len(open_) > 0)
 

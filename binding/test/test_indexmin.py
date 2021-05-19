@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from abqindexmin import PyIndexMin as indexmin
+from pyabqindexmin import PyIndexMin as indexmin
 from pyabquant import PyAbquant
 
 pd.set_option("display.max_rows", None)

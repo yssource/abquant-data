@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import pandas as pd
-from abqemconceptbase import PyEmConceptBase as emconceptbase
+from pyabqemconceptbase import PyEmConceptBase as emconceptbase
 from pyabquant import PyAbquant
 
 pd.set_option("display.max_rows", None)

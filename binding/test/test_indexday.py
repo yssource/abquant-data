@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from abqindexday import PyIndexDay as indexday
+from pyabqindexday import PyIndexDay as indexday
 from pyabquant import PyAbquant
 
 pd.set_option("display.max_rows", None)

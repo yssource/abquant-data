@@ -49,13 +49,13 @@ private:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(abqindexmin, m)
+PYBIND11_MODULE(pyabqindexmin, m)
 {
     m.doc() = R"pbdoc(
         Pybind11 IndexMin plugin
         -----------------------
 
-        .. abqindexmin:: currentmodule_exmaple
+        .. pyabqindexmin:: currentmodule_exmaple
 
         .. autosummary::
            :indexmin: toSeries

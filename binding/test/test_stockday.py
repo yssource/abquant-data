@@ -3,7 +3,7 @@
 import unittest
 import math
 
-from abqstockday import PyStockDay as stockday
+from pyabqstockday import PyStockDay as stockday
 from pyabquant import FQ_TYPE, PyAbquant
 
 import pandas as pd

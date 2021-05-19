@@ -1,4 +1,4 @@
-from abquant.apis.base import get_price
+from abquant.apis.base import get_price, get_all_securities
 import pandas as pd
 from abquant.utils.logger import user_log as ulog
 
@@ -55,3 +55,9 @@ def test_get_price_min_with_multi_field_without_data():
     ulog.debug(actual)
     assert isinstance(actual, (pd.DataFrame))
     assert actual.empty is True
+
+
+def test_get_all_securities_cs_withno_date():
+    actual = get_all_securities(["cs"])
+    ulog.debug(actual)
+    assert isinstance(actual, (pd.DataFrame))

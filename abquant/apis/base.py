@@ -6,7 +6,7 @@ from abquant.utils.code import code_tolist
 
 import pandas as pd
 
-from pyabquant import FQ_TYPE
+from pyabquant import FQ_TYPE, INSTRUMENT_TYPE
 
 
 def get_price(
@@ -125,12 +125,12 @@ def get_price(
         fq = FQ_TYPE.NONE
 
     if frequency in ["1d"]:
-        from abqstockday import PyStockDay as stockday
+        from pyabqstockday import PyStockDay as stockday
 
         sdm = stockday(order_book_ids, start_date, end_date, fq)
     else:
 
-        from abqstockmin import PyStockMin as stockmin
+        from pyabqstockmin import PyStockMin as stockmin
 
         sdm = stockmin(order_book_ids, start_date, end_date, frequency, fq)
 
@@ -155,6 +155,30 @@ def get_all_securities(
     types: List[str] = [], date: Optional[str] = None
 ) -> pd.DataFrame:
     df = pd.DataFrame()
-    if "" in types:
-        pass
-    return pd.DataFrame()
+    if "cs" in types:
+        from pyabqstocklist import PyStockList as stocklist
+
+        sl = stocklist()
+        code = sl.toSeries_string("code")
+        volunit = sl.toSeries("volunit")
+        decimal_point = sl.toSeries("decimal_point")
+        name = sl.toSeries_string("name")
+        pre_close = sl.toSeries("pre_close")
+        sse = sl.toSeries_string("sse")
+        sec = sl.toSeries_string("sec")
+        print(code[:10])
+
+        df = pd.DataFrame(
+            {
+                "code": code,
+                "volunit": volunit,
+                "decimal_point": decimal_point,
+                "name": name,
+                "pre_close": pre_close,
+                "sse": sse,
+                "sec": sec,
+            }
+        )
+        df.set_index(["code"], inplace=True)
+
+    return df

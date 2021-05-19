@@ -8,12 +8,12 @@
 
 # The name of the generated bindings module (as imported in Python). You can change the name
 # to something relevant for your project.
-set(bindings_library "abqstockday")
+set(bindings_library "pyabqstockday")
 
 # set(CMAKE_CXX_FLAGS_RELEASE "-O0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_SQL_LIB")
 
-set(abqstockday_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
+set(pyabqstockday_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
 set(tree_includes  "/usr/include/treefrog/")
 # set(tree_lib "/usr/lib/libtreefrog.so")
 set(abquant_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
@@ -66,7 +66,7 @@ pybind11_add_module(${bindings_library} SHARED ${${bindings_library}_sources} NO
 # Apply relevant include and link flags.
 target_include_directories(${bindings_library} PUBLIC ${python_include_dir})
 target_include_directories(${bindings_library} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(${bindings_library} PUBLIC ${abqstockday_include_dir})
+target_include_directories(${bindings_library} PUBLIC ${pyabqstockday_include_dir})
 target_include_directories(${bindings_library} PUBLIC ${tree_includes})
 
 target_include_directories(${bindings_library} PUBLIC "${Qt5Core_INCLUDE_DIRS}")

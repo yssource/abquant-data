@@ -55,9 +55,24 @@ PYBIND11_MODULE(pyabquant, m)
     )pbdoc");
 
     py::enum_<FQ_TYPE>(m, "FQ_TYPE", py::arithmetic(), "FQ_TYPE::PRE, FQ_TYPE::NONE, FQ_TYPE::POST")
-        .value("PRE", FQ_TYPE::PRE, "Docstring for PRE")
-        .value("NONE", FQ_TYPE::NONE, "Docstring for NONE")
-        .value("POST", FQ_TYPE::POST, "Docstring for POST")
+        .value("PRE", FQ_TYPE::PRE, "xdxr fq_type: PRE")
+        .value("NONE", FQ_TYPE::NONE, "xdxr fq_type: NONE")
+        .value("POST", FQ_TYPE::POST, "xdxr fq_type: POST")
+        .export_values();
+
+    py::enum_<INSTRUMENT_TYPE>(m, "INSTRUMENT_TYPE", py::arithmetic(), "INSTRUMENT_TYPE")
+        .value("CS", INSTRUMENT_TYPE::CS, "CS: stock")
+        .value("FUTURE", INSTRUMENT_TYPE::FUTURE, "Future: Future")
+        .value("ETF", INSTRUMENT_TYPE::ETF, "ETF: ETF")
+        .value("INDX", INSTRUMENT_TYPE::INDX, "INDX: INDX")
+        .value("FENJI_MU", INSTRUMENT_TYPE::FENJI_MU, "FenjiMu: FENJI_MU")
+        .value("FENJI_A", INSTRUMENT_TYPE::FENJI_A, "FenjiA: FENJI_A")
+        .value("FENJI_B", INSTRUMENT_TYPE::FENJI_B, "FenjiB: FENJI_B")
+        .value("PUBLIC_FUND", INSTRUMENT_TYPE::PUBLIC_FUND, "PublicFund: PUBLIC_FUND")
+        .value("BOND", INSTRUMENT_TYPE::BOND, "Bond: BOND")
+        .value("CONVERTIBLE", INSTRUMENT_TYPE::CONVERTIBLE, "Convertible: CONVERTIBLE")
+        .value("SPOT", INSTRUMENT_TYPE::SPOT, "Spot: SPOT")
+        .value("REPO", INSTRUMENT_TYPE::REPO, "Repo: REPO")
         .export_values();
 
 #ifdef VERSION_INFO

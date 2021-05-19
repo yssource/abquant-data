@@ -59,13 +59,13 @@ private:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(abqindexday, m)
+PYBIND11_MODULE(pyabqindexday, m)
 {
     m.doc() = R"pbdoc(
         Pybind11 IndexDay plugin
         -----------------------
 
-        .. abqindexday:: abqindexday_module_exmaple
+        .. pyabqindexday:: pyabqindexday_module_exmaple
 
         .. autosummary::
            :indexday: toSeries

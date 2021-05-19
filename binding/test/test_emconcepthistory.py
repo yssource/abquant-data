@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from abqemconcepthistory import PyEmConceptHistory as emconcepthistory
+from pyabqemconcepthistory import PyEmConceptHistory as emconcepthistory
 from pyabquant import PyAbquant
 
 pd.set_option("display.max_rows", None)

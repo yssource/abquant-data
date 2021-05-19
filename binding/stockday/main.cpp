@@ -67,13 +67,13 @@ private:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(abqstockday, m)
+PYBIND11_MODULE(pyabqstockday, m)
 {
     m.doc() = R"pbdoc(
         Pybind11 StockDay plugin
         -----------------------
 
-        .. abqstockday:: abqstockday_module_exmaple
+        .. pyabqstockday:: pyabqstockday_module_exmaple
 
         .. autosummary::
            :stockday: toSeries

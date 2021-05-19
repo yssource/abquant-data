@@ -61,13 +61,13 @@ private:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(abqstockmin, m)
+PYBIND11_MODULE(pyabqstockmin, m)
 {
     m.doc() = R"pbdoc(
         Pybind11 StockMin plugin
         -----------------------
 
-        .. abqstockmin:: currentmodule_exmaple
+        .. pyabqstockmin:: currentmodule_exmaple
 
         .. autosummary::
            :stockmin: toQfq
