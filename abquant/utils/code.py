@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import Iterable, Union, List
 
 
 def code_tostr(code):
@@ -36,7 +37,7 @@ def code_tostr(code):
         return code_tolist(code[0])
 
 
-def code_tolist(code, auto_fill=True):
+def code_tolist(code: Union[str, Iterable[str]], auto_fill=True) -> List:
     """
     explanation:
         将转换code==> list
@@ -63,3 +64,5 @@ def code_tolist(code, auto_fill=True):
             return [code_tostr(item) for item in code]
         else:
             return [item for item in code]
+    else:
+        return []

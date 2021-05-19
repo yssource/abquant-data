@@ -18,7 +18,7 @@ def get_price(
     adjust_type: Optional[str] = "pre",
     skip_suspended: Optional[bool] = False,
     expect_df: Optional[bool] = False,
-) -> Union[pd.DataFrame, pd.Panel, pd.Series]:
+) -> Union[pd.DataFrame, pd.Series]:
     """
     :param order_book_ids: 合约代码，合约代码，可传入order_book_id, order_book_id list, symbol, symbol list
     :param start_date: 开始日期，用户必须指定
@@ -149,3 +149,12 @@ def get_price(
         # return pd.Series
         return df[fields[0]]
     return df
+
+
+def get_all_securities(
+    types: List[str] = [], date: Optional[str] = None
+) -> pd.DataFrame:
+    df = pd.DataFrame()
+    if "" in types:
+        pass
+    return pd.DataFrame()

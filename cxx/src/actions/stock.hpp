@@ -98,11 +98,20 @@ protected:
     template <typename S>
     QList<S> run(const QStringList codes, int category = 1);
     template <typename S>
+    QList<S> run(const char* end = "");
+    template <typename S>
+    QList<S> run(const QStringList codes, const char* end = "");
+
+    template <typename S>
     QList<S> get_price(const QStringList codes, const char* start, const char* end);
     template <typename S>
     QList<S> get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq);
     template <typename S>
     QList<S> get_price(const QStringList codes, int category);
+    template <typename S>
+    QList<S> get_all_securities(const char* end = "");
+    template <typename S>
+    QList<S> get_all_securities(const QStringList codes, const char* end = "");
 
     auto getStocks();
 
@@ -176,6 +185,24 @@ QList<S> StockAction<SA>::run(const QStringList codes, int category)
 }
 
 template <class SA>
+template <typename S>
+QList<S> StockAction<SA>::run(const char* end)
+{
+    QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, end);
+    QList<S> stocks          = future.result();
+    return stocks;
+}
+
+template <class SA>
+template <typename S>
+QList<S> StockAction<SA>::run(const QStringList codes, const char* end)
+{
+    QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, codes, end);
+    QList<S> stocks          = future.result();
+    return stocks;
+}
+
+template <class SA>
 template <typename T>
 QVector<T> StockAction<SA>::toSeries(const char* col) const noexcept
 {
@@ -222,6 +249,34 @@ QList<S> StockAction<SA>::get_price(const QStringList codes, int category)
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
     QList<S> stocks = S::get_price(codes, category);
+    commitTransactions();
+    return stocks;
+}
+
+template <class SA>
+template <typename S>
+QList<S> StockAction<SA>::get_all_securities(const char* end)
+{
+    double end_d = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
+    auto sa      = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(sa);
+    bool EnableTransactions = true;
+    setTransactionEnabled(EnableTransactions);
+    QList<S> stocks = S::get_all_securities(end_d);
+    commitTransactions();
+    return stocks;
+}
+
+template <class SA>
+template <typename S>
+QList<S> StockAction<SA>::get_all_securities(const QStringList codes, const char* end)
+{
+    double end_d = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
+    auto sa      = derived_cast();
+    TDatabaseContext::setCurrentDatabaseContext(sa);
+    bool EnableTransactions = true;
+    setTransactionEnabled(EnableTransactions);
+    QList<S> stocks = S::get_all_securities(codes, end_d);
     commitTransactions();
     return stocks;
 }
