@@ -280,13 +280,14 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   - State "DONE"       from "STARTED"    [2021-01-01 Fri 00:00]
   :END:
   - 兼容 rqalpha apis ::
-  1. [X] get_price()
-  2. [X] get_fundamentals()[fn:1]
+  1. [X] get_price
+  2. [X] get_fundamentals[fn:1]
   - 兼容 jointquant apis ::
-  1. [X] get_all_securities()
+  1. [X] get_all_securities
+  2. [X] get_security_info
   - 东方财富 概念 apis ::
-  1. [X] easymoney concept base get_blocks()
-  2. [X] easymoney concept history get_price()
+  1. [X] easymoney concept base get_blocks
+  2. [X] easymoney concept history get_price
 * WAITING Development:
   :LOGBOOK:
   - State "STARTED"    from "DONE"       [2021-02-13 Sat 00:00]

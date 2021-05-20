@@ -23,13 +23,13 @@ class PyStockList : public std::enable_shared_from_this<PyStockList>
 public:
     PyStockList() { m_sla_ptr = std::make_shared<StockListAction>(); };
 
-    PyStockList(std::vector<std::string> codes, const string& end) : m_codes{codes}, m_end{end}
+    PyStockList(std::vector<std::string> codes, const string& end = "") : m_codes{codes}, m_end{end}
     {
         QStringList qcodes;
         for (auto c : codes) {
             qcodes << QString::fromStdString(c);
         }
-        m_sla_ptr = std::make_shared<StockListAction>(qcodes, m_end.c_str());
+        m_sla_ptr = std::make_shared<StockListAction>(qcodes, end.c_str());
     };
 
     template <class T>
@@ -66,7 +66,7 @@ PYBIND11_MODULE(pyabqstocklist, m)
     py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
     py::class_<PyStockList, std::shared_ptr<PyStockList>> sm_class(m, "PyStockList");
     sm_class.def(py::init<>())
-        .def(py::init<std::vector<std::string>, const string>())
+        .def(py::init<std::vector<std::string>, const string>(), py::arg("codes"), py::arg("end") = "")
         .def("toSeries", &PyStockList::toSeries<double> /* , py::return_value_policy::reference */,
              R"pbdoc(toSeries double function.)pbdoc")
         .def("toSeries_string", &PyStockList::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc");

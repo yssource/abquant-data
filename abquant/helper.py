@@ -6,6 +6,7 @@ from typing import Union, Optional, List, Tuple, Iterable, Callable
 from functools import lru_cache
 from enum import Enum, EnumMeta
 
+
 def time_counter(func):
     from abquant.utils.logger import system_log as slog
 
@@ -88,10 +89,26 @@ def normalize_code_list(codes: Tuple[str], kind: str = "cs") -> Iterable[str]:
     return [normalize_code(code, kind) for code in codes]
 
 
+@lru_cache(maxsize=256)
+def unnormalize_code(code: str) -> str:
+    if "." in code:
+        return code.split(".")[0]
+    return code
+
+
+@lru_cache(maxsize=256)
+def unnormalize_code_list(codes: Tuple[str], kind: str = "cs") -> Iterable[str]:
+    return [unnormalize_code(code, kind) for code in codes]
+
+
 class CustomEnumMeta(EnumMeta):
     def __new__(metacls, cls, bases, classdict):
-        enum_class = super(CustomEnumMeta, metacls).__new__(metacls, cls, bases, classdict)
-        enum_class._member_reverse_map = {v.value: v for v in enum_class.__members__.values()}
+        enum_class = super(CustomEnumMeta, metacls).__new__(
+            metacls, cls, bases, classdict
+        )
+        enum_class._member_reverse_map = {
+            v.value: v for v in enum_class.__members__.values()
+        }
         return enum_class
 
     def __contains__(cls, member):
@@ -107,14 +124,17 @@ class CustomEnumMeta(EnumMeta):
         except KeyError:
             return self._member_reverse_map[item]
 
+
 # noinspection PyUnresolvedReferences
-class CustomEnumCore(str, Enum, metaclass=CustomEnumMeta): pass
+class CustomEnumCore(str, Enum, metaclass=CustomEnumMeta):
+    pass
+
 
 # noinspection PyUnresolvedReferences
 class CustomEnum(CustomEnumCore):
     def __repr__(self):
-        return "%s.%s" % (
-            self.__class__.__name__, self._name_)
+        return "%s.%s" % (self.__class__.__name__, self._name_)
+
 
 # noinspection PyPep8Naming
 class INSTRUMENT_TYPE(CustomEnum):
@@ -127,7 +147,7 @@ class INSTRUMENT_TYPE(CustomEnum):
     FENJI_MU = "FenjiMu"
     FENJI_A = "FenjiA"
     FENJI_B = "FenjiB"
-    PUBLIC_FUND = 'PublicFund'
+    PUBLIC_FUND = "PublicFund"
     BOND = "Bond"
     CONVERTIBLE = "Convertible"
     SPOT = "Spot"

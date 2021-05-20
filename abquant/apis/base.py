@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from abquant.helper import unnormalize_code
 import datetime
 from typing import Iterable, List, Optional, Union
 from abquant.utils.code import code_tolist
+from abquant.helper import unnormalize_code
 
 import pandas as pd
 
@@ -182,3 +184,31 @@ def get_all_securities(
         df.set_index(["code"], inplace=True)
 
     return df
+
+
+def get_security_info(code: str) -> pd.Series:
+    from pyabqstocklist import PyStockList as stocklist
+
+    sl = stocklist([unnormalize_code(code)])
+
+    code = sl.toSeries_string("code")
+    volunit = sl.toSeries("volunit")
+    decimal_point = sl.toSeries("decimal_point")
+    name = sl.toSeries_string("name")
+    pre_close = sl.toSeries("pre_close")
+    sse = sl.toSeries_string("sse")
+    sec = sl.toSeries_string("sec")
+
+    s = pd.Series(
+        {
+            "code": code[0],
+            "volunit": volunit[0],
+            "decimal_point": decimal_point[0],
+            "symbol": name[0],
+            "pre_close": pre_close[0],
+            "sse": sse[0],
+            "sec": sec[0],
+        }
+    )
+
+    return s
