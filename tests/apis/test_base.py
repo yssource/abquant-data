@@ -68,4 +68,4 @@ def test_get_security_info():
     actual = get_security_info(code)
     ulog.debug(actual)
     assert isinstance(actual, (pd.Series))
-    assert actual.symbol == "平安银行"
+    assert actual.display_name == "平安银行"

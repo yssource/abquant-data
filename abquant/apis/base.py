@@ -204,7 +204,7 @@ def get_security_info(code: str) -> pd.Series:
             "code": code[0],
             "volunit": volunit[0],
             "decimal_point": decimal_point[0],
-            "symbol": name[0],
+            "display_name": name[0],
             "pre_close": pre_close[0],
             "sse": sse[0],
             "sec": sec[0],
@@ -212,3 +212,9 @@ def get_security_info(code: str) -> pd.Series:
     )
 
     return s
+
+
+def get_realtime_quotes(codes: Iterable[str]) -> pd.DataFrame:
+    import abquant.data.ts_api as ts
+
+    return ts.get_realtime_quotes(codes)
