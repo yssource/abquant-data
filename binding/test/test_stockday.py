@@ -14,7 +14,7 @@ pd.set_option("display.width", None)
 
 
 class MainTest(unittest.TestCase):
-    def testDay(self):
+    def test_stockday(self):
         codes = ["000001"]
         start = "2019-01-01"
         end = "2019-12-01"
