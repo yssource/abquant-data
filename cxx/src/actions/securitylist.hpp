@@ -19,34 +19,35 @@
 
 namespace abq
 {
-template <typename M>
-class SecuritylistAction : public StockAction<SecuritylistAction<S>>, std::enable_shared_from_this<SecuritylistAction<S>>
+template <typename S>
+class SecurityListAction : public StockAction<SecurityListAction<S>>,
+                           std::enable_shared_from_this<SecurityListAction<S>>
 {
 public:
     //! Default constructor
-    // SecuritylistAction() = default;
+    // SecurityListAction() = default;
 
-    SecuritylistAction();
+    SecurityListAction();
 
-    SecuritylistAction(const QStringList codes, const char* end = "");
+    SecurityListAction(const QStringList codes, const char* end = "");
 
     //! Copy constructor
-    SecuritylistAction(const SecuritylistAction& other) = delete;
+    SecurityListAction(const SecurityListAction& other) = delete;
 
     //! Move constructor
-    SecuritylistAction(SecuritylistAction&& other) noexcept = delete;
+    SecurityListAction(SecurityListAction&& other) noexcept = delete;
 
     //! Destructor
-    ~SecuritylistAction() = default;
+    ~SecurityListAction() = default;
 
     //! Copy assignment operator
-    SecuritylistAction& operator=(const SecuritylistAction& other) = default;
+    SecurityListAction& operator=(const SecurityListAction& other) = default;
 
     //! Move assignment operator
-    SecuritylistAction& operator=(SecuritylistAction&& other) noexcept;
+    SecurityListAction& operator=(SecurityListAction&& other) noexcept;
 
     QStringList getCodes() const { return m_codes; };
-    QList<S> getStocks() const { return m_security_list; };
+    QList<S> getSecurities() const { return m_security_list; };
     QVector<const char*> getColumns() const { return m_columns; };
     MyDataFramePtr getDataFrame() const;
 
@@ -62,11 +63,11 @@ private:
 private:
     void setDataFrame();
 
-    friend inline QDebug operator<<(QDebug d, const SecuritylistAction& sa)
+    friend inline QDebug operator<<(QDebug d, const SecurityListAction& sa)
     {
         QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = sa.getStocks();
+        auto qs = sa.getSecurities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -82,41 +83,41 @@ private:
     }
 };
 
-/***********************
- * SecuritylistAction impl *
- **********************/
+/***************************
+ * SecurityListAction impl *
+ **************************/
 
-template <typename M>
-SecuritylistAction<S>::SecuritylistAction()
+template <typename S>
+SecurityListAction<S>::SecurityListAction()
 {
     m_security_list = this->template run<S>("");
     if (m_security_list.isEmpty()) {
-        qDebug() << "No stock list data.\n";
+        qDebug() << "No security list data.\n";
     }
     setDataFrame();
 }
 
-template <typename M>
-SecuritylistAction<S>::SecuritylistAction(const QStringList codes, const char* end)
+template <typename S>
+SecurityListAction<S>::SecurityListAction(const QStringList codes, const char* end)
 {
-    m_security_list = run<S>(codes, end);
+    m_security_list = this->template run<S>(codes, end);
     if (m_security_list.isEmpty()) {
-        qDebug() << "No stock list data.\n"
+        qDebug() << "No security list data.\n"
                  << codes << "\n"
                  << "end: " << end << "\n";
     }
     setDataFrame();
 }
 
-template <typename M>
-MyDataFramePtr SecuritylistAction<S>::getDataFrame() const
+template <typename S>
+MyDataFramePtr SecurityListAction<S>::getDataFrame() const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
-template <typename M>
-void SecuritylistAction<S>::setDataFrame()
+template <typename S>
+void SecurityListAction<S>::setDataFrame()
 {
     MyDataFrame df;
     try {
@@ -153,9 +154,9 @@ void SecuritylistAction<S>::setDataFrame()
     m_df = std::make_shared<MyDataFrame>(df);
 };
 
-template <typename M>
+template <typename S>
 template <typename T>
-QVector<T> SecuritylistAction<S>::toSeries(const char* col) const noexcept
+QVector<T> SecurityListAction<S>::toSeries(const char* col) const noexcept
 {
     QVector<T> series;
     auto cols = getColumns();
@@ -163,7 +164,7 @@ QVector<T> SecuritylistAction<S>::toSeries(const char* col) const noexcept
         return series;
     }
 
-    for (auto s : getStocks()) {
+    for (auto s : getSecurities()) {
         if constexpr (std::is_same_v<T, std::string>) {
             if (QString("code") == QString(col)) {
                 series << s.code().toStdString();
