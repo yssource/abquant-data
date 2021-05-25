@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from abquant.utils.logger import system_log as slog
 from abquant.helper import to_json_from_pandas
-from abquant.utils.datetime import make_datestamp
+from abquant.utils.qa import make_datestamp
 from abquant.config import Setting
 import json
 

@@ -5,7 +5,7 @@ from abquant.helper import to_json_from_pandas, INSTRUMENT_TYPE
 from abquant.utils.logger import system_log as slog
 import pymongo
 from abquant.config import Setting
-from abquant.utils.datetime import now_time
+from abquant.utils.qa import now_time
 from abquant.utils.tdx import query_stock_day, stock_to_fq, save_error_log
 from abquant.utils.tdx_financial import download_financialzip, parse_filelist
 from abquant.data.tdx_api import (

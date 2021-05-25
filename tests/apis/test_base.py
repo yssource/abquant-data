@@ -1,3 +1,4 @@
+from pyabquant import PyAbquant, FQ_TYPE, INSTRUMENT_TYPE
 from abquant.apis.base import get_price, get_all_securities, get_security_info
 import pandas as pd
 from abquant.utils.logger import user_log as ulog
@@ -63,9 +64,16 @@ def test_get_all_securities_cs_withno_date():
     assert isinstance(actual, (pd.DataFrame))
 
 
-def test_get_security_info():
+def test_get_security_info_stock_type():
     code = "000001.XSHE"
-    actual = get_security_info(code)
+    actual = get_security_info(code, INSTRUMENT_TYPE.CS)
     ulog.debug(actual)
     assert isinstance(actual, (pd.Series))
     assert actual.display_name == "平安银行"
+
+def test_get_security_info_index_type():
+    code = "399006.XSHE"
+    actual = get_security_info(code, INSTRUMENT_TYPE.INDX)
+    ulog.debug(actual)
+    assert isinstance(actual, (pd.Series))
+    assert actual.display_name == "创业板指"

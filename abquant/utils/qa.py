@@ -695,7 +695,7 @@ def get_nth_trading_day(date, n=1, way=1):
         return get_date_gap(date, n, "gt")
 
 
-def get_date_gap(date, gap, methods):
+def get_date_gap(date, gap, methods) -> str:
     """
     :param date: 字符串起始日 类型 str eg: 2018-11-11
     :param gap: 整数 间隔多数个交易日
@@ -712,6 +712,8 @@ def get_date_gap(date, gap, methods):
         elif methods in ["<=", "lte"]:
             return trade_date_sse[trade_date_sse.index(date) - gap + 1]
         elif methods in ["==", "=", "eq"]:
+            return date
+        else:
             return date
     except Exception:
         return "wrong date"

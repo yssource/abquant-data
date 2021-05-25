@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from abquant.helper import unnormalize_code
+import pandas as pd
 import datetime
 from typing import Iterable, List, Optional, Union
-from abquant.utils.code import code_tolist
 from abquant.helper import unnormalize_code
-
-import pandas as pd
-
-from pyabquant import FQ_TYPE, INSTRUMENT_TYPE
+from abquant.utils.code import code_tolist
+from abquant.utils.logger import user_log as ulog
+from abquant.helper import unnormalize_code
+from pyabquant import PyAbquant, FQ_TYPE, INSTRUMENT_TYPE
 
 
 def get_price(
@@ -158,9 +157,9 @@ def get_all_securities(
 ) -> pd.DataFrame:
     df = pd.DataFrame()
     if "cs" in types:
-        from pyabqstocklist import PyStockList as stocklist
+        from pyabqsecuritylist import PySecurityList as securitylist
 
-        sl = stocklist()
+        sl = securitylist()
         code = sl.toSeries_string("code")
         volunit = sl.toSeries("volunit")
         decimal_point = sl.toSeries("decimal_point")
@@ -186,10 +185,10 @@ def get_all_securities(
     return df
 
 
-def get_security_info(code: str) -> pd.Series:
-    from pyabqstocklist import PyStockList as stocklist
+def get_security_info(code: str, ins_type : INSTRUMENT_TYPE = INSTRUMENT_TYPE.CS) -> pd.Series:
+    from pyabqsecuritylist import PySecurityList as securitylist
 
-    sl = stocklist([unnormalize_code(code)])
+    sl = securitylist([unnormalize_code(code)], "", ins_type)
 
     code = sl.toSeries_string("code")
     volunit = sl.toSeries("volunit")
@@ -198,20 +197,22 @@ def get_security_info(code: str) -> pd.Series:
     pre_close = sl.toSeries("pre_close")
     sse = sl.toSeries_string("sse")
     sec = sl.toSeries_string("sec")
-
-    s = pd.Series(
-        {
-            "code": code[0],
-            "volunit": volunit[0],
-            "decimal_point": decimal_point[0],
-            "display_name": name[0],
-            "pre_close": pre_close[0],
-            "sse": sse[0],
-            "sec": sec[0],
-        }
-    )
-
-    return s
+    try:
+        s = pd.Series(
+            {
+                "code": code[0],
+                "volunit": volunit[0],
+                "decimal_point": decimal_point[0],
+                "display_name": name[0],
+                "pre_close": pre_close[0],
+                "sse": sse[0],
+                "sec": sec[0],
+            }
+        )
+    except:
+        s = pd.Series()
+    else:
+        return s
 
 
 def get_realtime_quotes(codes: Iterable[str]) -> pd.DataFrame:

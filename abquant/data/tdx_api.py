@@ -10,8 +10,8 @@ from abquant.utils.cache import Cache
 from abquant.utils.parallelism import Parallelism
 from abquant.utils.tdx import *
 from abquant.utils.tdx import for_sh, for_sz, select_market_code, select_type
-from abquant.utils.datetime import *
-from abquant.utils.datetime import get_trade_gap, make_datestamp, make_timestamp
+from abquant.utils.qa import *
+from abquant.utils.qa import get_trade_gap, make_datestamp, make_timestamp
 from abquant.config import Setting
 
 global best_ip
