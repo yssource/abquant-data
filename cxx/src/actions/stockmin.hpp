@@ -13,14 +13,14 @@
 #include <experimental/propagate_const>
 #include <iostream>
 
-#include "abquant/actions/stock.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/utils.hpp"
 // #include "abquant/actions/xdxr.hpp"
 #include "abquant/models/stockmin.h"
 
 namespace abq
 {
-class StockMinAction : public StockAction<StockMinAction>, std::enable_shared_from_this<StockMinAction>
+class StockMinAction : public SecurityAction<StockMinAction>, std::enable_shared_from_this<StockMinAction>
 {
 public:
     //! Default constructor
@@ -44,7 +44,7 @@ public:
     //! Move assignment operator
     StockMinAction& operator=(StockMinAction&& other) noexcept;
 
-    QList<StockMin> getStocks() const;
+    QList<StockMin> get_securities() const;
     QVector<const char*> getColumns() const;
     MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
     MyDataFramePtr getDataFrame() const;
@@ -63,7 +63,7 @@ private:
     {
         QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = sa.getStocks();
+        auto qs = sa.get_securities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -116,7 +116,7 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
         }
     }
 
-    for (auto s : getStocks()) {
+    for (auto s : get_securities()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
                 series << s.open();

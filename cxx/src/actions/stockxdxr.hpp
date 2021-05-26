@@ -13,12 +13,12 @@
 #include <experimental/propagate_const>
 #include <iostream>
 
-#include "abquant/actions/stock.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/models/stockxdxr.h"
 
 namespace abq
 {
-class StockXdxrAction : public StockAction<StockXdxrAction>, std::enable_shared_from_this<StockXdxrAction>
+class StockXdxrAction : public SecurityAction<StockXdxrAction>, std::enable_shared_from_this<StockXdxrAction>
 {
 public:
     //! Default constructor
@@ -41,7 +41,7 @@ public:
     //! Move assignment operator
     StockXdxrAction& operator=(StockXdxrAction&& other) noexcept;
 
-    QList<StockXdxr> getStocks() const;
+    QList<StockXdxr> get_securities() const;
     QVector<const char*> getColumns() const;
     MyDataFramePtr getDataFrame() const;
 
@@ -58,7 +58,7 @@ private:
     {
         QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = sa.getStocks();
+        auto qs = sa.get_securities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -85,7 +85,7 @@ QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
-    for (auto s : getStocks()) {
+    for (auto s : get_securities()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("category") == QString(col)) {
                 series << static_cast<double>(s.category());

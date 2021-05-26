@@ -11,10 +11,9 @@
 #include <QtTest/QtTest>
 
 #include "abquant/actions/abquant.hpp"
-#include "abquant/actions/index.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/indexday.hpp"
 #include "abquant/actions/indicator.hpp"
-#include "abquant/actions/stock.hpp"
 #include "abquant/actions/stockday.hpp"
 #include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/stockxdxr.hpp"
@@ -34,8 +33,8 @@ static QList<IndexDay> indexdays;
 static std::shared_ptr<StockDayAction> sa;
 static std::shared_ptr<IndexDayAction> ia;
 
-static std::shared_ptr<Indicator<abq::StockAction<abq::StockDayAction>::derived_type>> indstockday;
-static std::shared_ptr<Indicator<abq::IndexAction<abq::IndexDayAction>::derived_type>> indindexday;
+static std::shared_ptr<Indicator<abq::SecurityAction<abq::StockDayAction>::derived_type>> indstockday;
+static std::shared_ptr<Indicator<abq::SecurityAction<abq::IndexDayAction>::derived_type>> indindexday;
 
 class TestIndicator : public QObject
 {

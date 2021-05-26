@@ -13,14 +13,14 @@
 #include <experimental/propagate_const>
 #include <iostream>
 
-#include "abquant/actions/stock.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/utils.hpp"
 // #include "abquant/models/securitylist.h"
 
 namespace abq
 {
 template <typename S>
-class SecurityListAction : public StockAction<SecurityListAction<S>>,
+class SecurityListAction : public SecurityAction<SecurityListAction<S>>,
                            std::enable_shared_from_this<SecurityListAction<S>>
 {
 public:

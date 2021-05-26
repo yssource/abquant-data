@@ -36,7 +36,7 @@ StockXdxrAction& StockXdxrAction::operator=(StockXdxrAction&& other) noexcept
 
 MyDataFramePtr StockXdxrAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
 
-QList<StockXdxr> StockXdxrAction::getStocks() const { return pImpl->getStocks(*this); };
+QList<StockXdxr> StockXdxrAction::get_securities() const { return pImpl->get_securities(*this); };
 
 QVector<const char*> StockXdxrAction::getColumns() const { return pImpl->getColumns(*this); }
 

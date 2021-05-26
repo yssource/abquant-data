@@ -11,7 +11,7 @@
 #include <QtTest/QtTest>
 
 #include "abquant/actions/abquant.hpp"
-#include "abquant/actions/stock.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/stockday.hpp"
 #include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/stockxdxr.hpp"

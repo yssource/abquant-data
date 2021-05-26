@@ -41,7 +41,7 @@ MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
 
 QStringList StockMinAction::getCodes() const { return pImpl->getCodes(*this); }
 
-QList<StockMin> StockMinAction::getStocks() const { return pImpl->getStocks(*this); };
+QList<StockMin> StockMinAction::get_securities() const { return pImpl->get_securities(*this); };
 
 QVector<const char*> StockMinAction::getColumns() const { return pImpl->getColumns(*this); }
 

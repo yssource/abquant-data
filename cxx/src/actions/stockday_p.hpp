@@ -20,7 +20,7 @@ public:
     MyDataFramePtr getDataFrame(const StockDayAction& sa) const;
     MyDataFramePtr toFq(FQ_TYPE fq);
     QStringList getCodes(const StockDayAction&) const { return m_codes; };
-    QList<StockDay> getStocks(const StockDayAction&) const { return m_stockdays; };
+    QList<StockDay> get_securities(const StockDayAction&) const { return m_stockdays; };
     QVector<const char*> getColumns(const StockDayAction&) const { return m_columns; };
 
 private:

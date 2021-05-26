@@ -13,13 +13,13 @@
 #include <experimental/propagate_const>
 #include <iostream>
 
-#include "abquant/actions/stock.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/utils.hpp"
 #include "abquant/models/stockday.h"
 
 namespace abq
 {
-class StockDayAction : public StockAction<StockDayAction>, std::enable_shared_from_this<StockDayAction>
+class StockDayAction : public SecurityAction<StockDayAction>, std::enable_shared_from_this<StockDayAction>
 {
 public:
     //! Default constructor
@@ -42,7 +42,7 @@ public:
     //! Move assignment operator
     StockDayAction& operator=(StockDayAction&& other) noexcept;
 
-    QList<StockDay> getStocks() const;
+    QList<StockDay> get_securities() const;
     QVector<const char*> getColumns() const;
     MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
     MyDataFramePtr getDataFrame() const;
@@ -61,7 +61,7 @@ private:
     {
         QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = sa.getStocks();
+        auto qs = sa.get_securities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -112,7 +112,7 @@ QVector<T> StockDayAction::toSeries(const char* col) const noexcept
         }
     }
 
-    for (auto s : getStocks()) {
+    for (auto s : get_securities()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
                 series << s.open();

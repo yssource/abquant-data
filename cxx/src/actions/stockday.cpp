@@ -41,7 +41,7 @@ MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
 
 QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
 
-QList<StockDay> StockDayAction::getStocks() const { return pImpl->getStocks(*this); };
+QList<StockDay> StockDayAction::get_securities() const { return pImpl->get_securities(*this); };
 
 QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
 

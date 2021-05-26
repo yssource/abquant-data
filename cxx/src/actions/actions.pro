@@ -25,7 +25,6 @@ HEADERS += emconcepthistory.hpp
 HEADERS += security.hpp
 HEADERS += indexday.hpp
 HEADERS += indexmin.hpp
-HEADERS += stock.hpp
 HEADERS += securitylist.hpp
 HEADERS += stockday.hpp
 HEADERS += stockday_p.hpp

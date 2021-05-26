@@ -11,7 +11,7 @@
 #include <QtTest/QtTest>
 
 #include "abquant/actions/abquant.hpp"
-#include "abquant/actions/index.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/indexday.hpp"
 // #include "abquant/actions/indexmin.hpp"
 #include "abquant/actions/utils.hpp"
