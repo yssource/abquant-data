@@ -33,8 +33,8 @@ private slots:
     void initTestCase();
     void initTestCase_data();
     void cleanupTestCase();
-    void getSecurities_data();
-    void getSecurities();
+    void get_securities_data();
+    void get_securities();
 };
 
 void TestSecurityList::initTestCase() {}
@@ -61,17 +61,17 @@ void TestSecurityList::initTestCase_data()
     QTest::newRow("1") << sa2 << 3 << ia2 << 3;
 }
 
-void TestSecurityList::getSecurities_data() {}
+void TestSecurityList::get_securities_data() {}
 
-void TestSecurityList::getSecurities()
+void TestSecurityList::get_securities()
 {
     QFETCH_GLOBAL(StockListActionPtr, sla);
     QFETCH_GLOBAL(int, s_rst);
-    QCOMPARE(sla->getSecurities().count(), s_rst);
+    QCOMPARE(sla->get_securities().count(), s_rst);
 
     QFETCH_GLOBAL(IndexListActionPtr, ila);
     QFETCH_GLOBAL(int, i_rst);
-    QCOMPARE(ila->getSecurities().count(), i_rst);
+    QCOMPARE(ila->get_securities().count(), i_rst);
 }
 
 void TestSecurityList::cleanupTestCase() {}

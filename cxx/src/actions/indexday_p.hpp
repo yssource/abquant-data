@@ -17,14 +17,14 @@ class IndexDayAction::impl
 {
 public:
     impl(IndexDayAction& sa, QStringList codes, const char* start, const char* end, FQ_TYPE xdxr);
-    MyDataFramePtr getDataFrame(const IndexDayAction& sa) const;
-    MyDataFramePtr toFq(FQ_TYPE fq);
-    QStringList getCodes(const IndexDayAction&) const { return m_codes; };
+    MyDataFramePtr get_dataframe(const IndexDayAction& sa) const;
+    MyDataFramePtr to_fq_type(FQ_TYPE fq);
+    QStringList get_codes(const IndexDayAction&) const { return m_codes; };
     QList<IndexDay> get_securities(const IndexDayAction&) const { return m_indexdays; };
-    QVector<const char*> getColumns(const IndexDayAction&) const { return m_columns; };
+    QVector<const char*> get_columns(const IndexDayAction&) const { return m_columns; };
 
 private:
-    void setDataFrame();
+    void set_dataframe();
 
 private:
     QList<IndexDay> m_indexdays;

@@ -35,13 +35,13 @@ IndexDayAction& IndexDayAction::operator=(IndexDayAction&& other) noexcept
     return *this;
 };
 
-MyDataFramePtr IndexDayAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+MyDataFramePtr IndexDayAction::get_dataframe() const { return pImpl->get_dataframe(*this); }
 
-QStringList IndexDayAction::getCodes() const { return pImpl->getCodes(*this); }
+QStringList IndexDayAction::get_codes() const { return pImpl->get_codes(*this); }
 
 QList<IndexDay> IndexDayAction::get_securities() const { return pImpl->get_securities(*this); };
 
-QVector<const char*> IndexDayAction::getColumns() const { return pImpl->getColumns(*this); }
+QVector<const char*> IndexDayAction::get_columns() const { return pImpl->get_columns(*this); }
 
 /***********************
  * IndexDayAction impl *
@@ -57,13 +57,13 @@ IndexDayAction::impl::impl(IndexDayAction& sa, QStringList codes, const char* st
                  << "start: " << start << "\n"
                  << "end: " << end << "\n";
     }
-    setDataFrame();
+    set_dataframe();
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
-MyDataFramePtr IndexDayAction::impl::getDataFrame(const IndexDayAction&) const { return m_df; }
+MyDataFramePtr IndexDayAction::impl::get_dataframe(const IndexDayAction&) const { return m_df; }
 
-void IndexDayAction::impl::setDataFrame()
+void IndexDayAction::impl::set_dataframe()
 {
     MyDataFrame df;
     try {

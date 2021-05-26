@@ -49,12 +49,12 @@ using series_no_cvp_type  = std::decay<series_type>::type;
 /***************************
  * SecurityAction declaration *
  ***************************/
-template <class SA>
+template <typename A>
 class SecurityAction : public TActionContext
 {
 public:
-    using self_type    = SecurityAction<SA>;
-    using derived_type = SA;
+    using self_type    = SecurityAction<A>;
+    using derived_type = A;
     using IndicatorPtr = std::shared_ptr<Indicator<derived_type>>;
 
 public:
@@ -64,7 +64,7 @@ public:
     const derived_type& derived_cast() const& noexcept;
     derived_type derived_cast() && noexcept;
 
-    IndicatorPtr makeIndicator();
+    IndicatorPtr make_indicator();
 
 protected:
     //! Default constructor
@@ -89,7 +89,7 @@ protected:
 
 protected:
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
     template <typename S>
     QList<S> run(const QStringList codes, const char* start, const char* end);
@@ -113,10 +113,10 @@ protected:
     template <typename S>
     QList<S> get_all_securities(const QStringList codes, const char* end = "");
 
-    auto getSecurities();
+    auto get_securities();
 
 private:
-    friend SA;
+    friend A;
     friend class Indicator<self_type>;
 };
 
@@ -130,8 +130,8 @@ private:
 /**
  * Returns a pointer to the actual derived type of the SecurityAction.
  */
-template <class SA>
-inline auto SecurityAction<SA>::derived_cast() & noexcept -> derived_type*
+template <typename A>
+inline auto SecurityAction<A>::derived_cast() & noexcept -> derived_type*
 {
     return static_cast<derived_type*>(this);
 }
@@ -139,8 +139,8 @@ inline auto SecurityAction<SA>::derived_cast() & noexcept -> derived_type*
 /**
  * Returns a constant reference to the actual derived type of the SecurityAction.
  */
-template <class SA>
-inline auto SecurityAction<SA>::derived_cast() const& noexcept -> const derived_type&
+template <typename A>
+inline auto SecurityAction<A>::derived_cast() const& noexcept -> const derived_type&
 {
     return *static_cast<const derived_type*>(this);
 }
@@ -148,15 +148,15 @@ inline auto SecurityAction<SA>::derived_cast() const& noexcept -> const derived_
 /**
  * Returns a constant reference to the actual derived type of the SecurityAction.
  */
-template <class SA>
-inline auto SecurityAction<SA>::derived_cast() && noexcept -> derived_type
+template <typename A>
+inline auto SecurityAction<A>::derived_cast() && noexcept -> derived_type
 {
     return *static_cast<derived_type*>(this);
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::run(const QStringList codes, const char* start, const char* end)
+QList<S> SecurityAction<A>::run(const QStringList codes, const char* start, const char* end)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, start, end);
 
@@ -164,9 +164,9 @@ QList<S> SecurityAction<SA>::run(const QStringList codes, const char* start, con
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::run(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+QList<S> SecurityAction<A>::run(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, start, end, freq);
 
@@ -174,9 +174,9 @@ QList<S> SecurityAction<SA>::run(const QStringList codes, const char* start, con
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::run(const QStringList codes, int category)
+QList<S> SecurityAction<A>::run(const QStringList codes, int category)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, category);
 
@@ -184,35 +184,35 @@ QList<S> SecurityAction<SA>::run(const QStringList codes, int category)
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::run(const char* end)
+QList<S> SecurityAction<A>::run(const char* end)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, end);
     QList<S> secriies        = future.result();
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::run(const QStringList codes, const char* end)
+QList<S> SecurityAction<A>::run(const QStringList codes, const char* end)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, codes, end);
     QList<S> secriies        = future.result();
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename T>
-QVector<T> SecurityAction<SA>::toSeries(const char* col) const noexcept
+QVector<T> SecurityAction<A>::to_series(const char* col) const noexcept
 {
     auto sa = derived_cast();
-    return sa->toSeries(col);
+    return sa->to_series(col);
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::get_price(const QStringList codes, const char* start, const char* end)
+QList<S> SecurityAction<A>::get_price(const QStringList codes, const char* start, const char* end)
 {
     double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
     double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
@@ -225,9 +225,9 @@ QList<S> SecurityAction<SA>::get_price(const QStringList codes, const char* star
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
+QList<S> SecurityAction<A>::get_price(const QStringList codes, const char* start, const char* end, MIN_FREQ freq)
 {
     double start_d = QDateTime::fromString(QString::fromUtf8(start), Qt::ISODate).toSecsSinceEpoch();
     double end_d   = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
@@ -240,9 +240,9 @@ QList<S> SecurityAction<SA>::get_price(const QStringList codes, const char* star
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::get_price(const QStringList codes, int category)
+QList<S> SecurityAction<A>::get_price(const QStringList codes, int category)
 {
     auto sa = derived_cast();
     TDatabaseContext::setCurrentDatabaseContext(sa);
@@ -253,9 +253,9 @@ QList<S> SecurityAction<SA>::get_price(const QStringList codes, int category)
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::get_all_securities(const char* end)
+QList<S> SecurityAction<A>::get_all_securities(const char* end)
 {
     double end_d = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
     auto sa      = derived_cast();
@@ -267,9 +267,9 @@ QList<S> SecurityAction<SA>::get_all_securities(const char* end)
     return secriies;
 }
 
-template <class SA>
+template <typename A>
 template <typename S>
-QList<S> SecurityAction<SA>::get_all_securities(const QStringList codes, const char* end)
+QList<S> SecurityAction<A>::get_all_securities(const QStringList codes, const char* end)
 {
     double end_d = QDateTime::fromString(QString::fromUtf8(end), Qt::ISODate).toSecsSinceEpoch();
     auto sa      = derived_cast();
@@ -281,15 +281,15 @@ QList<S> SecurityAction<SA>::get_all_securities(const QStringList codes, const c
     return secriies;
 }
 
-template <class SA>
-inline auto SecurityAction<SA>::getSecurities()
+template <typename A>
+inline auto SecurityAction<A>::get_securities()
 {
     auto sa = derived_cast();
-    return sa->getSecurities();
+    return sa->get_securities();
 }
 
-template <class SA>
-inline auto SecurityAction<SA>::makeIndicator() -> IndicatorPtr
+template <typename A>
+inline auto SecurityAction<A>::make_indicator() -> IndicatorPtr
 {
     auto sa = derived_cast();
     return std::make_shared<Indicator<derived_type>>(sa);

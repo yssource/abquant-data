@@ -53,7 +53,7 @@ void TestEmConceptHistory::initTestCase()
 void TestEmConceptHistory::f8_turnover_data()
 {
     QTest::addColumn<double>("f8_turnover");
-    xt::xarray<double> xs = xt::adapt(ca.toSeries<double>("f8_turnover").toStdVector());
+    xt::xarray<double> xs = xt::adapt(ca.to_series<double>("f8_turnover").toStdVector());
     QTest::newRow("1") << xs(0);
 }
 
@@ -67,7 +67,7 @@ void TestEmConceptHistory::f8_turnover()
 void TestEmConceptHistory::mkt_code_data()
 {
     QTest::addColumn<QString>("mkt_code");
-    xt::xarray<std::string> xs = xt::adapt(ca.toSeries<std::string>("mkt_code").toStdVector());
+    xt::xarray<std::string> xs = xt::adapt(ca.to_series<std::string>("mkt_code").toStdVector());
     QTest::newRow("1") << QString::fromStdString(xs(0));
 }
 

@@ -17,13 +17,13 @@ class IndexMinAction::impl
 {
 public:
     impl(IndexMinAction& sa, QStringList codes, const char* start, const char* end, MIN_FREQ freq);
-    MyDataFramePtr getDataFrame(const IndexMinAction& sa) const;
-    QStringList getCodes(const IndexMinAction&) const { return m_codes; };
+    MyDataFramePtr get_dataframe(const IndexMinAction& sa) const;
+    QStringList get_codes(const IndexMinAction&) const { return m_codes; };
     QList<IndexMin> get_securities(const IndexMinAction&) const { return m_indexmins; };
-    QVector<const char*> getColumns(const IndexMinAction&) const { return m_columns; };
+    QVector<const char*> get_columns(const IndexMinAction&) const { return m_columns; };
 
 private:
-    void setDataFrame();
+    void set_dataframe();
 
 private:
     QList<IndexMin> m_indexmins;

@@ -15,7 +15,6 @@
 
 #include "abquant/actions/security.hpp"
 #include "abquant/actions/utils.hpp"
-// #include "abquant/models/securitylist.h"
 
 namespace abq
 {
@@ -46,13 +45,13 @@ public:
     //! Move assignment operator
     SecurityListAction& operator=(SecurityListAction&& other) noexcept;
 
-    QStringList getCodes() const { return m_codes; };
-    QList<S> getSecurities() const { return m_security_list; };
-    QVector<const char*> getColumns() const { return m_columns; };
-    MyDataFramePtr getDataFrame() const;
+    QStringList get_codes() const { return m_codes; };
+    QList<S> get_securities() const { return m_security_list; };
+    QVector<const char*> get_columns() const { return m_columns; };
+    MyDataFramePtr get_dataframe() const;
 
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
 private:
     QList<S> m_security_list;
@@ -61,13 +60,13 @@ private:
     MyDataFramePtr m_df{nullptr};
 
 private:
-    void setDataFrame();
+    void set_dataframe();
 
     friend inline QDebug operator<<(QDebug d, const SecurityListAction& sa)
     {
-        QVector<const char*> columns = sa.getColumns();
+        QVector<const char*> columns = sa.get_columns();
         d << columns << "\n";
-        auto qs = sa.getSecurities();
+        auto qs = sa.get_securities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -94,7 +93,7 @@ SecurityListAction<S>::SecurityListAction()
     if (m_security_list.isEmpty()) {
         qDebug() << "No security list data.\n";
     }
-    setDataFrame();
+    set_dataframe();
 }
 
 template <typename S>
@@ -106,18 +105,18 @@ SecurityListAction<S>::SecurityListAction(const QStringList codes, const char* e
                  << codes << "\n"
                  << "end: " << end << "\n";
     }
-    setDataFrame();
+    set_dataframe();
 }
 
 template <typename S>
-MyDataFramePtr SecurityListAction<S>::getDataFrame() const
+MyDataFramePtr SecurityListAction<S>::get_dataframe() const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
 template <typename S>
-void SecurityListAction<S>::setDataFrame()
+void SecurityListAction<S>::set_dataframe()
 {
     MyDataFrame df;
     try {
@@ -156,15 +155,15 @@ void SecurityListAction<S>::setDataFrame()
 
 template <typename S>
 template <typename T>
-QVector<T> SecurityListAction<S>::toSeries(const char* col) const noexcept
+QVector<T> SecurityListAction<S>::to_series(const char* col) const noexcept
 {
     QVector<T> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
 
-    for (auto s : getSecurities()) {
+    for (auto s : get_securities()) {
         if constexpr (std::is_same_v<T, std::string>) {
             if (QString("code") == QString(col)) {
                 series << s.code().toStdString();

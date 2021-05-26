@@ -34,8 +34,8 @@ public:
 
     size_t toQfq()
     {
-        // const auto fq = m_sma.toFq(FQ_TYPE::PRE);
-        auto fq = m_sma.getDataFrame();
+        // const auto fq = m_sma.to_fq_type(FQ_TYPE::PRE);
+        auto fq = m_sma.get_dataframe();
         // fq.write<std::ostream, std::string, double, int>(std::cout);
         fq->write<std::ostream, std::string, double, int>(std::cout);
         return fq->get_index().size();
@@ -43,9 +43,9 @@ public:
     }
 
     template <class T>
-    std::vector<T> toSeries(const string& col) const noexcept
+    std::vector<T> to_series(const string& col) const noexcept
     {
-        auto series = m_sma.toSeries<T>(col.c_str());
+        auto series = m_sma.to_series<T>(col.c_str());
         return series.toStdVector();
     }
     ~PyStockMin() = default;
@@ -82,15 +82,15 @@ PYBIND11_MODULE(pyabqstockmin, m)
 
         qfq function.
     )pbdoc")
-        .def("toSeries", &PyStockMin::toSeries<double>, R"pbdoc(
-        toSeries double
+        .def("to_series", &PyStockMin::to_series<double>, R"pbdoc(
+        to_series double
 
-        toSeries double function.
+        to_series double function.
     )pbdoc")
-        .def("toSeries_string", &PyStockMin::toSeries<std::string>, R"pbdoc(
-        toSeries string
+        .def("to_series_string", &PyStockMin::to_series<std::string>, R"pbdoc(
+        to_series string
 
-        toSeries string function.
+        to_series string function.
     )pbdoc");
 
 #ifdef VERSION_INFO

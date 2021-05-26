@@ -51,7 +51,7 @@ def xdxr():
     x = Xdxr()
     # df = x.getXdxr()
     # dfx = x.getIdxs()
-    # df = x.getColumns()
+    # df = x.get_columns()
     df = x.getData()
     # df = x.hello()
     # df = x.getVec()

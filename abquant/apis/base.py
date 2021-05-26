@@ -136,15 +136,15 @@ def get_price(
 
         sdm = stockmin(order_book_ids, start_date, end_date, frequency, fq)
 
-    date = sdm.toSeries_string("date")
-    code = sdm.toSeries_string("code")
+    date = sdm.to_series_string("date")
+    code = sdm.to_series_string("code")
     df = pd.DataFrame({"code": code, "date": date})
     for field in fields:
         if field in ["code", "date"]:
             continue
         if field in ["vol"]:
-            df["volume"] = sdm.toSeries(field)
-        df[field] = sdm.toSeries(field)
+            df["volume"] = sdm.to_series(field)
+        df[field] = sdm.to_series(field)
     df.set_index(["code", "date"], inplace=True)
 
     if len(fields) == 1:
@@ -162,13 +162,13 @@ def get_all_securities(
         from pyabqsecuritylist import PySecurityList as securitylist
 
         sl = securitylist()
-        code = sl.toSeries_string("code")
-        volunit = sl.toSeries("volunit")
-        decimal_point = sl.toSeries("decimal_point")
-        name = sl.toSeries_string("name")
-        pre_close = sl.toSeries("pre_close")
-        sse = sl.toSeries_string("sse")
-        sec = sl.toSeries_string("sec")
+        code = sl.to_series_string("code")
+        volunit = sl.to_series("volunit")
+        decimal_point = sl.to_series("decimal_point")
+        name = sl.to_series_string("name")
+        pre_close = sl.to_series("pre_close")
+        sse = sl.to_series_string("sse")
+        sec = sl.to_series_string("sec")
         print(code[:10])
 
         df = pd.DataFrame(
@@ -195,13 +195,13 @@ def get_security_info(
 
     sl = securitylist([unnormalize_code(code)], "", ins_type)
 
-    code = sl.toSeries_string("code")
-    volunit = sl.toSeries("volunit")
-    decimal_point = sl.toSeries("decimal_point")
-    name = sl.toSeries_string("name")
-    pre_close = sl.toSeries("pre_close")
-    sse = sl.toSeries_string("sse")
-    sec = sl.toSeries_string("sec")
+    code = sl.to_series_string("code")
+    volunit = sl.to_series("volunit")
+    decimal_point = sl.to_series("decimal_point")
+    name = sl.to_series_string("name")
+    pre_close = sl.to_series("pre_close")
+    sse = sl.to_series_string("sse")
+    sec = sl.to_series_string("sec")
     try:
         s = pd.Series(
             {

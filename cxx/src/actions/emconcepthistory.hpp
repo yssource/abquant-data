@@ -55,14 +55,14 @@ public:
     };
 
     inline QList<EmConceptHistory> getEmConceptes() const { return m_emconcepthistorys; };
-    inline QVector<const char*> getColumns() const { return m_columns; };
+    inline QVector<const char*> get_columns() const { return m_columns; };
     MyDataFrame toDataFrame() const;
-    std::shared_ptr<MyDataFrame> getDataFrame() const;
+    std::shared_ptr<MyDataFrame> get_dataframe() const;
     vector<double> getOpen() const;
-    void setDataFrame();
+    void set_dataframe();
 
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
     // FIXME: a workaround for pybind11, maybe a bug that pybind11 does not work well with template, since unable get
     // MyDataFrame for binding
@@ -81,7 +81,7 @@ private:
 private:
     friend inline QDebug operator<<(QDebug d, const EmConceptHistoryAction& ia)
     {
-        QVector<const char*> columns = ia.getColumns();
+        QVector<const char*> columns = ia.get_columns();
         d << columns << "\n";
         auto qs = ia.getEmConceptes();
         d << qs.size() << "\n";
@@ -102,10 +102,10 @@ private:
 };
 
 template <typename T>
-QVector<T> EmConceptHistoryAction::toSeries(const char* col) const noexcept
+QVector<T> EmConceptHistoryAction::to_series(const char* col) const noexcept
 {
     QVector<T> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }

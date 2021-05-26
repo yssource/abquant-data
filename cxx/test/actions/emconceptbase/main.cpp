@@ -51,7 +51,7 @@ void TestEmConceptBase::initTestCase()
 void TestEmConceptBase::f8_turnover_data()
 {
     QTest::addColumn<double>("f8_turnover");
-    xt::xarray<double> xs = xt::adapt(ca.toSeries<double>("f8_turnover").toStdVector());
+    xt::xarray<double> xs = xt::adapt(ca.to_series<double>("f8_turnover").toStdVector());
     QTest::newRow("1") << xs(0);
 }
 
@@ -65,7 +65,7 @@ void TestEmConceptBase::f8_turnover()
 void TestEmConceptBase::f14_name_data()
 {
     QTest::addColumn<QString>("f14_name");
-    xt::xarray<std::string> xs = xt::adapt(ca.toSeries<std::string>("f14_name").toStdVector());
+    xt::xarray<std::string> xs = xt::adapt(ca.to_series<std::string>("f14_name").toStdVector());
     QTest::newRow("1") << QString::fromStdString(xs(0));
 }
 

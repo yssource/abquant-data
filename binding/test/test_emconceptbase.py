@@ -14,13 +14,13 @@ class MainTest(unittest.TestCase):
         codes = ["bk0980", "bk0990"]
         sd = emconceptbase(codes)
 
-        f104_bk_rise_cnt = sd.toSeries_int("f104_bk_rise_cnt")
-        f105_bk_fall_cnt = sd.toSeries_int("f105_bk_fall_cnt")
-        f12_code = sd.toSeries_string("f12_code")
-        f13_market = sd.toSeries_int("f13_market")
-        f14_name = sd.toSeries_string("f14_name")
-        f3_bk_rise_fall_pct = sd.toSeries("f3_bk_rise_fall_pct")
-        f8_turnover = sd.toSeries("f8_turnover")
+        f104_bk_rise_cnt = sd.to_series_int("f104_bk_rise_cnt")
+        f105_bk_fall_cnt = sd.to_series_int("f105_bk_fall_cnt")
+        f12_code = sd.to_series_string("f12_code")
+        f13_market = sd.to_series_int("f13_market")
+        f14_name = sd.to_series_string("f14_name")
+        f3_bk_rise_fall_pct = sd.to_series("f3_bk_rise_fall_pct")
+        f8_turnover = sd.to_series("f8_turnover")
 
         df = pd.DataFrame(
             {

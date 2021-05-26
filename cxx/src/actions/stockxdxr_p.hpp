@@ -17,13 +17,13 @@ class StockXdxrAction::impl
 {
 public:
     impl(StockXdxrAction& sa, QStringList codes, int category);
-    MyDataFramePtr getDataFrame(const StockXdxrAction& sa) const;
-    MyDataFramePtr toFq(const StockXdxrAction& sa, FQ_TYPE fq);
+    MyDataFramePtr get_dataframe(const StockXdxrAction& sa) const;
+    MyDataFramePtr to_fq_type(const StockXdxrAction& sa, FQ_TYPE fq);
     QList<StockXdxr> get_securities(const StockXdxrAction&) const { return m_stockxdxrs; };
-    QVector<const char*> getColumns(const StockXdxrAction&) const { return m_columns; };
+    QVector<const char*> get_columns(const StockXdxrAction&) const { return m_columns; };
 
 private:
-    void setDataFrame();
+    void set_dataframe();
 
 private:
     QList<StockXdxr> m_stockxdxrs;

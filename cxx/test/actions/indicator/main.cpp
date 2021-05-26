@@ -56,16 +56,16 @@ void TestIndicator::initTestCase()
     const char* end   = "2019-12-01";
 
     sa = std::make_shared<StockDayAction>(codes, start, end);
-    indstockday = sa->makeIndicator();
+    indstockday = sa->make_indicator();
 
     ia = std::make_shared<IndexDayAction>(codes, start, end);
-    indindexday = ia->makeIndicator();
+    indindexday = ia->make_indicator();
 }
 
 void TestIndicator::sma_data()
 {
     QTest::addColumn<double>("open");
-    xt::xarray<double> xs = xt::adapt(sa->toSeries<double>("open").toStdVector());
+    xt::xarray<double> xs = xt::adapt(sa->to_series<double>("open").toStdVector());
     xt::xarray<double> rs = indstockday->SMA(xs, 12);
     QTest::newRow("1") << rs(0);
 }

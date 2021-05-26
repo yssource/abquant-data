@@ -61,8 +61,8 @@ public:
     derived_type derived_cast() && noexcept;
 
     // TODO: friend class Indicator<S, derived_type, EmConceptAction>
-    QStringList getCodes() const;
-    // Indicator<self_type> makeIndicator();
+    QStringList get_codes() const;
+    // Indicator<self_type> make_indicator();
 
 protected:
     //! Default constructor
@@ -87,7 +87,7 @@ protected:
 
 protected:
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
     MyDataFrame toDataFrame();
     template <typename C>
@@ -208,10 +208,10 @@ QList<C> EmConceptAction<CA>::run(const QStringList codes)
 
 template <class CA>
 template <typename T>
-QVector<T> EmConceptAction<CA>::toSeries(const char* col) const noexcept
+QVector<T> EmConceptAction<CA>::to_series(const char* col) const noexcept
 {
     auto ca = derived_cast();
-    return ca->toSeries(col);
+    return ca->to_series(col);
 }
 
 template <class CA>
@@ -270,7 +270,7 @@ QList<C> EmConceptAction<CA>::get_blocks(QStringList codes)
 }
 
 template <class CA>
-QStringList EmConceptAction<CA>::getCodes() const
+QStringList EmConceptAction<CA>::get_codes() const
 {
     return m_codes;
 }
@@ -283,7 +283,7 @@ inline auto EmConceptAction<CA>::getEmConceptes()
 }
 
 // template <class CA>
-// inline auto EmConceptAction<CA>::makeIndicator()->Indicator<self_type>
+// inline auto EmConceptAction<CA>::make_indicator()->Indicator<self_type>
 // {
 //     auto ca = derived_cast();
 //     return Indicator<self_type>(ca);

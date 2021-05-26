@@ -40,7 +40,7 @@ MyDataFramePtr Xdxr::getXdxr(MyDataFramePtr df, FQ_TYPE fq) { return pImpl->getX
 Xdxr::impl::impl(const QStringList& codes)
 {
     std::shared_ptr<StockXdxrAction> sap = std::make_shared<StockXdxrAction>(codes, 1);
-    m_xdxr_df                            = sap->getDataFrame();
+    m_xdxr_df                            = sap->get_dataframe();
 };
 
 MyDataFramePtr Xdxr::impl::getXdxr(const MyDataFramePtr df, FQ_TYPE fq)

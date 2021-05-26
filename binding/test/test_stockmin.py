@@ -19,18 +19,18 @@ class MainTest(unittest.TestCase):
         sm = stockmin(codes, start, end, freq, FQ_TYPE.PRE)
         self.assertTrue(sm.toQfq() > 0)
 
-        open_ = sm.toSeries("open")
-        close = sm.toSeries("close")
-        high = sm.toSeries("high")
-        low = sm.toSeries("low")
-        vol = sm.toSeries("vol")
-        amount = sm.toSeries("amount")
-        date = sm.toSeries_string("date")
-        datetime = sm.toSeries_string("datetime")
-        code = sm.toSeries_string("code")
+        open_ = sm.to_series("open")
+        close = sm.to_series("close")
+        high = sm.to_series("high")
+        low = sm.to_series("low")
+        vol = sm.to_series("vol")
+        amount = sm.to_series("amount")
+        date = sm.to_series_string("date")
+        datetime = sm.to_series_string("datetime")
+        code = sm.to_series_string("code")
         print(date[:10])
         print(code[:10])
-        date_stamp = sm.toSeries("date_stamp")
+        date_stamp = sm.to_series("date_stamp")
 
         df = pd.DataFrame(
             {

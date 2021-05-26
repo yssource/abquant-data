@@ -27,18 +27,18 @@ public:
             qcodes << QString::fromStdString(c);
         }
         m_cda = EmConceptHistoryAction(qcodes, m_start.c_str(), m_end.c_str());
-        m_cda.setDataFrame();
+        m_cda.set_dataframe();
     };
 
     template <class T>
-    std::vector<T> toSeries(const string& col) const noexcept
+    std::vector<T> to_series(const string& col) const noexcept
     {
         if constexpr (std::is_same_v<T, double>) {
             auto series = m_cda.get_pyseries(col.c_str());
             return series;
         }
 
-        auto series = m_cda.toSeries<T>(col.c_str());
+        auto series = m_cda.to_series<T>(col.c_str());
         return series.toStdVector();
     }
     ~PyEmConceptHistory() = default;
@@ -61,17 +61,17 @@ PYBIND11_MODULE(pyabqemconcepthistory, m)
         .. pyabqemconcepthistory:: currentmodule_exmaple
 
         .. autosummary::
-           :emconcepthistory: toSeries
+           :emconcepthistory: to_series
 
-           toSeries
+           to_series
     )pbdoc";
 
     py::class_<PyEmConceptHistory> sm_class(m, "PyEmConceptHistory");
     sm_class.def(py::init<std::vector<std::string>, const string, const string>())
-        .def("toSeries", &PyEmConceptHistory::toSeries<double>,
-             R"pbdoc(toSeries double toSeries double function.)pbdoc")
-        .def("toSeries_string", &PyEmConceptHistory::toSeries<std::string>,
-             R"pbdoc(toSeries string toSeries string function.)pbdoc");
+        .def("to_series", &PyEmConceptHistory::to_series<double>,
+             R"pbdoc(to_series double to_series double function.)pbdoc")
+        .def("to_series_string", &PyEmConceptHistory::to_series<std::string>,
+             R"pbdoc(to_series string to_series string function.)pbdoc");
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

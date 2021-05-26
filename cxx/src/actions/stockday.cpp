@@ -35,15 +35,15 @@ StockDayAction& StockDayAction::operator=(StockDayAction&& other) noexcept
     return *this;
 };
 
-MyDataFramePtr StockDayAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+MyDataFramePtr StockDayAction::get_dataframe() const { return pImpl->get_dataframe(*this); }
 
-MyDataFramePtr StockDayAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
+MyDataFramePtr StockDayAction::to_fq_type(FQ_TYPE fq) { return pImpl->to_fq_type(fq); }
 
-QStringList StockDayAction::getCodes() const { return pImpl->getCodes(*this); }
+QStringList StockDayAction::get_codes() const { return pImpl->get_codes(*this); }
 
 QList<StockDay> StockDayAction::get_securities() const { return pImpl->get_securities(*this); };
 
-QVector<const char*> StockDayAction::getColumns() const { return pImpl->getColumns(*this); }
+QVector<const char*> StockDayAction::get_columns() const { return pImpl->get_columns(*this); }
 
 /***********************
  * StockDayAction impl *
@@ -59,20 +59,20 @@ StockDayAction::impl::impl(StockDayAction& sa, QStringList codes, const char* st
                  << "start: " << start << "\n"
                  << "end: " << end << "\n";
     }
-    setDataFrame();
+    set_dataframe();
     if (xdxr != FQ_TYPE::NONE) {
-        m_df = toFq(xdxr);
+        m_df = to_fq_type(xdxr);
     }
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
-MyDataFramePtr StockDayAction::impl::getDataFrame(const StockDayAction&) const
+MyDataFramePtr StockDayAction::impl::get_dataframe(const StockDayAction&) const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
-MyDataFramePtr StockDayAction::impl::toFq(FQ_TYPE fq)
+MyDataFramePtr StockDayAction::impl::to_fq_type(FQ_TYPE fq)
 {
     auto x = Xdxr(m_codes);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
@@ -82,7 +82,7 @@ MyDataFramePtr StockDayAction::impl::toFq(FQ_TYPE fq)
     return m_df;
 }
 
-void StockDayAction::impl::setDataFrame()
+void StockDayAction::impl::set_dataframe()
 {
     MyDataFrame df;
     try {

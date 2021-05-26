@@ -36,21 +36,21 @@ public:
 
     // size_t toQfq() noexcept
     // {
-    //     auto fq = m_sda_ptr->toFq(FQ_TYPE::PRE);
+    //     auto fq = m_sda_ptr->to_fq_type(FQ_TYPE::PRE);
     //     // fq->write<std::ostream, index_type, double, int>(std::cout);
     //     return fq->get_index().size();
     // }
 
     template <class T>
-    std::vector<T> toSeries(const string& col) noexcept
+    std::vector<T> to_series(const string& col) noexcept
     {
-        auto series = m_sda_ptr->toSeries<T>(col.c_str());
+        auto series = m_sda_ptr->to_series<T>(col.c_str());
         return series.toStdVector();
     }
 
     roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
     {
-        auto ind            = m_sda_ptr->makeIndicator();
+        auto ind            = m_sda_ptr->make_indicator();
         roc_return_type rst = ind->ROC(col.c_str(), N, M);
         return rst;
     }
@@ -76,9 +76,9 @@ PYBIND11_MODULE(pyabqstockday, m)
         .. pyabqstockday:: pyabqstockday_module_exmaple
 
         .. autosummary::
-           :stockday: toSeries
+           :stockday: to_series
 
-           toSeries
+           to_series
     )pbdoc";
 
     py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
@@ -86,9 +86,9 @@ PYBIND11_MODULE(pyabqstockday, m)
     sm_class
         .def(py::init<std::vector<std::string>, const string, const string, FQ_TYPE>())
         // .def("toQfq", &PyStockDay::toQfq, R"pbdoc(toQfq qfq function.)pbdoc")
-        .def("toSeries", &PyStockDay::toSeries<double> /* , py::return_value_policy::reference */,
-             R"pbdoc(toSeries double function.)pbdoc")
-        .def("toSeries_string", &PyStockDay::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc")
+        .def("to_series", &PyStockDay::to_series<double> /* , py::return_value_policy::reference */,
+             R"pbdoc(to_series double function.)pbdoc")
+        .def("to_series_string", &PyStockDay::to_series<std::string>, R"pbdoc(to_series string function.)pbdoc")
         .def("ROC", &PyStockDay::ROC, R"pbdoc(ROC function.)pbdoc");
 
 #ifdef VERSION_INFO

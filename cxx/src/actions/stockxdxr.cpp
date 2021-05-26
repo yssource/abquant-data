@@ -34,11 +34,11 @@ StockXdxrAction& StockXdxrAction::operator=(StockXdxrAction&& other) noexcept
     return *this;
 };
 
-MyDataFramePtr StockXdxrAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+MyDataFramePtr StockXdxrAction::get_dataframe() const { return pImpl->get_dataframe(*this); }
 
 QList<StockXdxr> StockXdxrAction::get_securities() const { return pImpl->get_securities(*this); };
 
-QVector<const char*> StockXdxrAction::getColumns() const { return pImpl->getColumns(*this); }
+QVector<const char*> StockXdxrAction::get_columns() const { return pImpl->get_columns(*this); }
 
 /***********************
  * StockXdxrAction impl *
@@ -52,17 +52,17 @@ StockXdxrAction::impl::impl(StockXdxrAction& sa, QStringList codes, int category
                  << codes << "\n"
                  << "category: " << category << "\n";
     }
-    setDataFrame();
+    set_dataframe();
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
-MyDataFramePtr StockXdxrAction::impl::getDataFrame(const StockXdxrAction&) const
+MyDataFramePtr StockXdxrAction::impl::get_dataframe(const StockXdxrAction&) const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
-void StockXdxrAction::impl::setDataFrame()
+void StockXdxrAction::impl::set_dataframe()
 {
     MyDataFrame df;
     try {

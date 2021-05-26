@@ -51,14 +51,14 @@ public:
     };
 
     template <class T>
-    std::vector<T> toSeries(const string& col) noexcept
+    std::vector<T> to_series(const string& col) noexcept
     {
         QVector<T> series;
         if (m_ins_type == INSTRUMENT_TYPE::CS) {
-            series = m_sla_ptr->toSeries<T>(col.c_str());
+            series = m_sla_ptr->to_series<T>(col.c_str());
         }
         if (m_ins_type == INSTRUMENT_TYPE::INDX) {
-            series = m_ila_ptr->toSeries<T>(col.c_str());
+            series = m_ila_ptr->to_series<T>(col.c_str());
         }
         return series.toStdVector();
     }
@@ -84,9 +84,9 @@ PYBIND11_MODULE(pyabqsecuritylist, m)
         .. pyabqsecuritylist:: pyabqsecuritylist_module_exmaple
 
         .. autosummary::
-           :securitylist: toSeries
+           :securitylist: to_series
 
-           toSeries
+           to_series
     )pbdoc";
 
     py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
@@ -94,9 +94,9 @@ PYBIND11_MODULE(pyabqsecuritylist, m)
     sm_class.def(py::init<INSTRUMENT_TYPE>())
         .def(py::init<std::vector<std::string>, const string, INSTRUMENT_TYPE>(), py::arg("codes"), py::arg("end") = "",
              py::arg("ins_type") = INSTRUMENT_TYPE::CS)
-        .def("toSeries", &PySecurityList::toSeries<double> /* , py::return_value_policy::reference */,
-             R"pbdoc(toSeries double function.)pbdoc")
-        .def("toSeries_string", &PySecurityList::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc");
+        .def("to_series", &PySecurityList::to_series<double> /* , py::return_value_policy::reference */,
+             R"pbdoc(to_series double function.)pbdoc")
+        .def("to_series_string", &PySecurityList::to_series<std::string>, R"pbdoc(to_series string function.)pbdoc");
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

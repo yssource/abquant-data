@@ -19,17 +19,17 @@ class MainTest(unittest.TestCase):
         end = "2019-12-01"
         sd = indexday(codes, start, end)
 
-        open_ = sd.toSeries("open")
-        close = sd.toSeries("close")
-        high = sd.toSeries("high")
-        low = sd.toSeries("low")
-        vol = sd.toSeries("vol")
-        amount = sd.toSeries("amount")
-        date = sd.toSeries_string("date")
-        code = sd.toSeries_string("code")
+        open_ = sd.to_series("open")
+        close = sd.to_series("close")
+        high = sd.to_series("high")
+        low = sd.to_series("low")
+        vol = sd.to_series("vol")
+        amount = sd.to_series("amount")
+        date = sd.to_series_string("date")
+        code = sd.to_series_string("code")
         print(date[:10])
         print(code[:10])
-        date_stamp = sd.toSeries("date_stamp")
+        date_stamp = sd.to_series("date_stamp")
 
         df = pd.DataFrame(
             {

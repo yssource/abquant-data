@@ -58,46 +58,46 @@ void TestIndexDay::initTestCase()
 
     IndexDayAction ia(codes, start, end);
 
-    // auto ind = ia.makeIndicator<IndexDay>();
+    // auto ind = ia.make_indicator<IndexDay>();
 
-    auto ind = ia.makeIndicator();
+    auto ind = ia.make_indicator();
 
-    // // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
-    // xt::xarray<double> xs = ia.toSeries("open");
+    // // xt::xarray<double> xs = xt::adapt(sa.to_series<double>("open").toStdVector());
+    // xt::xarray<double> xs = ia.to_series("open");
     // // xt::xarray<double> rs = ind.SMA(xs, 12);
 
     // // IndexMinAction sb(codes, start, end);
-    // // // auto ind2 = sb.makeIndicator<IndexMin>();
-    // // auto ind2 = sb.makeIndicator();
+    // // // auto ind2 = sb.make_indicator<IndexMin>();
+    // // auto ind2 = sb.make_indicator();
     // // std::string s{"jimmy"s};
     // // ind2.hello<std::string>(std::move(s));
 
     // // // IndexDayAction ia(codes, start, end);
-    // // auto m_codes = ia.getCodes();
-    // // auto df      = ia.toFq(FQ_TYPE::PRE);
-    // // // auto df = ia.toFq(FQ_TYPE::POST);
+    // // auto m_codes = ia.get_codes();
+    // // auto df      = ia.to_fq_type(FQ_TYPE::PRE);
+    // // // auto df = ia.to_fq_type(FQ_TYPE::POST);
     // // qDebug() << "m_codes main: " << m_codes << "\n";
     // // df.write<std::ostream, std::string, double, int>(std::cout);
     // // qDebug() << ia << "\n";
 
-    // ia.setDataFrame();
-    // auto ddff   = ia.getDataFrame();
+    // ia.set_dataframe();
+    // auto ddff   = ia.get_dataframe();
     // auto ooopen = ia.getOpen();
     // std::cout << ooopen.size() << "\n";
 
     // IndexDayAction ia2(codes, start, end, FQ_TYPE::PRE);
-    // ia2.setDataFrame();
-    // auto xls2 = ia2.toSeries("open");
+    // ia2.set_dataframe();
+    // auto xls2 = ia2.to_series("open");
     // std::cout << xls2.size() << "\n";
     // // IndexMinAction sb(codes, start, end);
-    // // // auto df2 = sb.toFq(FQ_TYPE::PRE);
-    // // auto df2 = sb.toFq(FQ_TYPE::POST);
+    // // // auto df2 = sb.to_fq_type(FQ_TYPE::PRE);
+    // // auto df2 = sb.to_fq_type(FQ_TYPE::POST);
     // // qDebug() << sb << "\n";
 
     // IndexXdxrAction sc(codes);
     // qDebug() << sc << "\n";
 
-    // auto mm0 = ia.toSeries<std::string>("code");
+    // auto mm0 = ia.to_series<std::string>("code");
     // qDebug() << "------- mm0 " << mm0.size() << "\n";
     // for (auto o : mm0) {
     //     for (auto i : o) {
@@ -106,14 +106,14 @@ void TestIndexDay::initTestCase()
     // }
     // qDebug() << "\n code000 \n";
 
-    // auto mm = ia.toSeries<double>("close");
+    // auto mm = ia.to_series<double>("close");
     // for (auto o : mm) {
     //     for (auto i : o) {
     //         qDebug() << i;
     //     }
     // }
 
-    // auto mm2 = ia.toSeries<double>("high");
+    // auto mm2 = ia.to_series<double>("high");
     // for (auto o : mm2) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -121,7 +121,7 @@ void TestIndexDay::initTestCase()
     // }
     // qDebug() << "\n close \n";
 
-    // auto mm3 = ia.toSeries<QString>("date");
+    // auto mm3 = ia.to_series<QString>("date");
     // for (auto o : mm3) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -129,7 +129,7 @@ void TestIndexDay::initTestCase()
     // }
     // qDebug() << "\n date \n";
 
-    // auto mm4 = sc.toSeries<double>("peigu");
+    // auto mm4 = sc.to_series<double>("peigu");
     // for (auto o : mm4) {
     //     for (auto i : o) {
     //         qDebug() << i;

@@ -35,15 +35,15 @@ public:
     };
 
     template <class T>
-    std::vector<T> toSeries(const string& col) noexcept
+    std::vector<T> to_series(const string& col) noexcept
     {
-        auto series = m_ida_ptr->toSeries<T>(col.c_str());
+        auto series = m_ida_ptr->to_series<T>(col.c_str());
         return series.toStdVector();
     }
 
     roc_return_type ROC(const string& col = "close", size_t N = 12, size_t M = 6) noexcept
     {
-        auto ind            = m_ida_ptr->makeIndicator();
+        auto ind            = m_ida_ptr->make_indicator();
         roc_return_type rst = ind->ROC(col.c_str(), N, M);
         return rst;
     }
@@ -68,17 +68,17 @@ PYBIND11_MODULE(pyabqindexday, m)
         .. pyabqindexday:: pyabqindexday_module_exmaple
 
         .. autosummary::
-           :indexday: toSeries
+           :indexday: to_series
 
-           toSeries
+           to_series
     )pbdoc";
 
     py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
     py::class_<PyIndexDay, std::shared_ptr<PyIndexDay>> sm_class(m, "PyIndexDay");
     sm_class.def(py::init<std::vector<std::string>, const string, const string>())
-        .def("toSeries", &PyIndexDay::toSeries<double> /* , py::return_value_policy::reference */,
-             R"pbdoc(toSeries double function.)pbdoc")
-        .def("toSeries_string", &PyIndexDay::toSeries<std::string>, R"pbdoc(toSeries string function.)pbdoc")
+        .def("to_series", &PyIndexDay::to_series<double> /* , py::return_value_policy::reference */,
+             R"pbdoc(to_series double function.)pbdoc")
+        .def("to_series_string", &PyIndexDay::to_series<std::string>, R"pbdoc(to_series string function.)pbdoc")
         .def("ROC", &PyIndexDay::ROC, R"pbdoc(ROC function.)pbdoc");
 
 #ifdef VERSION_INFO

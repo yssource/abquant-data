@@ -32,9 +32,9 @@ public:
     };
 
     template <class T>
-    std::vector<T> toSeries(const string& col) const noexcept
+    std::vector<T> to_series(const string& col) const noexcept
     {
-        auto series = m_ima.toSeries<T>(col.c_str());
+        auto series = m_ima.to_series<T>(col.c_str());
         return series.toStdVector();
     }
     ~PyIndexMin() = default;
@@ -58,22 +58,22 @@ PYBIND11_MODULE(pyabqindexmin, m)
         .. pyabqindexmin:: currentmodule_exmaple
 
         .. autosummary::
-           :indexmin: toSeries
+           :indexmin: to_series
 
-           toSeries
+           to_series
     )pbdoc";
 
     py::class_<PyIndexMin> sm_class(m, "PyIndexMin");
     sm_class.def(py::init<std::vector<std::string>, const string, const string, const string>())
-        .def("toSeries", &PyIndexMin::toSeries<double>, R"pbdoc(
-        toSeries double
+        .def("to_series", &PyIndexMin::to_series<double>, R"pbdoc(
+        to_series double
 
-        toSeries double function.
+        to_series double function.
     )pbdoc")
-        .def("toSeries_string", &PyIndexMin::toSeries<std::string>, R"pbdoc(
-        toSeries string
+        .def("to_series_string", &PyIndexMin::to_series<std::string>, R"pbdoc(
+        to_series string
 
-        toSeries string function.
+        to_series string function.
     )pbdoc");
 
 #ifdef VERSION_INFO

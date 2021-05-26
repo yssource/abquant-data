@@ -20,16 +20,16 @@ class MainTest(unittest.TestCase):
         freq = "5min"
         sm = indexmin(codes, start, end, freq)
 
-        open_ = sm.toSeries("open")
-        close = sm.toSeries("close")
-        high = sm.toSeries("high")
-        low = sm.toSeries("low")
-        vol = sm.toSeries("vol")
-        amount = sm.toSeries("amount")
-        date = sm.toSeries_string("date")
-        datetime = sm.toSeries_string("datetime")
-        code = sm.toSeries_string("code")
-        date_stamp = sm.toSeries("date_stamp")
+        open_ = sm.to_series("open")
+        close = sm.to_series("close")
+        high = sm.to_series("high")
+        low = sm.to_series("low")
+        vol = sm.to_series("vol")
+        amount = sm.to_series("amount")
+        date = sm.to_series_string("date")
+        datetime = sm.to_series_string("datetime")
+        code = sm.to_series_string("code")
+        date_stamp = sm.to_series("date_stamp")
         df = pd.DataFrame(
             {
                 "open": open_,

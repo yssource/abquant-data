@@ -17,14 +17,14 @@ class StockMinAction::impl
 {
 public:
     impl(StockMinAction& sa, QStringList codes, const char* start, const char* end, MIN_FREQ freq, FQ_TYPE xdxr);
-    MyDataFramePtr getDataFrame(const StockMinAction& sa) const;
-    MyDataFramePtr toFq(FQ_TYPE fq);
-    QStringList getCodes(const StockMinAction&) const { return m_codes; };
+    MyDataFramePtr get_dataframe(const StockMinAction& sa) const;
+    MyDataFramePtr to_fq_type(FQ_TYPE fq);
+    QStringList get_codes(const StockMinAction&) const { return m_codes; };
     QList<StockMin> get_securities(const StockMinAction&) const { return m_stockmins; };
-    QVector<const char*> getColumns(const StockMinAction&) const { return m_columns; };
+    QVector<const char*> get_columns(const StockMinAction&) const { return m_columns; };
 
 private:
-    void setDataFrame();
+    void set_dataframe();
 
 private:
     QList<StockMin> m_stockmins;

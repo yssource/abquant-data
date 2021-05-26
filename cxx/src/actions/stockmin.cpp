@@ -35,15 +35,15 @@ StockMinAction& StockMinAction::operator=(StockMinAction&& other) noexcept
     return *this;
 };
 
-MyDataFramePtr StockMinAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+MyDataFramePtr StockMinAction::get_dataframe() const { return pImpl->get_dataframe(*this); }
 
-MyDataFramePtr StockMinAction::toFq(FQ_TYPE fq) { return pImpl->toFq(fq); }
+MyDataFramePtr StockMinAction::to_fq_type(FQ_TYPE fq) { return pImpl->to_fq_type(fq); }
 
-QStringList StockMinAction::getCodes() const { return pImpl->getCodes(*this); }
+QStringList StockMinAction::get_codes() const { return pImpl->get_codes(*this); }
 
 QList<StockMin> StockMinAction::get_securities() const { return pImpl->get_securities(*this); };
 
-QVector<const char*> StockMinAction::getColumns() const { return pImpl->getColumns(*this); }
+QVector<const char*> StockMinAction::get_columns() const { return pImpl->get_columns(*this); }
 
 /***********************
  * StockMinAction impl *
@@ -61,20 +61,20 @@ StockMinAction::impl::impl(StockMinAction& sa, QStringList codes, const char* st
                  << "freq: " << freq << "\n"
                  << "end: " << end << "\n";
     }
-    setDataFrame();
+    set_dataframe();
     if (xdxr != FQ_TYPE::NONE) {
-        m_df = toFq(xdxr);
+        m_df = to_fq_type(xdxr);
     }
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
 }
 
-MyDataFramePtr StockMinAction::impl::getDataFrame(const StockMinAction&) const
+MyDataFramePtr StockMinAction::impl::get_dataframe(const StockMinAction&) const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
-MyDataFramePtr StockMinAction::impl::toFq(FQ_TYPE fq)
+MyDataFramePtr StockMinAction::impl::to_fq_type(FQ_TYPE fq)
 {
     auto x = Xdxr(m_codes);
     if (fq == FQ_TYPE::NONE || (m_df && !m_df->get_index().size())) {
@@ -84,7 +84,7 @@ MyDataFramePtr StockMinAction::impl::toFq(FQ_TYPE fq)
     return m_df;
 }
 
-void StockMinAction::impl::setDataFrame()
+void StockMinAction::impl::set_dataframe()
 {
     MyDataFrame df;
     try {

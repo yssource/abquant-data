@@ -59,49 +59,49 @@ void TestStockDay::initTestCase()
 
     StockDayAction sa(codes, start, end);
 
-    // // auto ind = sa.makeIndicator<StockDay>();
-    // auto ind = sa.makeIndicator();
+    // // auto ind = sa.make_indicator<StockDay>();
+    // auto ind = sa.make_indicator();
     // ind.hello<double>(1.1);
-    // // xt::xarray<double> xs = xt::adapt(sa.toSeries<double>("open").toStdVector());
-    // xt::xarray<double> xs = sa.toSeries("open");
+    // // xt::xarray<double> xs = xt::adapt(sa.to_series<double>("open").toStdVector());
+    // xt::xarray<double> xs = sa.to_series("open");
     // xt::xarray<double> rs = ind.SMA(xs, 12);
 
     // StockMinAction sb(codes, start, end);
-    // // auto ind2 = sb.makeIndicator<StockMin>();
-    // auto ind2 = sb.makeIndicator();
+    // // auto ind2 = sb.make_indicator<StockMin>();
+    // auto ind2 = sb.make_indicator();
     // std::string s{"jimmy"s};
     // ind2.hello<std::string>(std::move(s));
 
     // // StockDayAction sa(codes, start, end);
-    // auto m_codes = sa.getCodes();
-    // auto df = sa.toFq(FQ_TYPE::PRE);
-    // // auto df = sa.toFq(FQ_TYPE::POST);
+    // auto m_codes = sa.get_codes();
+    // auto df = sa.to_fq_type(FQ_TYPE::PRE);
+    // // auto df = sa.to_fq_type(FQ_TYPE::POST);
     // qDebug() << "m_codes main: " << m_codes << "\n";
     // df->write<std::ostream, std::string, double, int>(std::cout);
     qDebug() << sa << "\n";
 
-    // // sa.setDataFrame();
-    // auto ddff = sa.getDataFrame();
+    // // sa.set_dataframe();
+    // auto ddff = sa.get_dataframe();
     // auto ooopen = sa.getOpen();
     // std::cout << ooopen.size() << "\n";
 
     // StockDayAction sa2(codes, start, end, FQ_TYPE::PRE);
-    // // sa2.setDataFrame();
-    // auto xls2 = sa2.toSeries("open");
+    // // sa2.set_dataframe();
+    // auto xls2 = sa2.to_series("open");
     // // auto nn = sa2.getName();
 
     // sa.getName();
 
     // std::cout << xls2.size() << "\n";
     // StockMinAction sb(codes, start, end);
-    // // auto df2 = sb.toFq(FQ_TYPE::PRE);
-    // auto df2 = sb.toFq(FQ_TYPE::POST);
+    // // auto df2 = sb.to_fq_type(FQ_TYPE::PRE);
+    // auto df2 = sb.to_fq_type(FQ_TYPE::POST);
     // qDebug() << sb << "\n";
 
     StockXdxrAction sc(codes);
     qDebug() << sc << "\n";
 
-    // auto mm0 = sa.toSeries<std::string>("code");
+    // auto mm0 = sa.to_series<std::string>("code");
     // qDebug() << "------- mm0 " << mm0.size() << "\n";
     // for (auto o : mm0) {
     //     for (auto i : o) {
@@ -110,14 +110,14 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n code000 \n";
 
-    // auto mm = sa.toSeries<double>("close");
+    // auto mm = sa.to_series<double>("close");
     // for (auto o : mm) {
     //     for (auto i : o) {
     //         qDebug() << i;
     //     }
     // }
 
-    // auto mm2 = sa.toSeries<double>("high");
+    // auto mm2 = sa.to_series<double>("high");
     // for (auto o : mm2) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -125,7 +125,7 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n close \n";
 
-    // auto mm3 = sa.toSeries<QString>("date");
+    // auto mm3 = sa.to_series<QString>("date");
     // for (auto o : mm3) {
     //     for (auto i : o) {
     //         qDebug() << i;
@@ -133,7 +133,7 @@ void TestStockDay::initTestCase()
     // }
     // qDebug() << "\n date \n";
 
-    // auto mm4 = sc.toSeries<double>("peigu");
+    // auto mm4 = sc.to_series<double>("peigu");
     // for (auto o : mm4) {
     //     for (auto i : o) {
     //         qDebug() << i;

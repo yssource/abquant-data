@@ -35,13 +35,13 @@ IndexMinAction& IndexMinAction::operator=(IndexMinAction&& other) noexcept
     return *this;
 };
 
-MyDataFramePtr IndexMinAction::getDataFrame() const { return pImpl->getDataFrame(*this); }
+MyDataFramePtr IndexMinAction::get_dataframe() const { return pImpl->get_dataframe(*this); }
 
-QStringList IndexMinAction::getCodes() const { return pImpl->getCodes(*this); }
+QStringList IndexMinAction::get_codes() const { return pImpl->get_codes(*this); }
 
 QList<IndexMin> IndexMinAction::get_securities() const { return pImpl->get_securities(*this); };
 
-QVector<const char*> IndexMinAction::getColumns() const { return pImpl->getColumns(*this); }
+QVector<const char*> IndexMinAction::get_columns() const { return pImpl->get_columns(*this); }
 
 /***********************
  * IndexMinAction impl *
@@ -58,16 +58,16 @@ IndexMinAction::impl::impl(IndexMinAction& sa, QStringList codes, const char* st
                  << "freq: " << freq << "\n"
                  << "end: " << end << "\n";
     }
-    setDataFrame();
+    set_dataframe();
 }
 
-MyDataFramePtr IndexMinAction::impl::getDataFrame(const IndexMinAction&) const
+MyDataFramePtr IndexMinAction::impl::get_dataframe(const IndexMinAction&) const
 {
     // m_df->template write<std::ostream, index_type, double, int>(std::cout);
     return m_df;
 }
 
-void IndexMinAction::impl::setDataFrame()
+void IndexMinAction::impl::set_dataframe()
 {
     MyDataFrame df;
     try {

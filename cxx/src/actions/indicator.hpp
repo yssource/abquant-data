@@ -103,7 +103,7 @@ private:
 template <typename A>
 Indicator<A>::Indicator(const A* a) : m_a(std::move(a))
 {
-    auto df = a->getDataFrame();
+    auto df = a->get_dataframe();
     // auto qs = a->get_securities();
 }
 
@@ -125,7 +125,7 @@ xt::xarray<double> Indicator<A>::MA(const char* col, size_t N) const
 {
     CHECK_COLUMN_EXIST(col)
 
-    auto df = m_a->getDataFrame();
+    auto df = m_a->get_dataframe();
 
     SimpleRollAdopter<MinVisitor<double, index_type>, double> min_roller(MinVisitor<double, index_type>(), N);
     const auto& result = df->template single_act_visit<double>(col, min_roller).get_result();
@@ -138,7 +138,7 @@ xt::xarray<double> Indicator<A>::DIFF(const char* col, long N) const
 {
     CHECK_COLUMN_EXIST(col)
 
-    auto df = m_a->getDataFrame();
+    auto df = m_a->get_dataframe();
 
     DiffVisitor<double> diff_visit(N, false);
     const auto& result = df->template single_act_visit<double>(col, diff_visit).get_result();
@@ -153,7 +153,7 @@ roc_return_type Indicator<A>::ROC(const char* col, size_t N, size_t M) const
 
     series_no_cvp_type series;
     try {
-        auto df = m_a->getDataFrame();
+        auto df = m_a->get_dataframe();
         // df->template write<std::ostream, index_type, double, int>(std::cout);
         series = df->template get_column<double>(col);
     } catch (...) {

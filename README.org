@@ -204,9 +204,9 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
          auto begin = std::chrono::high_resolution_clock::now();
          for (int i = 0; i < N; ++i) {
              // 分钟前复权
-             sma.toFq(FQ_TYPE::PRE);
+             sma.to_fq_type(FQ_TYPE::PRE);
              // 分钟后复权
-             // sma.toFq(FQ_TYPE::POST);
+             // sma.to_fq_type(FQ_TYPE::POST);
          }
          auto finish_                          = std::chrono::high_resolution_clock::now();
          std::chrono::duration<double> elapsed = finish_ - begin;

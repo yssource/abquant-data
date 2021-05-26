@@ -17,13 +17,13 @@ class MainTest(unittest.TestCase):
         end = "2019-12-01"
         sd = securitylist(codes, end, INSTRUMENT_TYPE.INDX)
 
-        code = sd.toSeries_string("code")
-        volunit = sd.toSeries("volunit")
-        decimal_point = sd.toSeries("decimal_point")
-        name = sd.toSeries_string("name")
-        pre_close = sd.toSeries("pre_close")
-        sse = sd.toSeries_string("sse")
-        sec = sd.toSeries_string("sec")
+        code = sd.to_series_string("code")
+        volunit = sd.to_series("volunit")
+        decimal_point = sd.to_series("decimal_point")
+        name = sd.to_series_string("name")
+        pre_close = sd.to_series("pre_close")
+        sse = sd.to_series_string("sse")
+        sec = sd.to_series_string("sec")
         print(code[:10])
 
         df = pd.DataFrame(
@@ -50,13 +50,13 @@ class MainTest(unittest.TestCase):
         end = "2019-12-01"
         sd = securitylist(codes, end, INSTRUMENT_TYPE.CS)
 
-        code = sd.toSeries_string("code")
-        volunit = sd.toSeries("volunit")
-        decimal_point = sd.toSeries("decimal_point")
-        name = sd.toSeries_string("name")
-        pre_close = sd.toSeries("pre_close")
-        sse = sd.toSeries_string("sse")
-        sec = sd.toSeries_string("sec")
+        code = sd.to_series_string("code")
+        volunit = sd.to_series("volunit")
+        decimal_point = sd.to_series("decimal_point")
+        name = sd.to_series_string("name")
+        pre_close = sd.to_series("pre_close")
+        sse = sd.to_series_string("sse")
+        sec = sd.to_series_string("sec")
         print(code[:10])
 
         df = pd.DataFrame(

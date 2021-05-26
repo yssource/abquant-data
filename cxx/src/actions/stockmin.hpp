@@ -45,13 +45,13 @@ public:
     StockMinAction& operator=(StockMinAction&& other) noexcept;
 
     QList<StockMin> get_securities() const;
-    QVector<const char*> getColumns() const;
-    MyDataFramePtr toFq(FQ_TYPE fq = FQ_TYPE::NONE);
-    MyDataFramePtr getDataFrame() const;
-    QStringList getCodes() const;
+    QVector<const char*> get_columns() const;
+    MyDataFramePtr to_fq_type(FQ_TYPE fq = FQ_TYPE::NONE);
+    MyDataFramePtr get_dataframe() const;
+    QStringList get_codes() const;
 
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
 private:
     class impl;
@@ -61,7 +61,7 @@ private:
 private:
     friend inline QDebug operator<<(QDebug d, const StockMinAction& sa)
     {
-        QVector<const char*> columns = sa.getColumns();
+        QVector<const char*> columns = sa.get_columns();
         d << columns << "\n";
         auto qs = sa.get_securities();
         d << qs.size() << "\n";
@@ -81,10 +81,10 @@ private:
 };
 
 template <typename T>
-QVector<T> StockMinAction::toSeries(const char* col) const noexcept
+QVector<T> StockMinAction::to_series(const char* col) const noexcept
 {
     QVector<T> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
@@ -95,7 +95,7 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
             std::vector<T> stdv_series;
 
             try {
-                df = getDataFrame();
+                df = get_dataframe();
                 // df->write<std::ostream, std::string, double, int>(std::cout);
                 const char* colname;
                 if (QString(col) == QString("code")) {
@@ -109,7 +109,7 @@ QVector<T> StockMinAction::toSeries(const char* col) const noexcept
                 }
                 stdv_series = df->get_column<T>(colname);
             } catch (...) {
-                std::cout << "Errors with StockMinAction::toSeries ..."
+                std::cout << "Errors with StockMinAction::to_series ..."
                           << "\n";
             }
             return QVector<T>::fromStdVector(stdv_series);

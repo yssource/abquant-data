@@ -43,12 +43,12 @@ public:
     IndexDayAction& operator=(IndexDayAction&& other) noexcept;
 
     QList<IndexDay> get_securities() const;
-    QVector<const char*> getColumns() const;
-    MyDataFramePtr getDataFrame() const;
-    QStringList getCodes() const;
+    QVector<const char*> get_columns() const;
+    MyDataFramePtr get_dataframe() const;
+    QStringList get_codes() const;
 
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
 private:
     class impl;
@@ -58,7 +58,7 @@ private:
 private:
     friend inline QDebug operator<<(QDebug d, const IndexDayAction& sa)
     {
-        QVector<const char*> columns = sa.getColumns();
+        QVector<const char*> columns = sa.get_columns();
         d << columns << "\n";
         auto qs = sa.get_securities();
         d << qs.size() << "\n";
@@ -78,10 +78,10 @@ private:
 };
 
 template <typename T>
-QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
+QVector<T> IndexDayAction::to_series(const char* col) const noexcept
 {
     QVector<T> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }

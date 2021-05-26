@@ -42,11 +42,11 @@ public:
     StockXdxrAction& operator=(StockXdxrAction&& other) noexcept;
 
     QList<StockXdxr> get_securities() const;
-    QVector<const char*> getColumns() const;
-    MyDataFramePtr getDataFrame() const;
+    QVector<const char*> get_columns() const;
+    MyDataFramePtr get_dataframe() const;
 
     template <typename T>
-    QVector<T> toSeries(const char*) const noexcept;
+    QVector<T> to_series(const char*) const noexcept;
 
 private:
     class impl;
@@ -56,7 +56,7 @@ private:
 private:
     friend inline QDebug operator<<(QDebug d, const StockXdxrAction& sa)
     {
-        QVector<const char*> columns = sa.getColumns();
+        QVector<const char*> columns = sa.get_columns();
         d << columns << "\n";
         auto qs = sa.get_securities();
         d << qs.size() << "\n";
@@ -78,10 +78,10 @@ private:
 };
 
 template <typename T>
-QVector<T> StockXdxrAction::toSeries(const char* col) const noexcept
+QVector<T> StockXdxrAction::to_series(const char* col) const noexcept
 {
     QVector<T> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }

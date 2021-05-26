@@ -64,7 +64,7 @@ MyDataFrame EmConceptBaseAction::toDataFrame() const
     return df;
 }
 
-std::shared_ptr<MyDataFrame> EmConceptBaseAction::getDataFrame() const { return m_df; }
+std::shared_ptr<MyDataFrame> EmConceptBaseAction::get_dataframe() const { return m_df; }
 
 vector<std::string> EmConceptBaseAction::get_f14_name() const
 {
@@ -95,7 +95,7 @@ vector<int> EmConceptBaseAction::get_f104_bk_rise_cnt() const
     return f104_bk_rise_cnt_v;
 }
 
-void EmConceptBaseAction::setDataFrame()
+void EmConceptBaseAction::set_dataframe()
 {
     MyDataFrame df = toDataFrame();
     m_df           = std::make_shared<MyDataFrame>(df);
@@ -105,7 +105,7 @@ void EmConceptBaseAction::setDataFrame()
 vector<double> EmConceptBaseAction::get_pyseries(const char* col) const noexcept
 {
     vector<double> series;
-    auto cols = getColumns();
+    auto cols = get_columns();
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
@@ -113,7 +113,7 @@ vector<double> EmConceptBaseAction::get_pyseries(const char* col) const noexcept
     std::shared_ptr<MyDataFrame> df;
 
     try {
-        df = getDataFrame();
+        df = get_dataframe();
         // df->write<std::ostream, std::string, double, int>(std::cout);
         series = df->get_column<double>(col);
     } catch (...) {
