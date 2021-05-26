@@ -13,13 +13,14 @@
 #include <experimental/propagate_const>
 #include <iostream>
 
-#include "abquant/actions/index.hpp"
+// #include "abquant/actions/index.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/utils.hpp"
 #include "abquant/models/indexday.h"
 
 namespace abq
 {
-class IndexDayAction : public IndexAction<IndexDayAction>, std::enable_shared_from_this<IndexDayAction>
+class IndexDayAction : public SecurityAction<IndexDayAction>, std::enable_shared_from_this<IndexDayAction>
 {
 public:
     //! Default constructor
@@ -42,7 +43,7 @@ public:
     //! Move assignment operator
     IndexDayAction& operator=(IndexDayAction&& other) noexcept;
 
-    QList<IndexDay> getIndexes() const;
+    QList<IndexDay> get_securities() const;
     QVector<const char*> getColumns() const;
     MyDataFramePtr getDataFrame() const;
     QStringList getCodes() const;
@@ -60,7 +61,7 @@ private:
     {
         QVector<const char*> columns = sa.getColumns();
         d << columns << "\n";
-        auto qs = sa.getIndexes();
+        auto qs = sa.get_securities();
         d << qs.size() << "\n";
 
         QVector<QList<QVariant>> qv;
@@ -85,7 +86,7 @@ QVector<T> IndexDayAction::toSeries(const char* col) const noexcept
     if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) {
         return series;
     }
-    for (auto s : getIndexes()) {
+    for (auto s : get_securities()) {
         if constexpr (std::is_same_v<T, double>) {
             if (QString("open") == QString(col)) {
                 series << s.open();

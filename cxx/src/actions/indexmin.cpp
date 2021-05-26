@@ -39,7 +39,7 @@ MyDataFramePtr IndexMinAction::getDataFrame() const { return pImpl->getDataFrame
 
 QStringList IndexMinAction::getCodes() const { return pImpl->getCodes(*this); }
 
-QList<IndexMin> IndexMinAction::getIndexes() const { return pImpl->getIndexes(*this); };
+QList<IndexMin> IndexMinAction::get_securities() const { return pImpl->get_securities(*this); };
 
 QVector<const char*> IndexMinAction::getColumns() const { return pImpl->getColumns(*this); }
 

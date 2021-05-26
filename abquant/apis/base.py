@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from typing import Iterable, List, Optional, Union
 import pandas as pd
 import datetime
-from typing import Iterable, List, Optional, Union
+from functools import lru_cache
 from abquant.helper import unnormalize_code
 from abquant.utils.code import code_tolist
 from abquant.utils.logger import user_log as ulog
@@ -152,6 +153,7 @@ def get_price(
     return df
 
 
+@lru_cache(maxsize=256)
 def get_all_securities(
     types: List[str] = [], date: Optional[str] = None
 ) -> pd.DataFrame:
@@ -185,7 +187,10 @@ def get_all_securities(
     return df
 
 
-def get_security_info(code: str, ins_type : INSTRUMENT_TYPE = INSTRUMENT_TYPE.CS) -> pd.Series:
+@lru_cache(maxsize=256)
+def get_security_info(
+    code: str, ins_type: INSTRUMENT_TYPE = INSTRUMENT_TYPE.CS
+) -> pd.Series:
     from pyabqsecuritylist import PySecurityList as securitylist
 
     sl = securitylist([unnormalize_code(code)], "", ins_type)
@@ -211,8 +216,7 @@ def get_security_info(code: str, ins_type : INSTRUMENT_TYPE = INSTRUMENT_TYPE.CS
         )
     except:
         s = pd.Series()
-    else:
-        return s
+    return s
 
 
 def get_realtime_quotes(codes: Iterable[str]) -> pd.DataFrame:

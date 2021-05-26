@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QDebug>
+#include <experimental/propagate_const>
 #include <stdexcept>
 
 #include "DataFrame/DataFrame.h"
@@ -36,11 +37,6 @@ using xseries_no_cvp_type = std::decay<xseries_type>::type;
 using series_no_cvp_type  = std::decay<series_type>::type;
 
 using roc_return_type = std::unordered_map<const char*, std::vector<double>>;
-
-template <class A>
-class StockAction;
-template <class A>
-class IndexAction;
 
 // template<typename T>
 struct PySeries {
@@ -100,20 +96,15 @@ public:
 
 private:
     const A* m_a;
+    class impl;
+    std::experimental::propagate_const<std::shared_ptr<impl>> pImpl;
 };
 
 template <typename A>
 Indicator<A>::Indicator(const A* a) : m_a(std::move(a))
 {
     auto df = a->getDataFrame();
-    // df->template write<std::ostream, std::string, double, int>(std::cout);
-    using action_t = typename std::decay<typename std::remove_pointer<decltype(a)>::type>::type;
-    if constexpr (abq::is_base_of_template<IndexAction, action_t>::value) {
-        auto qs = a->getIndexes();
-    }
-    if constexpr (abq::is_base_of_template<StockAction, action_t>::value) {
-        auto qs = a->getStocks();
-    }
+    // auto qs = a->get_securities();
 }
 
 template <typename A>

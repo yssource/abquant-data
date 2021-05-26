@@ -39,7 +39,7 @@ MyDataFramePtr IndexDayAction::getDataFrame() const { return pImpl->getDataFrame
 
 QStringList IndexDayAction::getCodes() const { return pImpl->getCodes(*this); }
 
-QList<IndexDay> IndexDayAction::getIndexes() const { return pImpl->getIndexes(*this); };
+QList<IndexDay> IndexDayAction::get_securities() const { return pImpl->get_securities(*this); };
 
 QVector<const char*> IndexDayAction::getColumns() const { return pImpl->getColumns(*this); }
 

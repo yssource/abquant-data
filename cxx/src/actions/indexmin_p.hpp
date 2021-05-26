@@ -19,7 +19,7 @@ public:
     impl(IndexMinAction& sa, QStringList codes, const char* start, const char* end, MIN_FREQ freq);
     MyDataFramePtr getDataFrame(const IndexMinAction& sa) const;
     QStringList getCodes(const IndexMinAction&) const { return m_codes; };
-    QList<IndexMin> getIndexes(const IndexMinAction&) const { return m_indexmins; };
+    QList<IndexMin> get_securities(const IndexMinAction&) const { return m_indexmins; };
     QVector<const char*> getColumns(const IndexMinAction&) const { return m_columns; };
 
 private:
