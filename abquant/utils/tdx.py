@@ -1,13 +1,14 @@
+from functools import lru_cache
 import pandas as pd
 import numpy as np
 from abquant.utils.logger import system_log as slog
-from abquant.helper import to_json_from_pandas
+from abquant.helper import normalize_code, to_json_from_pandas
 from abquant.utils.qa import make_datestamp
 from abquant.config import Setting
 import json
 
 
-def for_sz(code):
+def for_sz(code: str) -> str:
     """深市代码分类
     Arguments:
         code {[type]} -- [description]
@@ -58,7 +59,7 @@ def for_sz(code):
         return "undefined"
 
 
-def for_sh(code):
+def for_sh(code: str) -> str:
     if str(code)[0] == "6":
         return "stock_cn"
     elif str(code)[0:3] in ["000", "880"]:
@@ -211,10 +212,10 @@ def query_stock_day(
     # code= [code] if isinstance(code,str) else code
 
     # code checking
-    code = code.split()
+    codes = code.split()
     cursor = collections.find(
         {
-            "code": {"$in": code},
+            "code": {"$in": codes},
             "date_stamp": {"$lte": make_datestamp(end), "$gte": make_datestamp(start)},
         },
         {"_id": 0},
@@ -335,3 +336,16 @@ def save_error_log(err: list, key: str):
         errs[key] = list(set(err))
         with Setting.ERROR_CODES_JSON.open(mode="w") as f:
             json.dump(errs, f)
+
+
+@lru_cache()
+def is_index_cn(code: str) -> bool:
+    # FIXME: is not perfect here, if the code is bare digits, without "XSHG" or
+    # "XSHE", suffix
+    if "XSHG" in code and "000" in code:
+        return True
+    if "XSHG" in normalize_code(code) and for_sh(code) == "index_cn":
+        return True
+    if "XSHE" in normalize_code(code) and for_sz(code) == "index_cn":
+        return True
+    return False
