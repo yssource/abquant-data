@@ -118,7 +118,7 @@ QList<StockDay> StockDay::get_price(const QStringList codes, double start, doubl
     cri.add(StockDayObject::Code, TMongo::In,
             codes); // AND add to the end operator
 
-    cri.add(StockDayObject::DateStamp, TMongo::GreaterThan,
+    cri.add(StockDayObject::DateStamp, TMongo::GreaterEqual,
             start); // AND add to the end operator
 
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);

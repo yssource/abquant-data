@@ -144,7 +144,7 @@ QList<IndexMin> IndexMin::get_price(const QStringList codes, double start, doubl
     cri.add(IndexMinObject::Code, TMongo::In,
             codes); // AND add to the end operator
 
-    cri.add(IndexMinObject::TimeStamp, TMongo::GreaterThan,
+    cri.add(IndexMinObject::TimeStamp, TMongo::GreaterEqual,
             start); // AND add to the end operator
 
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);

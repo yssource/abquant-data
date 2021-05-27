@@ -135,7 +135,7 @@ QList<StockMin> StockMin::get_price(const QStringList codes, double start, doubl
     cri.add(StockMinObject::Code, TMongo::In,
             codes); // AND add to the end operator
 
-    cri.add(StockMinObject::TimeStamp, TMongo::GreaterThan,
+    cri.add(StockMinObject::TimeStamp, TMongo::GreaterEqual,
             start); // AND add to the end operator
 
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);

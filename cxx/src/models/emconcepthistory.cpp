@@ -150,7 +150,7 @@ QList<EmConceptHistory> EmConceptHistory::get_price(const QStringList& cst_codes
     // QDateTime start_ = QDateTime::fromString(start, Qt::ISODate);
     cri.add(EmConceptHistoryObject::MktCode, TMongo::In,
             codes); // AND add to the end operator
-    cri.add(EmConceptHistoryObject::DateStamp, TMongo::GreaterThan,
+    cri.add(EmConceptHistoryObject::DateStamp, TMongo::GreaterEqual,
             start); // AND add to the end operator
 
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);

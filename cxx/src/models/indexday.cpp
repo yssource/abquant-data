@@ -131,7 +131,7 @@ QList<IndexDay> IndexDay::get_price(const QStringList& codes, double start, doub
     cri.add(IndexDayObject::Code, TMongo::In,
             codes); // AND add to the end operator
 
-    cri.add(IndexDayObject::DateStamp, TMongo::GreaterThan,
+    cri.add(IndexDayObject::DateStamp, TMongo::GreaterEqual,
             start); // AND add to the end operator
 
     // QDateTime end_ = QDateTime::fromString(end, Qt::ISODate);
