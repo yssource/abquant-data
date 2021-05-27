@@ -89,7 +89,6 @@ PYBIND11_MODULE(pyabqsecuritylist, m)
            to_series
     )pbdoc";
 
-    py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
     py::class_<PySecurityList, std::shared_ptr<PySecurityList>> sm_class(m, "PySecurityList");
     sm_class.def(py::init<INSTRUMENT_TYPE>())
         .def(py::init<std::vector<std::string>, const string, INSTRUMENT_TYPE>(), py::arg("codes"), py::arg("end") = "",

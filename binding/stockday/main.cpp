@@ -16,8 +16,6 @@
 
 namespace abq
 {
-// PYBIND11_DECLARE_HOLDER_TYPE(MyDataFrame, MyDataFramePtr);
-
 using roc_return_type   = std::unordered_map<const char*, std::vector<double>>;
 using StockDayActionPtr = std::shared_ptr<StockDayAction>;
 
@@ -81,7 +79,6 @@ PYBIND11_MODULE(pyabqstockday, m)
            to_series
     )pbdoc";
 
-    py::class_<MyDataFrame, MyDataFramePtr>(m, "MyDataFrame");
     py::class_<PyStockDay, std::shared_ptr<PyStockDay>> sm_class(m, "PyStockDay");
     sm_class
         .def(py::init<std::vector<std::string>, const string, const string, FQ_TYPE>())
