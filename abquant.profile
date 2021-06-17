@@ -4,24 +4,27 @@ os_build=Linux
 arch=x86_64
 arch_build=x86_64
 compiler=clang
-compiler.version=11
-compiler.libcxx=libstdc++11
+compiler.version=12
+compiler.libcxx=libc++
 build_type=Release
-# build_type=Debug
 [options]
+qt:shared=True
 qt:qtdeclarative=True
 qt:qttools=True
 qt:qtwebsockets=True
+qt:with_vulkan=True
 [build_requires]
+*: cmake/3.20.3, ninja/1.10.2
 [env]
 # CC=$PROFILE_DIR/ccache-clang
 # CXX=$PROFILE_DIR/ccache-clang++
+
 CC="ccache clang"
 CXX="ccache clang++"
 CPP="ccache cpp"
 
-# CC="clang"
-# CXX="clang++"
-# CPP="cpp"
+// CC="clang"
+// CXX="clang++"
+// CPP="cpp"
 
 CONAN_CMAKE_GENERATOR=Ninja

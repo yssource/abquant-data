@@ -11,7 +11,7 @@ def test_get_price_day_stock_date_with_single_field():
     fields = ["open"]
     actual = get_price(code, start, end, fields=fields)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
 
 
 def test_get_price_day_stock_datetime_with_single_field():
@@ -21,7 +21,7 @@ def test_get_price_day_stock_datetime_with_single_field():
     fields = ["open"]
     actual = get_price(code, start, end, fields=fields)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
 
 
 def test_get_price_day_index_date_with_single_field():
@@ -31,7 +31,7 @@ def test_get_price_day_index_date_with_single_field():
     fields = ["open"]
     actual = get_price(code, start, end, fields=fields)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
 
 
 def test_get_price_day_index_datetime_with_single_field():
@@ -41,7 +41,7 @@ def test_get_price_day_index_datetime_with_single_field():
     fields = ["open"]
     actual = get_price(code, start, end, fields=fields)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
 
 
 def test_get_price_day_stock_date_with_multi_field():
@@ -91,7 +91,7 @@ def test_get_price_min_stock_with_single_field():
     fields = ["open"]
     actual = get_price(code, start, end, frequency="1min", fields=fields)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
 
 
 def test_get_price_min_stock_with_multi_field():
@@ -133,7 +133,7 @@ def test_get_security_info_stock_type():
     code = "000001.XSHE"
     actual = get_security_info(code, INSTRUMENT_TYPE.CS)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
     assert actual.display_name == "平安银行"
 
 
@@ -141,5 +141,5 @@ def test_get_security_info_index_type():
     code = "399006.XSHE"
     actual = get_security_info(code, INSTRUMENT_TYPE.INDX)
     ulog.debug(actual)
-    assert isinstance(actual, pd.Series)
+    assert isinstance(actual, pd.DataFrame)
     assert actual.display_name == "创业板指"

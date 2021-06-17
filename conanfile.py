@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, CMake, tools, Meson, RunEnvironment
+from conans import ConanFile, CMake, tools, RunEnvironment
 import os
 import shutil
-import platform
 import pathlib
 import shutil
 
@@ -13,14 +12,22 @@ class AbquantConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {
-        "shared": False,
+        "shared": True,
         "fPIC": True,
         "qt:qtdeclarative": True,
         "qt:qttools": True,
         "qt:qtwebsockets": True,
+        "qt:with_vulkan": True,
     }
 
-    generators = ["cmake", "qmake"]
+    generators = (
+        "qt",
+        "qmake",
+        "cmake",
+        "virtualrunenv",
+        "cmake_find_package",
+        "cmake_find_package_multi",
+    )
 
     @property
     def _prefix(self):
@@ -59,11 +66,15 @@ class AbquantConan(ConanFile):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
+    def build_requirements(self):
+        self.build_requires("cmake/3.20.3")
+        self.build_requires("ninja/1.10.2")
+
     def requirements(self):
-        self.requires("qt/5.12.8@{}/{}".format("bincrafters", "stable"))
+        self.requires("qt/5.15.2@")
         self.requires("xtensor/0.21.3@")
         self.requires("dataframe/1.15.0@")
-        self.requires("pybind11/2.6.1@")
+        self.requires("pybind11/2.6.2@")
 
     def _build_with_qmake(self):
         tools.mkdir(self.build_subfolder(kind_="qbuild"))
@@ -150,6 +161,3 @@ class AbquantConan(ConanFile):
             self._build_with_qmake()
         if pathlib.Path.cwd().name == "cbuild":
             self._build_with_cmake()
-
-    # def package_info(self):
-    #     self.env_info.CMAKE_PREFIX_PATH.append(self.package_folder)

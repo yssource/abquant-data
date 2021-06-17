@@ -32,6 +32,7 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 
 find_package(Qt5 REQUIRED Core Network Sql Xml Qml)
+find_package(pybind11 REQUIRED)
 # add_subdirectory(pybind11)
 add_subdirectory(binding)
 
@@ -39,4 +40,4 @@ get_target_property(QtCore_location Qt5::Core LOCATION)
 get_filename_component(QtCore_libdir ${QtCore_location} DIRECTORY)
 
 enable_testing()
-# message(status ${CONAN_LIBS})
+message(status ${CONAN_LIBS})

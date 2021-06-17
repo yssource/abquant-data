@@ -17,11 +17,11 @@ def get_price(
     start_date: Union[datetime.date, datetime.datetime, str],
     end_date: Optional[Union[datetime.date, datetime.datetime, str]] = None,
     frequency: Optional[str] = "1d",
-    fields: List[str] = [],
+    fields: Optional[List[str]] = [],
     adjust_type: Optional[str] = "pre",
     skip_suspended: Optional[bool] = False,
     expect_df: Optional[bool] = False,
-) -> Union[pd.DataFrame, pd.Series]:
+) -> pd.DataFrame:
     """
     :param order_book_ids: 合约代码，合约代码，可传入order_book_id, order_book_id list, symbol, symbol list
     :param start_date: 开始日期，用户必须指定
@@ -81,9 +81,6 @@ def get_price(
         #...
     """
 
-    if fields is None:
-        fields = ["open", "close", "high", "low", "vol"]
-
     if isinstance(start_date, (datetime.datetime,)):
         start_date = start_date.strftime("%Y-%m-%d %H:%M:%S")
     if isinstance(end_date, (datetime.datetime,)):
@@ -93,9 +90,10 @@ def get_price(
         start_date = start_date.split(" ")[0]  # type: ignore
         end_date = end_date.split(" ")[0]  # type: ignore
 
+    if fields is None or not fields:
+        fields = ["open", "close", "high", "low", "vol"]
     if isinstance(fields, (str,)):
         fields = [fields]
-
     for field in fields:
         if field in ["volume"]:
             field = "vol"
@@ -161,7 +159,6 @@ def get_price(
         else:
             datetime_ = sm.to_series_string("datetime")
             df = pd.DataFrame({"code": code, "datetime": datetime_})
-            print(df)
     except Exception:
         raise RuntimeError("fail to get_price")
 
@@ -177,10 +174,6 @@ def get_price(
     else:
         df.set_index(["code", "datetime"], inplace=True)
 
-    if len(fields) == 1:
-        # return pd.Series
-        return df[fields[0]]  # type: ignore
-    # print(df)
     return df
 
 
