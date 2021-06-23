@@ -32,13 +32,6 @@ public:
         m_sda_ptr = std::make_shared<StockDayAction>(qcodes, m_start.c_str(), m_end.c_str(), m_xdxr);
     };
 
-    // size_t toQfq() noexcept
-    // {
-    //     auto fq = m_sda_ptr->to_fq_type(FQ_TYPE::PRE);
-    //     // fq->write<std::ostream, index_type, double, int>(std::cout);
-    //     return fq->get_index().size();
-    // }
-
     template <class T>
     std::vector<T> to_series(const string& col) noexcept
     {

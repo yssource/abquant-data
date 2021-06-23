@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-
 import pandas as pd
 
-from pyabqindexday import PyIndexDay as indexday
 from pyabquant import PyAbquant
+from pyabqindexday import PyIndexDay as indexday
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)

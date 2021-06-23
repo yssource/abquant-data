@@ -2,11 +2,11 @@
 
 import unittest
 import math
-
-from pyabqstockday import PyStockDay as stockday
-from pyabquant import FQ_TYPE, PyAbquant
-
 import pandas as pd
+
+from pyabquant import FQ_TYPE, PyAbquant
+from pyabqstockday import PyStockDay as stockday
+
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
