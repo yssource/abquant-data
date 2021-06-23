@@ -53,20 +53,20 @@ class MainTest(unittest.TestCase):
         # self.assertEqual(open_[0], 9.39)
         self.assertAlmostEqual(open_[0], 9.39, delta=0.001)
 
-    def test_ROC(self):
-        codes = ["000001"]
-        start = "2019-01-01"
-        end = "2019-12-01"
-        sd = stockday(codes, start, end, FQ_TYPE.PRE)
+    # def test_ROC(self):
+    #     codes = ["000001"]
+    #     start = "2019-01-01"
+    #     end = "2019-12-01"
+    #     sd = stockday(codes, start, end, FQ_TYPE.PRE)
 
-        rst = sd.ROC("close", 12, 6)
-        # print(rst)
-        self.assertTrue(len(rst["ROC"]) == 222)
-        self.assertTrue(len(rst["ROCMA"]) == 222)
-        self.assertAlmostEqual(rst["ROC"][0], -44.296, delta=0.01)
-        self.assertTrue(math.isnan(rst["ROCMA"][0]))
-        self.assertAlmostEqual(rst["ROC"][-1], -6.368, delta=0.01)
-        self.assertAlmostEqual(rst["ROCMA"][-1], 15.071, delta=0.01)
+    #     rst = sd.ROC("close", 12, 6)
+    #     # print(rst)
+    #     self.assertTrue(len(rst["ROC"]) == 222)
+    #     self.assertTrue(len(rst["ROCMA"]) == 222)
+    #     self.assertAlmostEqual(rst["ROC"][0], -44.296, delta=0.01)
+    #     self.assertTrue(math.isnan(rst["ROCMA"][0]))
+    #     self.assertAlmostEqual(rst["ROC"][-1], -6.368, delta=0.01)
+    #     self.assertAlmostEqual(rst["ROCMA"][-1], 15.071, delta=0.01)
 
 
 if __name__ == "__main__":
