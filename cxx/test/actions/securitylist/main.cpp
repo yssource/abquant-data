@@ -23,8 +23,11 @@ using namespace std;
 
 using StockListActionPtr = std::shared_ptr<abq::SecurityListAction<StockList>>;
 using IndexListActionPtr = std::shared_ptr<abq::SecurityListAction<IndexList>>;
+using MyDataFramePtr     = std::shared_ptr<MyDataFrame>;
+
 Q_DECLARE_METATYPE(StockListActionPtr)
 Q_DECLARE_METATYPE(IndexListActionPtr)
+Q_DECLARE_METATYPE(MyDataFramePtr)
 
 class TestSecurityList : public QObject
 {
@@ -35,6 +38,8 @@ private slots:
     void cleanupTestCase();
     void get_securities_data();
     void get_securities();
+    void get_dataframe_data();
+    void get_dataframe();
 };
 
 void TestSecurityList::initTestCase() {}
@@ -48,34 +53,55 @@ void TestSecurityList::initTestCase_data()
     auto sa2 = std::make_shared<SecurityListAction<StockList>>(s_codes, end);
 
     QTest::addColumn<StockListActionPtr>("sla");
-    QTest::addColumn<int>("s_rst");
 
     QStringList i_codes = {"000001", "399001", "399006"};
     auto ia             = std::make_shared<SecurityListAction<IndexList>>();
     auto ia2            = std::make_shared<SecurityListAction<IndexList>>(i_codes, end);
 
     QTest::addColumn<IndexListActionPtr>("ila");
-    QTest::addColumn<int>("i_rst");
-
-    QTest::newRow("0") << sa << 3785 << ia << 1155;
-    QTest::newRow("1") << sa2 << 3 << ia2 << 3;
+    QTest::newRow("0") << sa << ia;
+    QTest::newRow("1") << sa2 << ia2;
 }
 
-void TestSecurityList::get_securities_data() {}
+void TestSecurityList::get_securities_data()
+{
+    QTest::addColumn<int>("s_rst");
+    QTest::addColumn<int>("i_rst");
+    QTest::newRow("0") << 3785 << 1155;
+    QTest::newRow("1") << 3 << 3;
+}
 
 void TestSecurityList::get_securities()
 {
     QFETCH_GLOBAL(StockListActionPtr, sla);
-    QFETCH_GLOBAL(int, s_rst);
+    QFETCH(int, s_rst);
     QCOMPARE(sla->get_securities().count(), s_rst);
 
     QFETCH_GLOBAL(IndexListActionPtr, ila);
-    QFETCH_GLOBAL(int, i_rst);
+    QFETCH(int, i_rst);
     QCOMPARE(ila->get_securities().count(), i_rst);
+}
+
+void TestSecurityList::get_dataframe_data()
+{
+    QTest::addColumn<int>("df_rst");
+    QTest::addColumn<int>("df2_rst");
+    QTest::newRow("0") << 3785 << 1155;
+    QTest::newRow("1") << 3 << 3;
+}
+
+void TestSecurityList::get_dataframe()
+{
+    QFETCH_GLOBAL(StockListActionPtr, sla);
+    QFETCH(int, df_rst);
+    QCOMPARE(sla->get_dataframe()->get_index().size(), df_rst);
+
+    QFETCH_GLOBAL(IndexListActionPtr, ila);
+    QFETCH(int, df2_rst);
+    QCOMPARE(ila->get_dataframe()->get_index().size(), df2_rst);
 }
 
 void TestSecurityList::cleanupTestCase() {}
 
-// ABQ_TEST_SQLLESS_MAIN(TestSecurityList)
 ABQ_TEST_MAIN(TestSecurityList)
 #include "main.moc"
