@@ -44,7 +44,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 #+begin_src shell :exports code
   git clone -b feature/withConan https://github.com/yssource/treefrog-framework.git
   cd treefrog-framework && mkdir -v qbuild && cd qbuild
-  conan install .. --build missing
+  conan install .. --build missing --profile ../tf.profile
   conan build ..
   sudo make install
   sudo ldconfig

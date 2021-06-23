@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools, RunEnvironment
-import os
+import sys, os
 import shutil
 import pathlib
 import shutil
@@ -10,23 +10,29 @@ import shutil
 
 class AbquantConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
+    options = {
+        "shared": [True, False],
+        "with_glib": [True, False],
+        "with_harfbuzz": [True, False],
+        "fPIC": [True, False],
+    }
     default_options = {
         "shared": True,
         "fPIC": True,
+        "qt:shared": True,
         "qt:qtdeclarative": True,
         "qt:qttools": True,
         "qt:qtwebsockets": True,
-        "qt:with_vulkan": True,
+        "with_glib": True,
+        "with_harfbuzz": True,
     }
 
     generators = (
         "qt",
         "qmake",
         "cmake",
-        "virtualrunenv",
         "cmake_find_package",
-        "cmake_find_package_multi",
+        # "virtualrunenv",
     )
 
     @property
@@ -66,15 +72,15 @@ class AbquantConan(ConanFile):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
-    def build_requirements(self):
-        self.build_requires("cmake/3.20.3")
-        self.build_requires("ninja/1.10.2")
+    # def build_requirements(self):
+    #     self.build_requires("cmake/3.20.3")
+    #     self.build_requires("ninja/1.10.2")
 
     def requirements(self):
-        self.requires("qt/5.15.2@")
-        self.requires("xtensor/0.21.3@")
-        self.requires("dataframe/1.15.0@")
-        self.requires("pybind11/2.6.2@")
+        self.requires("qt/5.15.2")
+        self.requires("xtensor/0.21.3")
+        self.requires("dataframe/1.15.0")
+        self.requires("pybind11/2.6.2")
 
     def _build_with_qmake(self):
         tools.mkdir(self.build_subfolder(kind_="qbuild"))
@@ -153,8 +159,15 @@ class AbquantConan(ConanFile):
             if self.settings.os == "Macos":
                 cmake.definitions["CMAKE_OSX_DEPLOYMENT_TARGET"] = "10.14"
             cmake.definitions["PYTHON_EXECUTABLE"] = shutil.which("python")
+            # cmake.definitions["PYTHON_EXECUTABLE"] = self._python_interpreter
             cmake.configure()
             cmake.build()
+
+    @property
+    def _python_interpreter(self):
+        if getattr(sys, "frozen", False):
+            return "python"
+        return sys.executable
 
     def build(self):
         if pathlib.Path.cwd().name == "qbuild":

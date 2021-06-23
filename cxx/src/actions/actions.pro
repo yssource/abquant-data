@@ -1,23 +1,18 @@
 TARGET = abqaction
 TEMPLATE = lib
-#Bugfix: libabqaction.so -> libabqaction.a, since it is not able to port
-# DataFrame to outside for binding.
-CONFIG += static console release c++17
-# CONFIG += shared console debug c++17
+CONFIG += shared console debug c++17
+# CONFIG += static console release c++17
 CONFIG -= app_bundle
 
-QMAKE_CXXFLAGS += -fPIC
-
-include(../../abqbase.pri)
 include($$OUT_PWD/../../../conanbuildinfo.pri)
+include(../../abqbase.pri)
 
 QT += network sql
 QT += concurrent
 QT -= gui
-DEFINES += TF_DLL
 DESTDIR = $$PWD/../../../lib
 
-LIBS += -L$$PWD/../../../lib -labqmodel
+LIBS += -L$$PWD/../../../lib -labqmodel -labqhelper
 
 HEADERS = emconcept.hpp
 HEADERS += emconceptbase.hpp
