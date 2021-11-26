@@ -240,6 +240,7 @@ def get_stock_list(type_="stock", ip=None, port=None):
             axis=0,
             sort=False,
         )
+        data = data.drop_duplicates()
         data = data.loc[
             :, ["code", "volunit", "decimal_point", "name", "pre_close", "sse"]
         ].set_index(["code", "sse"], drop=False)
@@ -859,6 +860,7 @@ def get_index_list(ip=None, port=None):
             axis=0,
             sort=False,
         )
+        data = data.drop_duplicates()
         data = data.loc[
             :, ["code", "volunit", "decimal_point", "name", "pre_close", "sse"]
         ].set_index(["code", "sse"], drop=False)
