@@ -6,6 +6,7 @@ import json
 from abquant.utils.logger import set_loggers
 from abquant.utils.logger import system_log as slog
 from abquant.data.base import (
+    create_stock_list,
     create_stock_day,
     create_stock_min,
     create_stock_xdxr,
@@ -52,6 +53,12 @@ def stock():
 @cli.group()
 def etf():
     """Manages etf."""
+
+
+@stock.command("list")
+def stock_list():
+    """stock list."""
+    create_stock_list()
 
 
 @stock.command("day")

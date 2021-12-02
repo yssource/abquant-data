@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from pyabqstockmin import PyStockMin as stockmin
 from pyabquant import FQ_TYPE, PyAbquant
+from pyabqstockmin import PyStockMin as stockmin
 import pandas as pd
 
 pd.set_option("display.max_rows", None)

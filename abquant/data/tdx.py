@@ -40,6 +40,47 @@ class Stock(ISecurity):
         visitor.create_min(self)
         visitor.create_xdxr(self)
 
+    def create_list(self, *args, **kwargs):
+        """save security list
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        brokers_api = kwargs.get("brokers_api", [])
+        self._db.drop_collection("stock_list")
+        ins_type = kwargs.pop("ins_type", INSTRUMENT_TYPE.CS)
+        if ins_type == INSTRUMENT_TYPE.INDX:
+            self._db.drop_collection("index_list")
+            coll = self._db.index_list
+        else:
+            self._db.drop_collection("stock_list")
+            coll = self._db.stock_list
+        coll.create_index([("code", pymongo.ASCENDING)])
+
+        def saving_work(b_api):
+            try:
+                begin = datetime.datetime.now()
+                df = b_api.get_stock_list(type_=ins_type)
+                if isinstance(df, pd.DataFrame) and df.empty:
+                    slog.warn("df is empty.")
+                    return
+                if not isinstance(df, pd.DataFrame) and not df:
+                    return
+                coll.insert_many(to_json_from_pandas(df))
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "{} list {}, {:<04.2}s".format(
+                    ins_type, b_api.my_name(), interval
+                )
+                for _ in trange(df.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=1) as p:
+            p.map(partial(saving_work), brokers_api)
+
     def create_day(self, *args, **kwargs):
         """save INSTRUMENT_TYPE.CS or INSTRUMENT_TYPE.INDX day
 
@@ -62,7 +103,10 @@ class Stock(ISecurity):
             else self._db.stock_day
         )
         coll.create_index(
-            [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
+            [
+                ("code", pymongo.ASCENDING),
+                ("date_stamp", pymongo.ASCENDING),
+            ]
         )
         err = []
 
@@ -221,7 +265,8 @@ class Stock(ISecurity):
             [("code", pymongo.ASCENDING), ("date", pymongo.ASCENDING)], unique=True
         )
         coll_adj.create_index(
-            [("code", pymongo.ASCENDING), ("date", pymongo.ASCENDING)], unique=True,
+            [("code", pymongo.ASCENDING), ("date", pymongo.ASCENDING)],
+            unique=True,
         )
         err = []
 
@@ -256,7 +301,8 @@ class Stock(ISecurity):
                     finish = datetime.datetime.now()
                     interval = (finish - begin).total_seconds()
                     text = "{}, {:<04.2}s".format(
-                        "{} {}".format(ins_type, code), interval,
+                        "{} {}".format(ins_type, code),
+                        interval,
                     )
                     for _ in trange(data.size, desc=text):
                         pass
@@ -311,7 +357,10 @@ class Stock(ISecurity):
                 coll.insert_many(to_json_from_pandas(df))
                 finish = datetime.datetime.now()
                 interval = (finish - begin).total_seconds()
-                text = "{}, {:<04.2}s".format("{} {}".format(ins_type, code), interval,)
+                text = "{}, {:<04.2}s".format(
+                    "{} {}".format(ins_type, code),
+                    interval,
+                )
                 for _ in trange(df.size, desc=text):
                     pass
             except Exception as e:
@@ -440,8 +489,42 @@ class Etf(ISecurity):
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
+        visitor.create_list(self)
         visitor.create_day(self)
         visitor.create_min(self)
+
+    def create_list(self, *args, **kwargs):
+        """save etf list
+
+        Keyword Arguments:
+            client {[type]} -- [description] (default: {DATABASE})
+        """
+        brokers_api = kwargs.get("brokers_api", [])
+        self._db.drop_collection("etf_list")
+        coll = self._db.etf_list
+        coll.create_index([("code", pymongo.ASCENDING)])
+
+        def saving_work(b_api):
+            try:
+                begin = datetime.datetime.now()
+                df = b_api.get_stock_list(type_=INSTRUMENT_TYPE.ETF)
+                if isinstance(df, pd.DataFrame) and df.empty:
+                    slog.warn("df is empty.")
+                    return
+                if not isinstance(df, pd.DataFrame) and not df:
+                    return
+                coll.insert_many(to_json_from_pandas(df))
+                finish = datetime.datetime.now()
+                interval = (finish - begin).total_seconds()
+                text = "etf list {}, {:<04.2}s".format(b_api.my_name(), interval)
+                for _ in trange(df.size, desc=text):
+                    pass
+            except Exception as e:
+                slog.error("{}".format(e))
+
+        tqdm.set_lock(RLock())
+        with ThreadPoolExecutor(max_workers=1) as p:
+            p.map(partial(saving_work), brokers_api)
 
     def create_day(self, *args, **kwargs):
         """save etf_day
@@ -465,7 +548,10 @@ class Etf(ISecurity):
             else self._db.stock_day
         )
         coll.create_index(
-            [("code", pymongo.ASCENDING), ("date_stamp", pymongo.ASCENDING),]
+            [
+                ("code", pymongo.ASCENDING),
+                ("date_stamp", pymongo.ASCENDING),
+            ]
         )
         err = []
 
@@ -601,36 +687,3 @@ class Etf(ISecurity):
             p.map(partial(saving_work), list(range(len(instruments))))
 
         save_error_log(err, "{}_{}_min".format(self.getClassName(), ins_type))
-
-    def create_list(self, *args, **kwargs):
-        """save etf list
-
-        Keyword Arguments:
-            client {[type]} -- [description] (default: {DATABASE})
-        """
-        brokers_api = kwargs.get("brokers_api", [])
-        self._db.drop_collection("etf_list")
-        coll = self._db.etf_list
-        coll.create_index([("code", pymongo.ASCENDING)])
-
-        def saving_work(b_api):
-            try:
-                begin = datetime.datetime.now()
-                df = b_api.get_stock_list(type_=INSTRUMENT_TYPE.ETF)
-                if isinstance(df, pd.DataFrame) and df.empty:
-                    slog.warn("df is empty.")
-                    return
-                if not isinstance(df, pd.DataFrame) and not df:
-                    return
-                coll.insert_many(to_json_from_pandas(df))
-                finish = datetime.datetime.now()
-                interval = (finish - begin).total_seconds()
-                text = "etf list {}, {:<04.2}s".format(b_api.my_name(), interval)
-                for _ in trange(df.size, desc=text):
-                    pass
-            except Exception as e:
-                slog.error("{}".format(e))
-
-        tqdm.set_lock(RLock())
-        with ThreadPoolExecutor(max_workers=1) as p:
-            p.map(partial(saving_work), brokers_api)

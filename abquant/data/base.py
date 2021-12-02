@@ -22,6 +22,10 @@ class ISecurity(object, metaclass=abc.ABCMeta):
 
 class ISecurityVisitor(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
+    def create_list(self, iSecurity: ISecurity):
+        pass
+
+    @abc.abstractmethod
     def create_day(self, iSecurity: ISecurity):
         pass
 
@@ -39,17 +43,23 @@ class SecurityVisitor(ISecurityVisitor):
         "docstring"
         pass
 
+    def create_list(self, iSecurity: ISecurity):
+        if getattr(iSecurity, "create_list"):
+            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.INDX)
+            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.ETF)
+            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.CS)
+
     def create_day(self, iSecurity: ISecurity):
         if getattr(iSecurity, "create_day"):
             iSecurity.create_day(ins_type=INSTRUMENT_TYPE.INDX)
             iSecurity.create_day(ins_type=INSTRUMENT_TYPE.ETF)
-            iSecurity.create_day()
+            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.CS)
 
     def create_min(self, iSecurity: ISecurity):
         if getattr(iSecurity, "create_min"):
             iSecurity.create_min(ins_type=INSTRUMENT_TYPE.INDX)
             iSecurity.create_min(ins_type=INSTRUMENT_TYPE.ETF)
-            iSecurity.create_min()
+            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.CS)
 
     def create_xdxr(self, iSecurity: ISecurity):
         if getattr(iSecurity, "create_xdxr", None):
@@ -97,6 +107,15 @@ def create_base():
     broker = get_broker()
     securities = [broker.Stock(), broker.Future(), broker.Etf()]
     regist_securities(securities, SecurityVisitor())
+
+
+@time_counter
+def create_stock_list():
+    broker = get_broker("tdx")
+    brokers_api = [get_broker_api(b) for b in ["tdx", "ths", "qa"]]
+    e = broker.Stock()
+    e.create_list(brokers_api=brokers_api, ins_type=INSTRUMENT_TYPE.INDX)
+    e.create_list(brokers_api=brokers_api, ins_type=INSTRUMENT_TYPE.CS)
 
 
 @time_counter

@@ -95,9 +95,8 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # 但是不包含除权数据，除权数据不是经常更新，请手动 "abquant stock xdxr"
        abquant save base
 
-       # 股票除权除息
-       abquant stock xdxr
-       abquant stock xdxr --add '["000001", "300001", "600001"]'
+       # 股票和指数列表获取
+       abquant stock list
 
        # 保存所有股票日线，日线指数
        abquant stock day
@@ -119,6 +118,10 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
        # 1min 一分钟和 5min 五分钟
        abquant stock min -f '["1min", "5min"]'
        abquant stock min -f '["1min", "5min"]' --add '["000001", "300001", "600001"]'
+
+       # 股票除权除息
+       abquant stock xdxr
+       abquant stock xdxr --add '["000001", "300001", "600001"]'
 
        # 股票数据板块
        abquant stock block
