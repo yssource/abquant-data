@@ -9,8 +9,10 @@ from abquant.utils.ts import (
     US_LIVE_DATA_COLS,
     LIVE_DATA_COLS,
 )
+from abquant.utils.logger import user_log as ulog
 import re
-from urllib.request import urlopen, Request
+import requests
+from requests.exceptions import Timeout
 
 
 def get_realtime_quotes(symbols=None) -> pd.DataFrame:
@@ -61,11 +63,17 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
     else:
         symbols_list = code_to_symbol(symbols)
     symbols_list = symbols_list[:-1] if len(symbols_list) > 8 else symbols_list
-    request = Request(
-        LIVE_DATA_URL % (P_TYPE["http"], DOMAINS["sinahq"], random(), symbols_list)
-    )
-    text = urlopen(request, timeout=10).read()
-    text = text.decode("GBK")
+    url = LIVE_DATA_URL % (P_TYPE["http"], DOMAINS["sinahq"], random(), symbols_list)
+    headers = {"host": "hq.sinajs.cn", "referer": "https://finance.sina.com.cn/"}
+
+    text = ""
+    try:
+        resp = requests.get(url, headers=headers, timeout=10)
+        text = resp.text
+    except Timeout:
+        # ulog.warning(f"URL: {url} \n Timeout has been raised.")
+        return pd.DataFrame()
+
     reg = re.compile(r'\="(.*?)\";')
     data = reg.findall(text)
     regSym = re.compile(r"(?:sh|sz|gb_)(.*?)\=")
@@ -74,7 +82,7 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
     syms_list = []
     for index, row in enumerate(data):
         if len(row) > 1:
-            data_list.append([astr for astr in row.split(",")][:len(LIVE_DATA_COLS)])
+            data_list.append([astr for astr in row.split(",")][: len(LIVE_DATA_COLS)])
             syms_list.append(syms[index])
     if len(syms_list) == 0:
         return pd.DataFrame()

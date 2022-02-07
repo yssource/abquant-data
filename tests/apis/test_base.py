@@ -1,5 +1,10 @@
 from pyabquant import PyAbquant, FQ_TYPE, INSTRUMENT_TYPE  # type: ignore
-from abquant.apis.base import get_price, get_all_securities, get_security_info
+from abquant.apis.base import (
+    get_price,
+    get_all_securities,
+    get_security_info,
+    get_realtime_quotes,
+)
 import pandas as pd
 from abquant.utils.logger import user_log as ulog
 
@@ -143,3 +148,25 @@ def test_get_security_info_index_type():
     ulog.debug(actual)
     assert isinstance(actual, pd.DataFrame)
     assert actual.display_name == "创业板指"
+
+
+def test_get_realtime_quotes():
+    codes = ["000001.XSHE", "600000.XSHG", "300001.XSHE"]
+    names = ["平安银行", "浦发银行", "特锐德"]
+    actual = get_realtime_quotes(codes)
+    ulog.debug(actual)
+    ulog.debug(actual["name"])
+    ulog.debug(pd.Series(names))
+    assert isinstance(actual, pd.DataFrame)
+    assert actual.name.equals(pd.Series(names))
+
+
+def test_get_realtime_quotes_index():
+    codes = ["sh000001", "sz399001", "sh000300", "sh000016", "sz399005", "sz399006"]
+    names = ["上证指数", "深证成指", "沪深300", "上证50", "中小100", "创业板指"]
+    actual = get_realtime_quotes(codes)
+    ulog.debug(actual)
+    ulog.debug(actual["name"])
+    ulog.debug(pd.Series(names))
+    assert isinstance(actual, pd.DataFrame)
+    assert actual.name.equals(pd.Series(names))

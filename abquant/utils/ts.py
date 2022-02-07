@@ -129,3 +129,7 @@ def random(n: int = 13) -> str:
     start = 10 ** (n - 1)
     end = (10 ** n) - 1
     return str(randint(start, end))
+
+
+def order_book_id_2_tushare_code(order_book_id: str) -> str:
+    return order_book_id.split(".")[0]

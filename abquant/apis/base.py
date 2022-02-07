@@ -245,5 +245,7 @@ def get_security_info(
 
 def get_realtime_quotes(codes: Iterable[str]) -> pd.DataFrame:
     import abquant.data.ts_api as ts
+    from abquant.utils.ts import order_book_id_2_tushare_code
 
+    codes = [order_book_id_2_tushare_code(code) for code in codes]
     return ts.get_realtime_quotes(codes)
