@@ -72,7 +72,7 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
         text = resp.text
     except Timeout:
         # ulog.warning(f"URL: {url} \n Timeout has been raised.")
-        return pd.DataFrame()
+        return pd.DataFrame(columns=LIVE_DATA_COLS)
 
     reg = re.compile(r'\="(.*?)\";')
     data = reg.findall(text)
@@ -85,7 +85,7 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
             data_list.append([astr for astr in row.split(",")][: len(LIVE_DATA_COLS)])
             syms_list.append(syms[index])
     if len(syms_list) == 0:
-        return pd.DataFrame()
+        return pd.DataFrame(columns=LIVE_DATA_COLS)
     if len(data_list[0]) == 28:
         df = pd.DataFrame(data_list, columns=US_LIVE_DATA_COLS)
     else:
