@@ -1,5 +1,5 @@
 import re
-import pandas as pd
+import pandas as pd  # type: ignore
 from abquant.utils.ts import (
     code_to_symbol,
     LIVE_DATA_URL,
@@ -13,9 +13,10 @@ from abquant.utils.logger import user_log as ulog
 import re
 import requests
 from requests.exceptions import Timeout
+from typing import Union, Iterable
 
 
-def get_realtime_quotes(symbols=None) -> pd.DataFrame:
+def get_realtime_quotes(symbols: Union[str, Iterable[str]]) -> pd.DataFrame:
     """
        获取实时交易数据 getting real time quotes data
        用于跟踪交易情况（本次执行的结果-上一次执行的数据）
@@ -52,12 +53,7 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
             31：time，时间；
     """
     symbols_list = ""
-    if (
-        isinstance(symbols, list)
-        or isinstance(symbols, set)
-        or isinstance(symbols, tuple)
-        or isinstance(symbols, pd.Series)
-    ):
+    if isinstance(symbols, Iterable):
         for code in symbols:
             symbols_list += code_to_symbol(code) + ","
     else:
@@ -72,7 +68,7 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
         text = resp.text
     except Timeout:
         # ulog.warning(f"URL: {url} \n Timeout has been raised.")
-        return pd.DataFrame(columns=LIVE_DATA_COLS)
+        return pd.DataFrame(columns=LIVE_DATA_COLS).drop("s", axis=1)  # type: ignore
 
     reg = re.compile(r'\="(.*?)\";')
     data = reg.findall(text)
@@ -85,12 +81,12 @@ def get_realtime_quotes(symbols=None) -> pd.DataFrame:
             data_list.append([astr for astr in row.split(",")][: len(LIVE_DATA_COLS)])
             syms_list.append(syms[index])
     if len(syms_list) == 0:
-        return pd.DataFrame(columns=LIVE_DATA_COLS)
+        return pd.DataFrame(columns=LIVE_DATA_COLS).drop("s", axis=1)  # type: ignore
     if len(data_list[0]) == 28:
         df = pd.DataFrame(data_list, columns=US_LIVE_DATA_COLS)
     else:
         df = pd.DataFrame(data_list, columns=LIVE_DATA_COLS)
-        df = df.drop("s", axis=1)
+        df: pd.DataFrame = df.drop("s", axis=1)  # type: ignore
     df["code"] = syms_list
     ls = [cls for cls in df.columns if "_v" in cls]
     for txt in ls:
