@@ -21,12 +21,14 @@ retrying = "^1.3.3"
 simplejson = "^3.17.2"
 pymongo = "^3.11.3"
 pyarrow = "^4.0.0"
+requests = "^2.27.1"
 
 [tool.poetry.dev-dependencies]
 conan = "^1.34.0"
 black = "^21.5b1"
 pytest = "^6.2.4"
 pudb = "^2021.1"
+pylint = "^2.12.2"
 
 [tool.poetry.scripts]
 abquant = "abquant.cli:cli"
