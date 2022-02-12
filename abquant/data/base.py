@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 import abc
-from typing import List
+from typing import List, TYPE_CHECKING
 from abquant.helper import time_counter, INSTRUMENT_TYPE
+
+if TYPE_CHECKING:
+    from abquant.data.tdx import Stock, Future, Etf
 
 
 class ISecurity(object, metaclass=abc.ABCMeta):
@@ -14,58 +17,79 @@ class ISecurity(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def accept(self, visitor: ISecurityVisitor) -> None:
-        pass
+        ...
 
-    def getClassName(self):
+    @abc.abstractmethod
+    def create_list(self, iSecurity: ISecurity) -> None:
+        ...
+
+    @abc.abstractmethod
+    def create_day(self, iSecurity: ISecurity) -> None:
+        ...
+
+    @abc.abstractmethod
+    def create_min(self, iSecurity: ISecurity) -> None:
+        ...
+
+    def getClassName(self) -> str:
         return self.__class__.__name__
 
 
 class ISecurityVisitor(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def create_list(self, iSecurity: ISecurity):
-        pass
+    def visit_stock(self, stock: Stock) -> None:
+        ...
 
     @abc.abstractmethod
-    def create_day(self, iSecurity: ISecurity):
-        pass
+    def visit_future(self, future: Future) -> None:
+        ...
 
     @abc.abstractmethod
-    def create_min(self, iSecurity: ISecurity):
-        pass
-
-    @abc.abstractmethod
-    def create_xdxr(self, iSecurity: ISecurity):
-        pass
+    def visit_etf(self, stock: Etf) -> None:
+        ...
 
 
 class SecurityVisitor(ISecurityVisitor):
     def __init__(self, *args, **kwargs):
         "docstring"
-        pass
+        ...
 
-    def create_list(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_list"):
-            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.INDX)
-            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.ETF)
-            iSecurity.create_list(ins_type=INSTRUMENT_TYPE.CS)
+    def visit_stock(self, stock: Stock):
+        if getattr(stock, "create_list"):
+            stock.create_list(ins_type=INSTRUMENT_TYPE.INDX)
+            stock.create_list(ins_type=INSTRUMENT_TYPE.CS)
 
-    def create_day(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_day"):
-            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.INDX)
-            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.ETF)
-            iSecurity.create_day(ins_type=INSTRUMENT_TYPE.CS)
+        if getattr(stock, "create_day"):
+            stock.create_day(ins_type=INSTRUMENT_TYPE.INDX)
+            stock.create_day(ins_type=INSTRUMENT_TYPE.CS)
 
-    def create_min(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_min"):
-            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.INDX)
-            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.ETF)
-            iSecurity.create_min(ins_type=INSTRUMENT_TYPE.CS)
+        if getattr(stock, "create_min"):
+            stock.create_min(ins_type=INSTRUMENT_TYPE.INDX)
+            stock.create_min(ins_type=INSTRUMENT_TYPE.CS)
 
-    def create_xdxr(self, iSecurity: ISecurity):
-        if getattr(iSecurity, "create_xdxr", None):
-            pass
-            # please manually `abquant stock xdxr`
-            # iSecurity.create_xdxr()
+        if getattr(stock, "create_xdxr"):
+            stock.create_xdxr(ins_type=INSTRUMENT_TYPE.INDX)
+            stock.create_xdxr(ins_type=INSTRUMENT_TYPE.CS)
+
+    def visit_future(self, future: Future):
+        if getattr(future, "create_list"):
+            future.create_list(ins_type=INSTRUMENT_TYPE.FUTURE)
+
+        if getattr(future, "create_day"):
+            future.create_day(ins_type=INSTRUMENT_TYPE.FUTURE)
+
+        if getattr(future, "create_min"):
+            future.create_min(ins_type=INSTRUMENT_TYPE.FUTURE)
+
+    def visit_etf(self, etf: Etf):
+        if getattr(etf, "create_list"):
+            etf.create_list(ins_type=INSTRUMENT_TYPE.ETF)
+
+        if getattr(etf, "create_day"):
+            etf.create_day(ins_type=INSTRUMENT_TYPE.ETF)
+
+        if getattr(etf, "create_min"):
+            etf.create_min(ins_type=INSTRUMENT_TYPE.ETF)
 
 
 def get_broker(broker="tdx"):

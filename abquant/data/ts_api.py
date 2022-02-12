@@ -1,5 +1,3 @@
-import re
-import pandas as pd  # type: ignore
 from abquant.utils.ts import (
     code_to_symbol,
     LIVE_DATA_URL,
@@ -10,6 +8,7 @@ from abquant.utils.ts import (
     LIVE_DATA_COLS,
 )
 from abquant.utils.logger import user_log as ulog
+import pandas as pd  # type: ignore
 import re
 import requests
 from requests.exceptions import Timeout

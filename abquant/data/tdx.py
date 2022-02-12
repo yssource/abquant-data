@@ -36,9 +36,7 @@ class Stock(ISecurity):
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
-        visitor.create_day(self)
-        visitor.create_min(self)
-        visitor.create_xdxr(self)
+        visitor.visit_stock(self)
 
     def create_list(self, *args, **kwargs):
         """save security list
@@ -88,6 +86,7 @@ class Stock(ISecurity):
             client {[type]} -- [description] (default: {DATABASE})
         """
         ins_type = kwargs.pop("ins_type", INSTRUMENT_TYPE.CS)
+
         instruments = (
             self.codes
             if self.codes
@@ -465,9 +464,12 @@ class Future(ISecurity):
         self.freqs = []
 
     def accept(self, visitor: ISecurityVisitor) -> None:
-        visitor.create_day(self)
-        visitor.create_min(self)
-        visitor.create_xdxr(self)
+        visitor.visit_future(self)
+
+    def create_list(self, *args, **kwargs):
+        """create_list, for Future
+        """
+        return
 
     def create_day(self, *args, **kwargs):
         ins_type = kwargs.pop("ins_type", "future")
@@ -489,9 +491,7 @@ class Etf(ISecurity):
         self.freqs = kwargs.get("freqs", ["1min", "5min", "15min", "30min", "60min"])
 
     def accept(self, visitor: ISecurityVisitor) -> None:
-        visitor.create_list(self)
-        visitor.create_day(self)
-        visitor.create_min(self)
+        visitor.visit_etf(self)
 
     def create_list(self, *args, **kwargs):
         """save etf list
