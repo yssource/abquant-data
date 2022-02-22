@@ -1,4 +1,4 @@
-direnv 2.28.0
+direnv 2.30.3
 # ccache 4.1
 shellcheck 0.7.1
-poetry 1.1.6
+poetry 1.1.13

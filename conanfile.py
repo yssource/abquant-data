@@ -12,19 +12,11 @@ class AbquantConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
-        "with_glib": [True, False],
-        "with_harfbuzz": [True, False],
         "fPIC": [True, False],
     }
     default_options = {
         "shared": True,
         "fPIC": True,
-        "qt:shared": True,
-        "qt:qtdeclarative": True,
-        "qt:qttools": True,
-        "qt:qtwebsockets": True,
-        "with_glib": True,
-        "with_harfbuzz": True,
     }
 
     generators = (
