@@ -20,9 +20,9 @@ qt:with_dbus=True
 # *: cmake/3.20.3, ninja/1.10.2
 
 [env]
-// CC="ccache clang"
-// CXX="ccache clang++"
-// CPP="ccache cpp"
+# CC="ccache clang"
+# CXX="ccache clang++"
+# CPP="ccache cpp"
 CC="clang"
 CXX="clang++"
 CPP="cpp"

@@ -11,9 +11,9 @@
 set(binding_library "pyabqstockday")
 set(pyabqstockday_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
 set(tree_includes  "/usr/include/treefrog/")
-# set(tree_lib "/usr/lib/libtreefrog.so")
+set(tf_lib "/usr/lib/libtreefrog.so")
 set(abquant_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
-set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.so;/usr/lib/libtreefrog.so")
+set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.so;${tf_lib}")
 set(binding_library_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/)
 
 

@@ -9,19 +9,11 @@
 # The name of the generated bindings module (as imported in Python). You can change the name
 # to something relevant for your project.
 set(binding_library "pyabqindexmin")
-
-# set(CMAKE_CXX_FLAGS_RELEASE "-O0")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_SQL_LIB")
-
 set(pyabqindexmin_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../cxx/include)
 set(tree_includes  "/usr/include/treefrog/")
-# set(tree_lib "/usr/lib/libtreefrog.so")
+set(tf_lib "/usr/lib/libtreefrog.so")
 set(abquant_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
-
-set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.so;/usr/lib/libtreefrog.so")
-# set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.a;/usr/lib/libtreefrog.so")
-# set(core_libraries "${abquant_lib_dir}/libabqcontroller.a;${abquant_lib_dir}/libabqhelper.a;${abquant_lib_dir}/libabqmodel.a;${abquant_lib_dir}/libabqaction.a;/usr/lib/libtreefrog.so")
-
+set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/libabqhelper.so;${abquant_lib_dir}/libabqmodel.so;${abquant_lib_dir}/libabqaction.so;${tf_lib}")
 set(binding_library_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/)
 
 

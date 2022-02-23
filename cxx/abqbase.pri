@@ -41,3 +41,4 @@ INSTALLS += target
 
 CONFIG += conan_basic_setup
 include($$TOP_BUILD_DIR/conanbuildinfo.pri)
+LIBS -= $$CONAN_LIBS_QT
