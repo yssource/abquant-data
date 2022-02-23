@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2020-2026 Jimmy M. Gong                                    *
+ * Copyright (c) 2020-present Jimmy M. Gong                                 *
  * All rights reserved.                                                     *
  *                                                                          *
  * Distributed under the terms of the GPL3 and LGPL3 Licenses.              *

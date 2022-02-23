@@ -34,7 +34,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
 * 构建
   作者本人是在 x86_64 Linux 4.19.105-1-MANJARO 上构建本项目，暂时不支持
   Windows. \\
-  你需要安装好 clang++/llvm ccache ninja python pip conan cmake/qmake 等基础开发工具
+  你需要安装好 clang++/llvm ccache ninja python pip poetry conan cmake/qmake 等基础开发工具
   - 核心模块 cpp
   - 中间层 binding ([[https://github.com/pybind/pybind11.git][pybind11]] [[https://doc.qt.io/qtforpython/shiboken2/][ +shiboken2+ ]])
   - 用户接口层 python
@@ -65,12 +65,12 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   conan build ..
 
   # todo:: qbuild, cbuild 将来会直接放在 setup.py 中作为 ext_modules 完成。
-  # 用户只需 pip install -e .
+  # 用户只需 poetry install
 #+end_src
 ** python 依赖安装
    #+begin_src python :exports code
-     pip install -r requirements-dev.txt
-     pip install -e .
+     poetry install
+     poetry update
    #+end_src
 ** 环境变量
    请参照 .envrc 文件, 推荐使用 direnv 管理环境变量
@@ -311,7 +311,7 @@ abquant 分为三大模块 a) 数据获取 b) 策略回测 c) 模拟/实盘交�
   |------------------------------------+------------------------------------|
   | [[file:./screenshot/jimmy.wechat.png]] | [[file:./screenshot/jimmy.alipay.png]] |
 * LICENSE
-Copyright (c) 2020-2026 Jimmy M. Gong \\
+Copyright (c) 2020-present Jimmy M. Gong \\
 All rights reserved.
 
 除非遵守当前许可，否则不得使用本软件。
