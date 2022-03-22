@@ -160,8 +160,8 @@ QList<S> SecurityAction<A>::run(const QStringList codes, const char* start, cons
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, start, end);
 
-    QList<S> secriies = future.result();
-    return secriies;
+    QList<S> securities = future.result();
+    return securities;
 }
 
 template <typename A>
@@ -170,8 +170,8 @@ QList<S> SecurityAction<A>::run(const QStringList codes, const char* start, cons
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, start, end, freq);
 
-    QList<S> secriies = future.result();
-    return secriies;
+    QList<S> securities = future.result();
+    return securities;
 }
 
 template <typename A>
@@ -180,8 +180,8 @@ QList<S> SecurityAction<A>::run(const QStringList codes, int category)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_price<S>, codes, category);
 
-    QList<S> secriies = future.result();
-    return secriies;
+    QList<S> securities = future.result();
+    return securities;
 }
 
 template <typename A>
@@ -189,8 +189,8 @@ template <typename S>
 QList<S> SecurityAction<A>::run(const char* end)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, end);
-    QList<S> secriies        = future.result();
-    return secriies;
+    QList<S> securities      = future.result();
+    return securities;
 }
 
 template <typename A>
@@ -198,8 +198,8 @@ template <typename S>
 QList<S> SecurityAction<A>::run(const QStringList codes, const char* end)
 {
     QFuture<QList<S>> future = QtConcurrent::run(this, &self_type::get_all_securities<S>, codes, end);
-    QList<S> secriies        = future.result();
-    return secriies;
+    QList<S> securities      = future.result();
+    return securities;
 }
 
 template <typename A>
@@ -220,9 +220,9 @@ QList<S> SecurityAction<A>::get_price(const QStringList codes, const char* start
     TDatabaseContext::setCurrentDatabaseContext(sa);
     bool EnableTransactions = true;
     TDatabaseContext::setTransactionEnabled(EnableTransactions);
-    QList<S> secriies = S::get_price(codes, start_d, end_d);
+    QList<S> securities = S::get_price(codes, start_d, end_d);
     commitTransactions();
-    return secriies;
+    return securities;
 }
 
 template <typename A>
@@ -235,9 +235,9 @@ QList<S> SecurityAction<A>::get_price(const QStringList codes, const char* start
     TDatabaseContext::setCurrentDatabaseContext(sa);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<S> secriies = S::get_price(codes, start_d, end_d, freq);
+    QList<S> securities = S::get_price(codes, start_d, end_d, freq);
     commitTransactions();
-    return secriies;
+    return securities;
 }
 
 template <typename A>
@@ -248,9 +248,9 @@ QList<S> SecurityAction<A>::get_price(const QStringList codes, int category)
     TDatabaseContext::setCurrentDatabaseContext(sa);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<S> secriies = S::get_price(codes, category);
+    QList<S> securities = S::get_price(codes, category);
     commitTransactions();
-    return secriies;
+    return securities;
 }
 
 template <typename A>
@@ -262,9 +262,9 @@ QList<S> SecurityAction<A>::get_all_securities(const char* end)
     TDatabaseContext::setCurrentDatabaseContext(sa);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<S> secriies = S::get_all_securities(end_d);
+    QList<S> securities = S::get_all_securities(end_d);
     commitTransactions();
-    return secriies;
+    return securities;
 }
 
 template <typename A>
@@ -276,9 +276,9 @@ QList<S> SecurityAction<A>::get_all_securities(const QStringList codes, const ch
     TDatabaseContext::setCurrentDatabaseContext(sa);
     bool EnableTransactions = true;
     setTransactionEnabled(EnableTransactions);
-    QList<S> secriies = S::get_all_securities(codes, end_d);
+    QList<S> securities = S::get_all_securities(codes, end_d);
     commitTransactions();
-    return secriies;
+    return securities;
 }
 
 template <typename A>

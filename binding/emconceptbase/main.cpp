@@ -65,7 +65,8 @@ PYBIND11_MODULE(pyabqemconceptbase, m)
 
     py::class_<PyEmConceptBase> sm_class(m, "PyEmConceptBase");
     sm_class.def(py::init<std::vector<std::string>>())
-        .def("to_series", &PyEmConceptBase::to_series<double>, R"pbdoc(to_series double to_series double function.)pbdoc")
+        .def("to_series", &PyEmConceptBase::to_series<double>,
+             R"pbdoc(to_series double to_series double function.)pbdoc")
         .def("to_series_int", &PyEmConceptBase::to_series<int>, R"pbdoc(to_series int to_series double function.)pbdoc")
         .def("to_series_string", &PyEmConceptBase::to_series<std::string>,
              R"pbdoc(to_series string to_series string function.)pbdoc");

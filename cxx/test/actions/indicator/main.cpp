@@ -11,9 +11,9 @@
 #include <QtTest/QtTest>
 
 #include "abquant/actions/abquant.hpp"
-#include "abquant/actions/security.hpp"
 #include "abquant/actions/indexday.hpp"
 #include "abquant/actions/indicator.hpp"
+#include "abquant/actions/security.hpp"
 #include "abquant/actions/stockday.hpp"
 #include "abquant/actions/stockmin.hpp"
 #include "abquant/actions/stockxdxr.hpp"
@@ -55,10 +55,10 @@ void TestIndicator::initTestCase()
     const char* start = "2017-01-01";
     const char* end   = "2019-12-01";
 
-    sa = std::make_shared<StockDayAction>(codes, start, end);
+    sa          = std::make_shared<StockDayAction>(codes, start, end);
     indstockday = sa->make_indicator();
 
-    ia = std::make_shared<IndexDayAction>(codes, start, end);
+    ia          = std::make_shared<IndexDayAction>(codes, start, end);
     indindexday = ia->make_indicator();
 }
 
@@ -84,7 +84,7 @@ void TestIndicator::roc_data()
     QTest::addColumn<double>("rocma");
     QTest::addColumn<double>("rocma_result");
 
-    const char* col       = "close";
+    const char* col                 = "close";
     roc_return_type roc_map         = indstockday->ROC(col, 12, 6);
     series_no_cvp_type roc_actual   = roc_map["ROC"];
     series_no_cvp_type rocma_actual = roc_map["ROCMA"];

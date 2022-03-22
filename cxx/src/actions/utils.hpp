@@ -159,11 +159,13 @@ struct is_base_of_template_impl {
 template <template <typename...> class base, typename derived>
 using is_base_of_template = typename is_base_of_template_impl<base, derived>::type;
 
-#define CHECK_COLUMN_EXIST(col)                                                                                  \
-    std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};                           \
-    if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) { \
-        QString msg = QString(col) + QString(" series are not available here.");                                 \
-        throw std::runtime_error(msg.toStdString());                                                             \
-    }
+#define CHECK_COLUMN_EXIST(col)                                                                                      \
+    do {                                                                                                             \
+        std::vector<const char*> cols = {"open", "close", "high", "low", "vol", "amount"};                           \
+        if (std::none_of(cols.cbegin(), cols.cend(), [col](const char* c) { return QString(c) == QString(col); })) { \
+            QString msg = QString(col) + QString(" series are not available here.");                                 \
+            throw std::runtime_error(msg.toStdString());                                                             \
+        }                                                                                                            \
+    } while (false)
 
 } // namespace abq

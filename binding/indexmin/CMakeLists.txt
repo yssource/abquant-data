@@ -17,33 +17,6 @@ set(core_libraries "${abquant_lib_dir}/libabqcontroller.so;${abquant_lib_dir}/li
 set(binding_library_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/)
 
 
-# ==================================== RPATH configuration ====================================
-
-
-# =============================================================================================
-# !!! (The section below is deployment related, so in a real world application you will want to
-# take care of this properly with some custom script or tool).
-# =============================================================================================
-# Enable rpaths so that the built shared libraries find their dependencies.
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-set(CMAKE_INSTALL_RPATH ${CMAKE_CURRENT_SOURCE_DIR} ${QtCore_libdir})
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-# =============================================================================================
-# !!! End of dubious section.
-# =============================================================================================
-
-
-# # ====================== Shiboken target for generating binding C++ files  ====================
-# get_target_property(qtcore_M_QT5_INCLUDES Qt5::Core INTERFACE_INCLUDE_DIRECTORIES)
-set(qtcore_M_QT5_INCLUDES ${Qt5Core_INCLUDE_DIRS})
-
-list(JOIN qtcore_M_QT5_INCLUDES ";-I" M_QT5_INCLUDES)
-
-message(STATUS "${M_QT5_INCLUDES}")
-set(M_QT5_INCLUDES ${M_QT5_INCLUDES})
-
-
 # =============================== CMake target - binding_library =============================
 
 # Set the cpp files which will be used for the bindings library.

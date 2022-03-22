@@ -21,8 +21,8 @@ int main(int argc, char* argv[])
 
     QStringList codes = {"000001", "000002", "000003"};
     // QStringList codes = {"000001"};
-    const char* start = "2017-01-01 00:00:00";
-    const char* end   = "2019-12-01 23:55:00";
+    const char* start = "2022-01-01 00:00:00";
+    const char* end   = "2022-12-01 23:55:00";
     MIN_FREQ freq     = MIN_FREQ::FIVE;
 
     auto begin = std::chrono::high_resolution_clock::now();

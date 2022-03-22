@@ -25,7 +25,7 @@ def test_singleton():
 def test_get_price():
     code = "000001"
     start = "1989-01-01"
-    end = "2019-01-01"
+    end = "2022-01-01"
     expected = get_price(code, start, end)
     assert "000001" in expected.code()
     # time.sleep(10)

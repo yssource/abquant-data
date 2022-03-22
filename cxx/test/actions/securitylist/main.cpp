@@ -47,7 +47,7 @@ void TestSecurityList::initTestCase() {}
 void TestSecurityList::initTestCase_data()
 {
     QStringList s_codes = {"000001", "300001", "600000"};
-    const char* end     = "2019-12-01";
+    const char* end     = "2022-12-01";
 
     auto sa  = std::make_shared<SecurityListAction<StockList>>();
     auto sa2 = std::make_shared<SecurityListAction<StockList>>(s_codes, end);

@@ -8,19 +8,17 @@
  ****************************************************************************/
 
 #include <QtTest/QtTest>
-
-#include "abquant/actions/abquant.hpp"
-#include "abquant/actions/security.hpp"
-#include "abquant/actions/indexday.hpp"
-#include "abquant/actions/utils.hpp"
 #include <iostream>
 #include <utility>
 
+#include "abquant/actions/abquant.hpp"
+#include "abquant/actions/indexday.hpp"
+#include "abquant/actions/security.hpp"
+#include "abquant/actions/utils.hpp"
 #include "string"
 
 using namespace abq;
 using namespace std;
-
 
 class TestIndexDay : public QObject
 {
@@ -42,10 +40,8 @@ void TestIndexDay::initTestCase()
 
     IndexDayAction ia(codes, start, end);
 
-
     auto ind = ia.make_indicator();
 }
-
 
 void TestIndexDay::cleanupTestCase() {}
 

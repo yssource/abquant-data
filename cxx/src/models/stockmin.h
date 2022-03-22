@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <TAbstractModel>
 #include <TGlobal>
+
 #include "abquant/helpers/applicationhelper.h"
 
 class TModelObject;
