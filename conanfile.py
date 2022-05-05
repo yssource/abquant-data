@@ -64,6 +64,10 @@ class AbquantConan(ConanFile):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
+    def configure(self):
+        if self.options.shared:
+            del self.options.fPIC
+
     # def build_requirements(self):
     #     self.build_requires("cmake/3.20.3")
     #     self.build_requires("ninja/1.10.2")

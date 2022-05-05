@@ -166,6 +166,6 @@ using is_base_of_template = typename is_base_of_template_impl<base, derived>::ty
             QString msg = QString(col) + QString(" series are not available here.");                                 \
             throw std::runtime_error(msg.toStdString());                                                             \
         }                                                                                                            \
-    } while (false)
+    } while (false);
 
 } // namespace abq

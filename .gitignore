@@ -111,8 +111,8 @@ ENV/
 /cxx.sql/
 /cxx/public/
 /cxx/views/
-/**/cbuild*/
-/**/q*build*/
+cbuild/
+qbuild/
 tmp/
 build-main*/
 *.pro.user
@@ -138,3 +138,5 @@ Pipfile.lock
 
 # premium data source
 /abquant/data/premium/
+
+tags
