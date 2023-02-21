@@ -32,9 +32,7 @@ abquant_home = (
 )
 
 abquant_data_home = (
-    xdg_data_home / "abquant"
-    if xdg_data_home.exists()
-    else Path.home() / ".abquant"
+    xdg_data_home / "abquant" if xdg_data_home.exists() else Path.home() / ".abquant"
 )
 
 
@@ -152,6 +150,20 @@ class Setting(object):
                 {"ip": "59.173.18.140", "port": 7709},
                 {"ip": "60.12.136.250", "port": 7709},
                 {"ip": "60.28.23.80", "port": 7709},
+                # added 2022-11-28 from tdx
+                {"ip": "124.71.187.122", "port": 7709, "name": "上海双线主站14"},
+                {"ip": "119.97.185.59", "port": 7709, "name": "武汉电信主站1"},
+                {"ip": "47.107.64.168", "port": 7709, "name": "深圳双线主站7"},
+                {"ip": "124.70.75.113", "port": 7709, "name": "北京双线主站4"},
+                {"ip": "124.71.9.153", "port": 7709, "name": "广州双线主站4"},
+                {"ip": "123.60.84.66", "port": 7709, "name": "上海双线主站15"},
+                {"ip": "47.107.228.47", "port": 7719, "name": "深圳双线主站8"},
+                {"ip": "120.46.186.223", "port": 7709, "name": "北京双线主站5"},
+                {"ip": "124.70.22.210", "port": 7709, "name": "北京双线主站6"},
+                {"ip": "139.9.133.247", "port": 7709, "name": "北京双线主站7"},
+                {"ip": "116.205.163.254", "port": 7709, "name": "广州双线主站5"},
+                {"ip": "116.205.171.132", "port": 7709, "name": "广州双线主站6"},
+                {"ip": "116.205.183.150", "port": 7709, "name": "广州双线主站7"},
                 # added 20190222 from tdx
                 {"ip": "106.14.95.149", "port": 7711, "name": "上海双线资讯主站"},
                 {"ip": "112.74.214.43", "port": 7711, "name": "深圳双线资讯主站1"},
@@ -277,7 +289,7 @@ class Setting(object):
 
     @staticmethod
     def exclude_from_stock_ip_list(exclude_ip_list):
-        """ 从stock_ip_list删除列表exclude_ip_list中的ip
+        """从stock_ip_list删除列表exclude_ip_list中的ip
         从stock_ip_list删除列表future_ip_list中的ip
 
         :param exclude_ip_list:  需要删除的ip_list
