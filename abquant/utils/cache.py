@@ -21,13 +21,13 @@ class Cache(object):
         if age == -1:
             self.time[key] = -1
         else:
-            self.time[key] = time() + age
+            self.time[key] = time.time() + age
         return True
 
     def get(self, key):
         """获取键key对应的值"""
         if key in self.mem.keys():
-            if self.time[key] == -1 or self.time[key] > time():
+            if self.time[key] == -1 or self.time[key] > time.time():
                 return self.mem[key]
             else:
                 self.delete(key)

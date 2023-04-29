@@ -189,6 +189,7 @@ class Setting(object):
         else:
             Setting.stock_ip_list = [
                 # added 20190222 from tdx
+                {"ip": "124.71.187.122", "port": 7709, "name": "上海双线主站14"},
                 {"ip": "106.120.74.86", "port": 7711, "name": "北京行情主站1"},
                 {"ip": "113.105.73.88", "port": 7709, "name": "深圳行情主站"},
                 {"ip": "113.105.73.88", "port": 7711, "name": "深圳行情主站"},

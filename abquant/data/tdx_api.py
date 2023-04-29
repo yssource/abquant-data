@@ -75,7 +75,7 @@ def select_best_ip():
 
     ipdefault = Setting.get_setting(Setting.NETWORK_IP_INI, "IPLIST", "default")
 
-    ipdefault = eval(ipdefault) if isinstance(ipdefault, str) else ipdefault
+    ipdefault = json.loads(ipdefault) if isinstance(ipdefault, str) else ipdefault
     assert isinstance(ipdefault, dict)
 
     stock_ip_list = Setting.make_stock_ip_list()
@@ -150,8 +150,11 @@ def get_ip_list_by_multi_process_ping(ip_list=[], n=0, _type="stock", cache_age=
         results = [x[1] for x in sorted(results, key=lambda x: x[0])]
         if _type:
             # store the data as binary data stream
-            cache.set(_type, results, age=cache_age)
-            slog.debug("saving ip list to {} cache {}".format(_type, len(results)))
+            try:
+                cache.set(_type, results, age=cache_age)
+                slog.debug("saving ip list to {} cache {}".format(_type, len(results)))
+            except Exception:
+                results = []
     if len(results) > 0:
         if n == 0 and len(results) > 0:
             return results
@@ -191,6 +194,7 @@ def get_mainmarket_ip(ip, port):
         port = best_ip["stock"]["port"]
     else:
         pass
+    assert ip is not None and ip != "", "Best IP is None, Abort TDX!"
     return ip, port
 
 
