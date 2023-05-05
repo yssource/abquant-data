@@ -39,3 +39,6 @@ SOURCES += stockmin.cpp
 HEADERS += mongoobjects/stockxdxrobject.h
 HEADERS += stockxdxr.h
 SOURCES += stockxdxr.cpp
+HEADERS += mongoobjects/etflistobject.h
+HEADERS += etflist.h
+SOURCES += etflist.cpp

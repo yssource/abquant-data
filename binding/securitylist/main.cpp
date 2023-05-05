@@ -13,6 +13,7 @@
 #include "abquant/actions/abquant.hpp"
 #include "abquant/actions/securitylist.hpp"
 #include "abquant/actions/utils.hpp"
+#include "abquant/models/etflist.h"
 #include "abquant/models/indexlist.h"
 #include "abquant/models/stocklist.h"
 
@@ -20,6 +21,7 @@ namespace abq
 {
 using StockListActionPtr = std::shared_ptr<SecurityListAction<StockList>>;
 using IndexListActionPtr = std::shared_ptr<SecurityListAction<IndexList>>;
+using EtfListActionPtr = std::shared_ptr<SecurityListAction<EtfList>>;
 
 class PySecurityList : public std::enable_shared_from_this<PySecurityList>
 {
@@ -31,6 +33,9 @@ public:
         }
         if (ins_type == INSTRUMENT_TYPE::INDX) {
             m_ila_ptr = std::make_shared<SecurityListAction<IndexList>>();
+        }
+        if (ins_type == INSTRUMENT_TYPE::ETF) {
+            m_ela_ptr = std::make_shared<SecurityListAction<EtfList>>();
         }
     };
 
@@ -48,6 +53,9 @@ public:
         if (ins_type == INSTRUMENT_TYPE::INDX) {
             m_ila_ptr = std::make_shared<SecurityListAction<IndexList>>(qcodes, end.c_str());
         }
+        if (ins_type == INSTRUMENT_TYPE::ETF) {
+            m_ela_ptr = std::make_shared<SecurityListAction<EtfList>>(qcodes, end.c_str());
+        }
     };
 
     template <class T>
@@ -60,6 +68,9 @@ public:
         if (m_ins_type == INSTRUMENT_TYPE::INDX) {
             series = m_ila_ptr->to_series<T>(col.c_str());
         }
+        if (m_ins_type == INSTRUMENT_TYPE::ETF) {
+            series = m_ela_ptr->to_series<T>(col.c_str());
+        }
         return series.toStdVector();
     }
 
@@ -71,6 +82,7 @@ private:
     INSTRUMENT_TYPE m_ins_type;
     StockListActionPtr m_sla_ptr{nullptr};
     IndexListActionPtr m_ila_ptr{nullptr};
+    EtfListActionPtr m_ela_ptr{nullptr};
 };
 
 namespace py = pybind11;

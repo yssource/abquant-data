@@ -16,6 +16,7 @@
 #include "abquant/actions/securitylist.hpp"
 #include "abquant/actions/utils.hpp"
 #include "abquant/models/indexlist.h"
+#include "abquant/models/etflist.h"
 #include "abquant/models/stocklist.h"
 
 using namespace abq;
@@ -23,10 +24,12 @@ using namespace std;
 
 using StockListActionPtr = std::shared_ptr<abq::SecurityListAction<StockList>>;
 using IndexListActionPtr = std::shared_ptr<abq::SecurityListAction<IndexList>>;
+using EtfListActionPtr = std::shared_ptr<abq::SecurityListAction<EtfList>>;
 using MyDataFramePtr     = std::shared_ptr<MyDataFrame>;
 
 Q_DECLARE_METATYPE(StockListActionPtr)
 Q_DECLARE_METATYPE(IndexListActionPtr)
+Q_DECLARE_METATYPE(EtfListActionPtr)
 Q_DECLARE_METATYPE(MyDataFramePtr)
 
 class TestSecurityList : public QObject
@@ -46,29 +49,34 @@ void TestSecurityList::initTestCase() {}
 
 void TestSecurityList::initTestCase_data()
 {
-    QStringList s_codes = {"000001", "300001", "600000"};
     const char* end     = "2022-12-01";
 
+    QStringList s_codes = {"000001", "300001", "600000"};
     auto sa  = std::make_shared<SecurityListAction<StockList>>();
     auto sa2 = std::make_shared<SecurityListAction<StockList>>(s_codes, end);
-
     QTest::addColumn<StockListActionPtr>("sla");
 
     QStringList i_codes = {"000001", "399001", "399006"};
     auto ia             = std::make_shared<SecurityListAction<IndexList>>();
     auto ia2            = std::make_shared<SecurityListAction<IndexList>>(i_codes, end);
-
     QTest::addColumn<IndexListActionPtr>("ila");
-    QTest::newRow("0") << sa << ia;
-    QTest::newRow("1") << sa2 << ia2;
+
+    QStringList e_codes = {"159001", "510010", "519997"};
+    auto ea             = std::make_shared<SecurityListAction<EtfList>>();
+    auto ea2            = std::make_shared<SecurityListAction<EtfList>>(e_codes, end);
+    QTest::addColumn<EtfListActionPtr>("ela");
+
+    QTest::newRow("0") << sa << ia << ea;
+    QTest::newRow("1") << sa2 << ia2 << ea2;
 }
 
 void TestSecurityList::get_securities_data()
 {
     QTest::addColumn<int>("s_rst");
     QTest::addColumn<int>("i_rst");
-    QTest::newRow("0") << 3785 << 1155;
-    QTest::newRow("1") << 3 << 3;
+    QTest::addColumn<int>("e_rst");
+    QTest::newRow("0") << 4990 << 1142 << 885;
+    QTest::newRow("1") << 3 << 3 << 3;
 }
 
 void TestSecurityList::get_securities()
@@ -80,14 +88,19 @@ void TestSecurityList::get_securities()
     QFETCH_GLOBAL(IndexListActionPtr, ila);
     QFETCH(int, i_rst);
     QCOMPARE(ila->get_securities().count(), i_rst);
+
+    QFETCH_GLOBAL(EtfListActionPtr, ela);
+    QFETCH(int, e_rst);
+    QCOMPARE(ela->get_securities().count(), e_rst);
 }
 
 void TestSecurityList::get_dataframe_data()
 {
     QTest::addColumn<int>("df_rst");
     QTest::addColumn<int>("df2_rst");
-    QTest::newRow("0") << 3785 << 1155;
-    QTest::newRow("1") << 3 << 3;
+    QTest::addColumn<int>("df3_rst");
+    QTest::newRow("0") << 4990 << 1142 << 885;
+    QTest::newRow("1") << 3 << 3 << 3;
 }
 
 void TestSecurityList::get_dataframe()
@@ -99,6 +112,10 @@ void TestSecurityList::get_dataframe()
     QFETCH_GLOBAL(IndexListActionPtr, ila);
     QFETCH(int, df2_rst);
     QCOMPARE(ila->get_dataframe()->get_index().size(), df2_rst);
+
+    QFETCH_GLOBAL(EtfListActionPtr, ela);
+    QFETCH(int, df3_rst);
+    QCOMPARE(ela->get_dataframe()->get_index().size(), df3_rst);
 }
 
 void TestSecurityList::cleanupTestCase() {}
