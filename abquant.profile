@@ -4,7 +4,7 @@ os_build=Linux
 arch=x86_64
 arch_build=x86_64
 compiler=clang
-compiler.version=15
+compiler.version=16
 compiler.libcxx=libc++
 build_type=Release
 
